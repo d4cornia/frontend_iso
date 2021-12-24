@@ -8,7 +8,7 @@ import Profile from "./Components/Profile";
 
 import {BrowserRouter as Router, Route, Link, Routes} from "react-router-dom";
 import PageNotFound from "./Components/PageNotFound";
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 function App() {
   return (
     <Router>
