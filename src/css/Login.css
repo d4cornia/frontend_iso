@@ -1,0 +1,23 @@
+.background{
+    background-color: #F3F3F3;
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url('../Image/bglogin.jpg');
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.container{
+
+}
+.image-login{
+    border-radius: 12px;
+}
+
+.login{
+    background-color: #FFFFFF;
+    margin-top: 1.5%;
+    box-shadow: 0 1.1px 5.3px rgba(0, 0, 0, 0.024),0 3.8px 17.9px rgba(0, 0, 0, 0.036), 0 17px 80px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+}
