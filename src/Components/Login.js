@@ -11,10 +11,10 @@ const Login = () =>{
             </div>
             <div className={'container'} >
                 <div className={'row'}>
-                    <div className={'col-sm-12 col-md-5 col-lg-5'} style={{"margin-top" : '2%', "padding" : '3%', "text-align": 'center'}}>
+                    <div className={'image col-sm-12 col-md-5 col-lg-5'} >
                         <img className={'image-login d-none d-md-block'} src={loginimage} style={{"width": '80%'}}/>
                     </div>
-                    <div className={'login col-sm-12 col-md-4 col-lg-4'} style={{"margin-top" : '5%', "padding" : '3%'}}>
+                    <div className={'login col-sm-12 col-md-6 col-lg-6'} style={{"margin-top" : '5%', "padding" : '3%'}}>
                         <h3 className={"center"}>Login</h3>
                         <Form>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -33,7 +33,7 @@ const Login = () =>{
                                 <Form.Check type="checkbox" label="Check me out" />
                             </Form.Group>
                             <Button variant="primary" type="submit">
-                                Submit
+                                Login
                             </Button>
                         </Form>
                     </div>
