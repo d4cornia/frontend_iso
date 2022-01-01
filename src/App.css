@@ -1,38 +1,154 @@
-/* .App {
-  text-align: center;
+@import url('https://api.fontshare.com/css?f[]=satoshi@300,301,400,401,500,501,700,701,900,901,1,2&display=swap');
+
+:root {
+  --fs-small-2: clamp(0.49rem, 0.26rem + 0.63vw, 0.63rem);
+  --fs-small-1: clamp(0.66rem, 0.35rem + 0.84vw, 0.84rem);
+  --fs-body: clamp(0.88rem, 0.47rem + 1.12vw, 1.13rem);
+  --fs-h5: clamp(1.17rem, 0.63rem + 1.5vw, 1.5rem);
+  --fs-h4: clamp(1.56rem, 0.84rem + 1.99vw, 2rem);
+  --fs-h3: clamp(2.07rem, 1.11rem + 2.66vw, 2.66rem);
+  --fs-h2: clamp(2.76rem, 1.49rem + 3.55vw, 3.55rem);
+  --fs-h1: clamp(3.68rem, 1.98rem + 4.73vw, 4.74rem);
+  --clr-body-1000: #000000;
+  --clr-body-900: #212529;
+  --clr-body-800: #343a40;
+  --clr-body-700: #495057;
+  --clr-body-600: #6c757d;
+  --clr-body-500: #adb5bd;
+  --clr-body-400: #ced4da;
+  --clr-body-300: #dee2e6;
+  --clr-body-200: #e9ecef;
+  --clr-body-100: #f8f9fa;
+  --clr-body-0: #ffffff;
+  --clr-primary-900: hsl(317, 88%, 77%);
+  --clr-primary-900-dark: hsl(317, 88%, 67%);
+  --clr-primary-800: hsl(309, 65%, 85%);
+  --clr-primary-800-dark: hsl(309, 65%, 75%);
+  --clr-primary-700: hsl(293, 53%, 74%);
+  --clr-primary-700-dark: hsl(293, 53%, 64%);
+  --clr-primary-600: hsl(281, 53%, 74%);
+  --clr-primary-600-dark: hsl(281, 53%, 64%);
+  --clr-primary-500: hsl(267, 53%, 74%);
+  --clr-primary-500-dark: hsl(267, 53%, 64%);
+  --clr-primary-400: hsl(255, 55%, 74%);
+  --clr-primary-400-dark: hsl(255, 55%, 64%);
+  --clr-primary-300: hsl(241, 55%, 74%);
+  --clr-primary-300-dark: hsl(241, 55%, 64%);
+  --clr-primary-200: hsl(231, 59%, 73%);
+  --clr-primary-200-dark: hsl(231, 59%, 63%);
+  --clr-primary-100: hsl(223, 65%, 71%);
+  --clr-primary-100-dark: hsl(223, 65%, 61%);
+  --clr-primary-0: hsl(218, 68%, 69%);
+  --clr-primary-0-dark: hsl(218, 68%, 59%);
+  --clr-black: var(--clr-body-1000);
+  --clr-white: var(--clr-body-0);
+  /* Override Bootstrap Variables */
+  --bs-body-font-family: 'Satoshi', sans-serif !important;
+  --bs-body-line-height: 1.75 !important;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+html {
+  font-size: 100%;
+} /*16px*/
+
+body {
+  font-family: var(--bs-body-font-family);
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--clr-black);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+p {
+  margin-bottom: 1rem;
+  font-size: var(--fs-body);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 3rem 0 1.38rem;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 400;
+  line-height: 1.3;
 }
 
-.App-link {
-  color: #61dafb;
+h1 {
+  margin-top: 0;
+  font-size: var(--fs-h1) !important;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+h2 {
+  font-size: var(--fs-h2) !important;
+}
+
+h3 {
+  font-size: var(--fs-h3) !important;
+}
+
+h4 {
+  font-size: var(--fs-h4) !important;
+}
+
+h5 {
+  font-size: var(--fs-h5) !important;
+}
+
+small,
+.text_small {
+  font-size: var(--fs-small-1);
+}
+
+smaller,
+.text_smaller {
+  font-size: var(--fs-small-2);
+}
+
+.gradient-text {
+  background: linear-gradient(to right, #fbc2eb 20%, #a6c1ee 40%, #a6c1ee 60%, #fbc2eb 80%);
+  background-size: 200% auto;
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: shine 3s linear infinite;
+}
+
+.btn-primary {
+  background-color: var(--clr-primary-0) !important;
+  border-color: var(--clr-primary-0) !important;
+}
+
+.btn:hover {
+  background-color: var(--clr-primary-0-dark) !important;
+  border-color: var(--clr-primary-0-dark) !important;
+}
+
+@keyframes shine {
   to {
-    transform: rotate(360deg);
+    background-position: 200% center;
   }
-} */
+}
+
+/* Breakpoints(Copy Only) */
+
+/* X-Large devices (large desktops, less than 1400px) */
+/* @media (max-width: 1399.98px) {  } */
+
+/* Large devices (desktops, less than 1200px) */
+/* @media (max-width: 1199.98px) {  } */
+
+/* Medium devices (tablets, less than 992px) */
+/* @media (max-width: 991.98px) {  } */
+
+/* Small devices (landscape phones, less than 768px) */
+/* @media (max-width: 767.98px) {  } */
+
+/* X-Small devices (portrait phones, less than 576px) */
+/* @media (max-width: 575.98px) {  } */
+
+
+
+
