@@ -4,6 +4,7 @@ import Home from './Components/Home';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import Profile from './Components/Profile';
+import Chat_room from './Components/Chat-room';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './Components/PageNotFound';
@@ -20,8 +21,8 @@ function App() {
           <Route exact path={'/home'} element={<Home />} />
           <Route exact path={'/profile'} element={<Profile />} />
           {/* <Route exact path={"/search"} element={<Search/>}/>
-                <Route exact path={"/post"} element={<Post/>}/>
-                <Route exact path={"/dm"} element={<DM/>}/> */}
+                <Route exact path={"/post"} element={<Post/>}/>*/}
+          <Route exact path={'/chat-room'} element={<Chat_room />} />
           {/* jika tidak ada url yang cocok dengan route" diatas*/}
           <Route element={<PageNotFound />} />
         </Routes>

@@ -2,8 +2,22 @@ import React, { useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import loginImageSrc from '../Image/login-image.jpg';
 import '../css/Login.css';
+import axios from 'axios';
 
 const Login = () => {
+  const login = async (username, password) => {
+    const temp = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {
+      username: username,
+      password: password
+    })
+
+    if(temp.data.status === 'success') {
+      localStorage.setItem('username', JSON.stringify(temp.data.data.username))
+      localStorage.setItem('email', JSON.stringify(temp.data.data.email))
+      localStorage.setItem('name', JSON.stringify(temp.data.data.name))
+      localStorage.setItem('x-auth-token', JSON.stringify(temp.data.data.token))
+    }
+  }
   useEffect(() => {
     document.title = 'Login';
   }, []);

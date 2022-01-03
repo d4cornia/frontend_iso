@@ -13,3 +13,6 @@ code {
     monospace;
 }
 
+.scrollarea {
+  min-height: 500px;
+}

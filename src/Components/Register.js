@@ -2,8 +2,23 @@ import React from 'react';
 import { Form, Button } from 'react-bootstrap';
 import registerimage from '../Image/register.jpg';
 import '../css/Register.css';
+import axios from 'axios';
 
 const Register = () => {
+  const reigster = async (obj) => {
+    const temp = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/users/register`, {
+      username: obj.username,
+      name: obj.name,
+      email: obj.email,
+      age: obj.age,
+      description: obj.description,
+      password: obj.password,
+      confirm_password: obj.confirm_password,
+    })
+
+    console.log(temp)
+  }
+
   return (
     <div>
       <div className={'background-reg'}></div>
