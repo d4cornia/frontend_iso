@@ -1,26 +1,57 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import loginImageSrc from '../Image/login-image.jpg';
 import '../css/Login.css';
 import axios from 'axios';
 
 const Login = () => {
+  const [errorUsername, setErrorUsername] = useState({ status: false, text: '' });
+  const [errorPassword, setErrorPassword] = useState({ status: false, text: '' });
+
   const login = async (username, password) => {
     const temp = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {
       username: username,
       password: password
-    })
+    });
 
-    if(temp.data.status === 'success') {
-      localStorage.setItem('username', JSON.stringify(temp.data.data.username))
-      localStorage.setItem('email', JSON.stringify(temp.data.data.email))
-      localStorage.setItem('name', JSON.stringify(temp.data.data.name))
-      localStorage.setItem('x-auth-token', JSON.stringify(temp.data.data.token))
+    if (temp.data.status === 'success') {
+      localStorage.setItem('username', JSON.stringify(temp.data.data.username));
+      localStorage.setItem('email', JSON.stringify(temp.data.data.email));
+      localStorage.setItem('name', JSON.stringify(temp.data.data.name));
+      localStorage.setItem('x-auth-token', JSON.stringify(temp.data.data.token));
     }
-  }
+  };
   useEffect(() => {
     document.title = 'Login';
   }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const username = e.target.email.value;
+    const password = e.target.password.value;
+
+    // if (this.inputValidation(username, password)) {
+    //   this.login(username, password);
+    // }
+
+    console.log('submit', e);
+    console.log('email', e.target.email.value);
+    console.log('password', e.target.password.value);
+  };
+
+  const inputValidation = (username, password) => {
+    // Input Validation
+    // if (password === '') {
+    //   setErrorPassword(true);
+    //   return false;
+    // }
+  };
+
+  const handleInput = () => {
+    // Do Something onInput
+  };
 
   return (
     <div>
@@ -31,7 +62,7 @@ const Login = () => {
         <div className="login-form-container">
           <div className="login-form-wrapper">
             <svg
-              className="logo"
+              className="login-logo"
               viewBox="0 0 292 280"
               fill="none"
               xmlns="http://www.w3.org/2000/svg">
@@ -48,62 +79,35 @@ const Login = () => {
                 fill="#212529"
               />
             </svg>
-            <Form className="login-form">
+            <Form className="login-form" onSubmit={handleSubmit}>
               <h2 className={'login-form-title fw-bold'}>Login</h2>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control type="email" placeholder="Enter email associated with your account" />
-                <Form.Text className="text-muted">
-                  {"We'll never share your username with anyone else."}
-                </Form.Text>
+              <Form.Group className="mb-3" controlId="loginEmail">
+                <Form.Label>Email Address or Username</Form.Label>
+                <Form.Control type="email" name="email" required onInput={handleInput} />
+                <div class="text-danger text_small">Example invalid form file feedback</div>
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formBasicPassword">
+              <Form.Group className="mb-3" controlId="loginPassword">
                 <Form.Label>Password</Form.Label>
-                <Form.Control type="password" />
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                <Form.Check type="checkbox" label="Remember Me" />
+                <Form.Control type="password" name="password" required onInput={handleInput} />
+                {}
+                <div class="text-danger text_small">Example invalid form file feedback</div>
               </Form.Group>
               <Button variant="primary" type="submit">
-                Submit
+                Log in
               </Button>
+              <p className="text-muted text_small">
+                Don't have any account?{' '}
+                <Link to="/register" className="link">
+                  Register now
+                </Link>
+              </p>
             </Form>
             <p className="text-muted small copyright-text">
-              {'© 2021 Polarogram, Inc. All Rights Reserved'}
+              {'© 2022 Polarogram, Inc. All Rights Reserved'}
             </p>
           </div>
         </div>
-        {/* <Container fluid className='login-container'>
-                <Row fluid className='login-wrapper h-100'>
-                    <Col className='login-image-container'>
-                        <Image fluid className='login-image' src={loginimage}/>
-                    </Col>
-                    <Col>
-                    <h3 className={"center"}>Login</h3>
-                        <Form>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
-                                <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" placeholder="Enter email" />
-                                <Form.Text className="text-muted">
-                                We'll never share your email with anyone else.
-                                </Form.Text>
-                            </Form.Group>
-
-                            <Form.Group className="mb-3" controlId="formBasicPassword">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" placeholder="Password" />
-                            </Form.Group>
-                            <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                                <Form.Check type="checkbox" label="Check me out" />
-                            </Form.Group>
-                            <Button variant="primary" type="submit">
-                                Login
-                            </Button>
-                        </Form>
-                    </Col>
-                </Row>
-            </Container> */}
       </div>
     </div>
   );
