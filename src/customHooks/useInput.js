@@ -1,20 +1,29 @@
-import {useState} from "react";
+import { useState } from 'react';
 
-const useInput = (initialValue) => {
-    const [value, setValue] = useState(initialValue)
+const useInput = (initialValue, initialValue2 = false, initialValue3 = '') => {
+  const [value, setValue] = useState(initialValue);
+  const [value2, setValue2] = useState(initialValue2);
+  const [value3, setValue3] = useState(initialValue3);
 
-    const bindForm = {
-        value: value,
-        onChange: e => {
-            setValue(e.target.value)
-        }
+  const bindForm = {
+    value: value,
+    onChange: (e) => {
+      setValue(e.target.value);
+      setValue2(false);
+      setValue3('');
     }
+  };
 
-    const clearText = (val = '') => {
-        setValue(val)
-    }
+  const clearText = (val = '') => {
+    setValue(val);
+  };
 
-    return [value, bindForm, clearText]
-}
+  const clearMessage = (val = '') => {
+    setValue3(val);
+  };
 
-export default useInput
+  return [value, bindForm, clearText, value2, setValue2, value3, setValue3, clearMessage];
+  // [Input Value, Binding, ClearValue, Error, ChangeError, ErrorMessage, ChangeErrorMessage, ClearErrorMessage]
+};
+
+export default useInput;

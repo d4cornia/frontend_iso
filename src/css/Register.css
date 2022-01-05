@@ -40,6 +40,10 @@
   gap: 1rem;
 }
 
+.input-container.hidden {
+  display: none;
+}
+
 .register-logo {
   width: 2.3rem;
 }

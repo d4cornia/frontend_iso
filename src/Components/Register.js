@@ -1,28 +1,121 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import useInput from '../customHooks/useInput';
+import { Link, Navigate } from 'react-router-dom';
 import registerImageSrc from '../Image/new-register.jpg';
 import '../css/Register.css';
 import axios from 'axios';
 import Validator from '../helper/validator';
-
-const FIELD_NAMES = ['username', 'password', 'confPassword', 'fullName', 'email', 'birth'];
-const STEP_INDEX = [2, FIELD_NAMES.length];
+import '../helper/functions';
+import _calculateAge from '../helper/functions';
 
 const Register = () => {
   const register = async (obj) => {
-    const temp = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/users/register`, {
-      username: obj.username,
-      name: obj.name,
-      email: obj.email,
-      age: obj.age,
-      description: obj.description,
-      password: obj.password,
-      confirm_password: obj.confirm_password
-    });
+    const askRegister = await axios
+      .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/register`, {
+        username: obj.username,
+        name: obj.name,
+        email: obj.email,
+        age: obj.age,
+        description: '-',
+        password: obj.password,
+        confirm_password: obj.confirm_password
+      })
+      .then((res) => {
+        let isError = false;
+        if (res.data.inputName === 'email') {
+          isError = true;
+          setErrorEmail(true);
+          setErrorMsgEmail(res.data.error_msg);
+        }
+
+        if (res.data.inputName === 'username') {
+          isError = true;
+          setRegisterStep(1);
+          setErrorUsername(true);
+          setErrorMsgUsername(res.data.error_msg);
+        }
+
+        if (!isError) {
+          {
+            <Navigate push to="/" />;
+          }
+        }
+      });
   };
 
   const [registerStep, setRegisterStep] = useState(1);
+
+  // FIELDS
+  const [
+    username,
+    bindUsername,
+    clearUsername,
+    isErrorUsername,
+    setErrorUsername,
+    errorMsgUsername,
+    setErrorMsgUsername,
+    clearErrorMsgUsername
+  ] = useInput('', false, '');
+  const [
+    password,
+    bindPassword,
+    clearPassword,
+    isErrorPassword,
+    setErrorPassword,
+    errorMsgPassword,
+    setErrorMsgPassword,
+    clearErrorMsgPassword
+  ] = useInput('', false, '');
+  const [
+    cPassword,
+    bindCPassword,
+    clearCPassword,
+    isErrorCPassword,
+    setErrorCPassword,
+    errorMsgCPassword,
+    setErrorMsgCPassword,
+    clearErrorMsgCPassword
+  ] = useInput('', false, '');
+  const [
+    fullName,
+    bindFullName,
+    clearFullName,
+    isErrorFullName,
+    setErrorFullName,
+    errorMsgFullName,
+    setErrorMsgFullName,
+    clearErrorMsgFullName
+  ] = useInput('', false, '');
+  const [
+    email,
+    bindEmail,
+    clearEmail,
+    isErrorEmail,
+    setErrorEmail,
+    errorMsgEmail,
+    setErrorMsgEmail,
+    clearErrorMsgEmail
+  ] = useInput('', false, '');
+  const [
+    birth,
+    bindBirth,
+    clearBirth,
+    isErrorBirth,
+    setErrorBirth,
+    errorMsgBirth,
+    setErrorMsgBirth,
+    clearErrorMsgBirth
+  ] = useInput('', false, '');
+
+  // const [FIELDS, setFields] = useState({
+  //   username: { name: 'Username', isError: false, errorMsg: '', step: 1 },
+  //   password: { name: 'Password', isError: false, errorMsg: '', step: 1 },
+  //   confPassword: { name: 'Confirm Password', isError: false, errorMsg: '', step: 1 },
+  //   fullName: { name: 'Full Name', isError: false, errorMsg: '', step: 2 },
+  //   email: { name: 'Email', isError: false, errorMsg: '', step: 2 },
+  //   birth: { name: 'Birth Date', isError: false, errorMsg: '', step: 2 }
+  // });
   // TODO:
   // - ERROR TEXT DISPLAY
   // - BIND VALUE atau hide step lain
@@ -31,21 +124,85 @@ const Register = () => {
     e.preventDefault();
     if (registerStep === 1) {
       let isError = false;
-      FIELD_NAMES.forEach((input, index) => {
-        if (index > STEP_INDEX[registerStep - 1]) {
-          return;
-        }
 
-        if (Validator.isEmpty(e.target[input].value)) {
-          isError = true;
-          return;
-        }
-      });
+      // Username
+      if (Validator.isEmpty(username)) {
+        isError = true;
+        setErrorUsername(true);
+        setErrorMsgUsername(`Username is required`);
+      }
+
+      // Password
+      if (Validator.isEmpty(password)) {
+        isError = true;
+        setErrorPassword(true);
+        setErrorMsgPassword(`Password is required`);
+      } else if (!Validator.isStrictAlphaNum(password)) {
+        isError = true;
+        setErrorPassword(true);
+        setErrorMsgPassword(`Password must contains atleast 1 letter and 1 number`);
+      }
+
+      // Confirm Password
+      if (Validator.isEmpty(cPassword)) {
+        isError = true;
+        setErrorCPassword(true);
+        setErrorMsgCPassword(`Confirm Password is required`);
+      } else if (cPassword !== password) {
+        isError = true;
+        setErrorCPassword(true);
+        setErrorMsgCPassword(`Confirm Password doesn't match Password`);
+      }
+
+      // Jika tidak ada error, Lanjut step 2, ADUADUADU
       if (!isError) {
         setRegisterStep(registerStep + 1);
       }
     } else {
-      console.log('REGISTER');
+      let isError = false;
+
+      // Full Name
+      if (Validator.isEmpty(fullName)) {
+        isError = true;
+        setErrorFullName(true);
+        setErrorMsgFullName(`Full Name is required`);
+      }
+      // Email
+      if (Validator.isEmpty(email)) {
+        isError = true;
+        setErrorEmail(true);
+        setErrorMsgEmail(`Email Address is required`);
+      } else if (!Validator.isEmailValid(email)) {
+        isError = true;
+        setErrorEmail(true);
+        setErrorMsgEmail(`Email Address is invalid`);
+      }
+
+      // Birth Date
+      if (Validator.isEmpty(birth)) {
+        isError = true;
+        setErrorBirth(true);
+        setErrorMsgBirth(`Birth Date is required`);
+      }
+      const userAge = _calculateAge(new Date(birth));
+
+      if (userAge < 13) {
+        isError = true;
+        setErrorBirth(true);
+        setErrorMsgBirth(`Age must be 13 or above`);
+      }
+
+      // Jika tidak ada error, Lanjut register, ADUADUADU
+      if (!isError) {
+        register({
+          username,
+          name: fullName,
+          email,
+          age: userAge,
+          password,
+          confirm_password: cPassword
+        });
+      }
     }
   };
 
@@ -87,51 +244,92 @@ const Register = () => {
                 moments, anywhere, anytime.
               </p>
               <p className="fw-bold text-muted text_small">Step {registerStep} of 2</p>
-              {registerStep === 1 && (
-                <div className="form-section-wrapper">
-                  <Form.Group className="mb-3" controlId="formUsername">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" name="username" />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="formPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Password"
-                      name="password"
-                      placeholder="Must atleast contains 1 alphabet and 1 number"
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="formConfirmPassword">
-                    <Form.Label>Confirm Password</Form.Label>
-                    <Form.Control
-                      type="password"
-                      placeholder="Must match with Password"
-                      name="confPassword"
-                    />
-                  </Form.Group>
-                </div>
-              )}
+              <Form.Group
+                className={`mb-3 input-container ${registerStep != 1 ? 'hidden' : ''}`}
+                controlId="formUsername">
+                <Form.Label>Username</Form.Label>
+                <Form.Control
+                  className={`${isErrorUsername ? 'is-invalid' : ''}`}
+                  type="text"
+                  name="username"
+                  {...bindUsername}
+                />
+                {isErrorUsername && (
+                  <div className="text-danger text_small">{errorMsgUsername}</div>
+                )}
+              </Form.Group>
+              <Form.Group
+                className={`mb-3 input-container ${registerStep != 1 ? 'hidden' : ''}`}
+                controlId="formPassword">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  className={`${isErrorPassword ? 'is-invalid' : ''}`}
+                  type="password"
+                  placeholder="Password"
+                  name="password"
+                  placeholder="Must atleast contains 1 alphabet and 1 number"
+                  {...bindPassword}
+                />
+                {isErrorPassword && (
+                  <div className="text-danger text_small">{errorMsgPassword}</div>
+                )}
+              </Form.Group>
+              <Form.Group
+                className={`mb-3 input-container ${registerStep != 1 ? 'hidden' : ''}`}
+                controlId="formConfirmPassword">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  className={`${isErrorCPassword ? 'is-invalid' : ''}`}
+                  type="password"
+                  placeholder="Must match with Password"
+                  name="confPassword"
+                  {...bindCPassword}
+                />
+                {isErrorCPassword && (
+                  <div className="text-danger text_small">{errorMsgCPassword}</div>
+                )}
+              </Form.Group>
 
-              {registerStep === 2 && (
-                <div className="form-section-wrapper">
-                  <Form.Group className="mb-3" controlId="formName">
-                    <Form.Label>Full Name</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Full Name" name="fullName" />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="formEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Enter email" name="email" />
-                    <p className="text-muted small">
-                      {'Email will be used for sending confirmation and login'}
-                    </p>
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="formAge" name="birth">
-                    <Form.Label>Birth Date</Form.Label>
-                    <Form.Control type="date" min="1899-01-01" max="2000-13-13" />
-                  </Form.Group>
-                </div>
-              )}
+              <Form.Group
+                className={`mb-3 input-container ${registerStep != 2 ? 'hidden' : ''}`}
+                controlId="formName">
+                <Form.Label>Full Name</Form.Label>
+                <Form.Control
+                  className={`${isErrorFullName ? 'is-invalid' : ''}`}
+                  type="text"
+                  placeholder="Enter Full Name"
+                  name="fullName"
+                  {...bindFullName}
+                />
+                {isErrorFullName && (
+                  <div className="text-danger text_small">{errorMsgFullName}</div>
+                )}
+              </Form.Group>
+              <Form.Group
+                className={`mb-3 input-container ${registerStep != 2 ? 'hidden' : ''}`}
+                controlId="formEmail">
+                <Form.Label>Email Address</Form.Label>
+                <Form.Control
+                  className={`${isErrorEmail ? 'is-invalid' : ''}`}
+                  type="text"
+                  placeholder="Email will be used for confirmation and login"
+                  name="email"
+                  {...bindEmail}
+                />
+                {isErrorEmail && <div className="text-danger text_small">{errorMsgEmail}</div>}
+              </Form.Group>
+              <Form.Group
+                className={`mb-3 input-container ${registerStep != 2 ? 'hidden' : ''}`}
+                controlId="formAge">
+                <Form.Label>Birth Date</Form.Label>
+                <Form.Control
+                  className={`${isErrorBirth ? 'is-invalid' : ''}`}
+                  type="date"
+                  name="birth"
+                  {...bindBirth}
+                />
+                {isErrorBirth && <div className="text-danger text_small">{errorMsgBirth}</div>}
+              </Form.Group>
 
               <Button variant="primary" type="submit" className="form-control">
                 {registerStep === 2 ? 'Register' : 'Next'}

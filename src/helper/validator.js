@@ -64,6 +64,14 @@ const validator = {
     return value.length <= ceiling;
   },
   /**
+   * To check if the length of value is more or equal to a number
+   * @param {any} value Value to be checked
+   * @param {Number} floor Desired Min length of value
+   */
+  isMinLength: (value, floor) => {
+    return value.length >= floor;
+  },
+  /**
    * To check if value(email) is valid
    * @param {any} value Value to be checked
    */
