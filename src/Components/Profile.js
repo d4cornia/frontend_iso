@@ -2,9 +2,9 @@ import React from 'react';
 import { Form, Button } from 'react-bootstrap';
 import profilImage from '../Image/profil.jpg';
 import '../css/Profile.css';
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 const Profile = () => {
   return (

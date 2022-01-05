@@ -1,0 +1,21 @@
+.image{
+    width: 10%;
+    border-radius: 50%;
+}
+.card-head{
+    display: flex;
+}
+
+.user{
+    margin-left: 5%;
+}
+.post-image{
+    margin-top: 2%;
+}
+.caption{
+    display: flex;
+}
+
+.isi-caption{
+    margin-left: 2%;
+}
