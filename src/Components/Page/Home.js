@@ -1,9 +1,13 @@
 // import { Image, Video, Transformation, CloudinaryContext } from 'cloudinary-react';
 import { Image, Video } from 'cloudinary-react';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Form, Button, Card } from 'react-bootstrap';
 import 'css/Home.css';
 import profilImage from 'Image/profil.jpg';
+
+
+import {db} from 'helper/fbconfig';
+import {collection,getDocs,addDoc} from "firebase/firestore";
 
 const Home = () => {
   const widget = window.cloudinary.createUploadWidget(
@@ -19,8 +23,49 @@ const Home = () => {
     }
   );
 
+  const [report,setReport] = useState([]);
+  const [id1,setId1] = useState("");
+  const [id2,setId2] = useState("");
+
+  const dataReport = collection(db,"report");
+
+  useEffect(()=> {
+    const getReport = async () =>{
+      const data = await getDocs(dataReport);
+      setReport(data.docs.map((doc) => ({...doc.data(),id:doc.id})))
+    }
+    getReport();
+  })
+
+  const addReport = async () =>{
+    await addDoc(dataReport,{user_id:id1,reported_user_id:id2,created_at: new Date(),deleted_at:null})
+  }
+
   return (
     <div className={'container'}>
+      <input
+          placeholder="id user 1"
+          type="id1"
+          onChange={(event) => {
+            setId1(event.target.value)
+          }}/>
+      <input
+          placeholder="id user 2"
+          type="id2"
+          onChange={(event) => {
+            setId2(event.target.value)
+          }}/>
+      <button onClick={addReport}>Report User</button>
+
+        {/*{report.map((rep)=> {*/}
+        {/*  return (*/}
+        {/*      <div>*/}
+        {/*        <h1>id: {rep.id}</h1>*/}
+        {/*        <h1>userid1: {rep.user_id}</h1>*/}
+        {/*        <h1>userid2: {rep.reported_user_id}</h1>*/}
+        {/*      </div>*/}
+        {/*  );*/}
+        {/*})}*/}
       <h1>Home</h1>
       <Card style={{ width: '42.5rem' }}>
         <Card.Body>
@@ -89,6 +134,8 @@ const Home = () => {
       </button>
     </div>
   );
+
+
 };
 
 export default Home;
