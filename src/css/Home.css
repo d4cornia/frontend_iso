@@ -93,12 +93,13 @@
   position: absolute;
 }
 
-.like-icon.selected {
-  opacity: 1;
-}
-
 .like-icon.filled {
   opacity: 0;
+}
+
+.like-icon.selected {
+  opacity: 1;
+  pointer-events: none;
 }
 
 .card-caption_action-like-button:hover .like-icon.filled {

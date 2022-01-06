@@ -60,9 +60,11 @@ const Home = () => {
     }
   };
 
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [showComments, setShowComments] = useState(false);
-  const [allowPost, setAllowPost] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false); // database
+  const [showComments, setShowComments] = useState(false); //dipisah per item
+  const [allowPost, setAllowPost] = useState(false); // dipisah per item
+
+  const isLiked = true;
 
   return (
     <div className={'content-container center-items'}>
@@ -79,7 +81,7 @@ const Home = () => {
                   <span
                     className="follow-button link"
                     onClick={() => {
-                      setIsFollowing(true);
+                      setIsFollowing(true); // ganti call api
                     }}>
                     Follow
                   </span>
@@ -101,7 +103,7 @@ const Home = () => {
             <div className="card-caption_action">
               <div className="card-caption_action-like-button">
                 <svg
-                  className="like-icon"
+                  className={`like-icon`}
                   viewBox="0 0 1024 1024"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg">
@@ -111,7 +113,7 @@ const Home = () => {
                   />
                 </svg>
                 <svg
-                  className="like-icon filled"
+                  className={`like-icon filled ${isLiked ? 'selected' : ''}`}
                   viewBox="0 0 1024 1024"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg">
