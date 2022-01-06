@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import 'css/components/Navigation.css';
 import CustomInput from './CustomInput';
 import LogoText from './LogoText';
+import profilImage from 'Image/profil.jpg';
 
 const Navigation = (props) => {
   const search = useRef();
@@ -19,6 +20,23 @@ const Navigation = (props) => {
       <div className="navigation-wrapper">
         <div className="notification-popup">
           <h5>NOTIFICATION</h5>
+          <div className="notification-content">
+            <img className={'card-head_image'} src={profilImage} alt="Profil Image" />
+            <div className="card-head_profile">
+              <p className="card-head_profile-followers text_small fw-bold text-muted" style={{"margin-left": "1rem"}}>
+                <b>joesentosa1511</b> Started following you! 
+              </p>
+            </div>
+          </div>
+          <hr />
+          <div className="notification-content">
+            <img className={'card-head_image'} src={profilImage} alt="Profil Image" />
+            <div className="card-head_profile">
+              <p className="card-head_profile-followers text_small fw-bold text-muted" style={{"margin-left": "1rem"}}>
+                <b>joesentosa1511</b> Started following you! 
+              </p>
+            </div>
+          </div>
         </div>
         <LogoText className="nav-logo" />
         <form action="#" method="post" className="form-search" onSubmit={handleSubmit}>
