@@ -3,17 +3,46 @@ import 'css/components/Navigation.css';
 import CustomInput from './CustomInput';
 import LogoText from './LogoText';
 
-const Navigation = () => {
+const Navigation = (props) => {
   const search = useRef();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const searchText = search.current.value;
+    const postfix = searchText[0] === '#' ? 'by=tag' : 'by=name';
+    const searchUrl = `/search?post=${searchText}&${postfix}`;
+    console.log('url', searchUrl);
+  };
+
   return (
     <div className="navigation-container">
       <div className="navigation-wrapper">
+        <div className="notification-popup">
+          <h5>NOTIFICATION</h5>
+        </div>
         <LogoText className="nav-logo" />
-        <form action="#" method="post" className="form-search">
+        <form action="#" method="post" className="form-search" onSubmit={handleSubmit}>
           <CustomInput ref={search} placeholder="Search" name="search" />
+          <div className="searchButton" onClick={handleSubmit}>
+            <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g clip-path="url(#clip0_57_59)">
+                <path
+                  d="M505 442.7L405.3 343C400.8 338.5 394.7 336 388.3 336H372C399.6 300.7 416 256.3 416 208C416 93.1 322.9 0 208 0C93.1 0 0 93.1 0 208C0 322.9 93.1 416 208 416C256.3 416 300.7 399.6 336 372V388.3C336 394.7 338.5 400.8 343 405.3L442.7 505C452.1 514.4 467.3 514.4 476.6 505L504.9 476.7C514.3 467.3 514.3 452.1 505 442.7ZM208 336C137.3 336 80 278.8 80 208C80 137.3 137.2 80 208 80C278.7 80 336 137.2 336 208C336 278.7 278.8 336 208 336Z"
+                  fill="#212121"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_57_59">
+                  <rect width="512" height="512" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </div>
         </form>
         <ul className="navigation-links">
-          <li className="navigation-link" id="home">
+          <li
+            className={`navigation-link ${props.selected === 'home' ? 'selected' : ''}`}
+            id="home">
             <svg
               className="home"
               viewBox="0 0 97 97"
@@ -35,7 +64,9 @@ const Navigation = () => {
               />
             </svg>
           </li>
-          <li className="navigation-link" id="addPost">
+          <li
+            className={`navigation-link ${props.selected === 'addPost' ? 'selected' : ''}`}
+            id="addPost">
             <svg className="add" viewBox="0 0 97 97" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M14.55 24.25C14.55 21.6774 15.572 19.2102 17.3911 17.3911C19.2102 15.572 21.6774 14.55 24.25 14.55H72.75C75.3226 14.55 77.7899 15.572 79.609 17.3911C81.4281 19.2102 82.45 21.6774 82.45 24.25V72.75C82.45 75.3226 81.4281 77.7899 79.609 79.609C77.7899 81.4281 75.3226 82.45 72.75 82.45H24.25C21.6774 82.45 19.2102 81.4281 17.3911 79.609C15.572 77.7899 14.55 75.3226 14.55 72.75V24.25ZM24.25 19.4C22.9637 19.4 21.7301 19.911 20.8206 20.8206C19.911 21.7301 19.4 22.9637 19.4 24.25V72.75C19.4 74.0363 19.911 75.27 20.8206 76.1795C21.7301 77.0891 22.9637 77.6 24.25 77.6H72.75C74.0363 77.6 75.27 77.0891 76.1795 76.1795C77.0891 75.27 77.6 74.0363 77.6 72.75V24.25C77.6 22.9637 77.0891 21.7301 76.1795 20.8206C75.27 19.911 74.0363 19.4 72.75 19.4H24.25ZM48.5 29.1C49.1432 29.1 49.76 29.3555 50.2148 29.8103C50.6696 30.2651 50.925 30.8819 50.925 31.525V46.075H65.475C66.1182 46.075 66.735 46.3305 67.1898 46.7853C67.6446 47.2401 67.9 47.8569 67.9 48.5C67.9 49.1432 67.6446 49.76 67.1898 50.2148C66.735 50.6696 66.1182 50.925 65.475 50.925H50.925V65.475C50.925 66.1182 50.6696 66.735 50.2148 67.1898C49.76 67.6446 49.1432 67.9 48.5 67.9C47.8569 67.9 47.2401 67.6446 46.7853 67.1898C46.3305 66.735 46.075 66.1182 46.075 65.475V50.925H31.525C30.8819 50.925 30.2651 50.6696 29.8103 50.2148C29.3555 49.76 29.1 49.1432 29.1 48.5C29.1 47.8569 29.3555 47.2401 29.8103 46.7853C30.2651 46.3305 30.8819 46.075 31.525 46.075H46.075V31.525C46.075 30.8819 46.3305 30.2651 46.7853 29.8103C47.2401 29.3555 47.8569 29.1 48.5 29.1Z"
@@ -53,7 +84,7 @@ const Navigation = () => {
               />
             </svg>
           </li>
-          <li className="navigation-link" id="DM">
+          <li className={`navigation-link ${props.selected === 'dm' ? 'selected' : ''}`} id="DM">
             <svg className="dm" viewBox="0 0 97 97" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
                 d={
@@ -75,7 +106,7 @@ const Navigation = () => {
             </svg>
           </li>
           <div className="profile-container">
-            <div className="profile-img"></div>
+            <img src={props.profileImage} alt="Profile" className="profile-img" />
           </div>
         </ul>
       </div>

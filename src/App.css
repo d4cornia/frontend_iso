@@ -161,7 +161,7 @@ smaller,
   flex-flow: column;
 }
 
-.content-container.center {
+.content-container.center-items {
   align-items: center;
 }
 
