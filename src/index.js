@@ -5,13 +5,13 @@ import App from './App';
 
 import reportWebVitals from './reportWebVitals';
 
-import {createStore,applyMiddleware,compose} from "redux";
-import rootReducer from "./store/reducers/rootReducer";
-import {Provider} from 'react-redux';
-import firebase from "firebase/compat";
-import {ReactReduxFirebaseProvider,getFirebase} from "react-redux-firebase";
-import {createFirestoreInstance,getFirestore,reduxFirestore} from "redux-firestore";
-import thunk from 'redux-thunk';
+// import {createStore,applyMiddleware,compose} from "redux";
+// import rootReducer from "./store/reducers/rootReducer";
+// import {Provider} from 'react-redux';
+// import firebase from "firebase/compat";
+// import {ReactReduxFirebaseProvider,getFirebase} from "react-redux-firebase";
+// import {createFirestoreInstance,getFirestore,reduxFirestore} from "redux-firestore";
+// import thunk from 'redux-thunk';
 
 ReactDOM.render(
   <React.StrictMode>
