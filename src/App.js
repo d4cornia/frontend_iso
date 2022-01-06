@@ -1,14 +1,14 @@
 import './App.css';
 
-import Home from './Components/Home';
-import Login from './Components/Login';
-import Register from './Components/Register';
-import Profile from './Components/Profile';
-import Chat_room from './Components/Chat-room';
-import PrivacyPolicy from './Components/PrivacyPolicy';
+import Home from 'Components/Page/Home';
+import Login from 'Components/Page/Login';
+import Register from 'Components/Page/Register';
+import Profile from 'Components/Page/Profile';
+import Chat_room from 'Components/Page/Chat-room';
+import PrivacyPolicy from 'Components/Page/PrivacyPolicy';
+import PageNotFound from 'Components/Page/PageNotFound';
 
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import PageNotFound from './Components/PageNotFound';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import $ from 'jquery';
 

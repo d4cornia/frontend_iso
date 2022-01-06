@@ -21,11 +21,18 @@ const validator = {
     return /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/.test(value);
   },
   /**
-   * To check if value is alphabetic
+   * To check if value is alphabetic(Disallow Spaces)
+   * @param {any} value Value to be checked
+   */
+  isStrictAlpha: (value) => {
+    return /^[a-zA-Z]+$/.test(value);
+  },
+  /**
+   * To check if value is alphabetic(Allow Spaces)
    * @param {any} value Value to be checked
    */
   isAlpha: (value) => {
-    return /^[a-zA-Z]+$/.test(value);
+    return /^[a-zA-Z ]*$/.test(value);
   },
   /**
    * To check if value is numeric

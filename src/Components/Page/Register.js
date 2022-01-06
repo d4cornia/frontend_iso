@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import useInput from '../customHooks/useInput';
-import { Link, Navigate } from 'react-router-dom';
-import registerImageSrc from '../Image/new-register.jpg';
-import '../css/Register.css';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Validator from '../helper/validator';
-import '../helper/functions';
-import _calculateAge from '../helper/functions';
+// Assets
+import registerImageSrc from 'Image/new-register.jpg';
+import 'css/Register.css';
+// Custom Functions
+import useInput from 'customHooks/useInput';
+import Validator from 'helper/validator';
+import _calculateAge from 'helper/functions';
+import 'helper/functions';
+// Components
+import CustomInput from 'Components/Reusable/CustomInput';
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const register = async (obj) => {
     const askRegister = await axios
       .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/register`, {
@@ -25,21 +31,17 @@ const Register = () => {
         let isError = false;
         if (res.data.inputName === 'email') {
           isError = true;
-          setErrorEmail(true);
-          setErrorMsgEmail(res.data.error_msg);
+          email.setError(res.data.error_msg);
         }
 
         if (res.data.inputName === 'username') {
           isError = true;
           setRegisterStep(1);
-          setErrorUsername(true);
-          setErrorMsgUsername(res.data.error_msg);
+          username.setError(res.data.error_msg);
         }
 
         if (!isError) {
-          {
-            <Navigate push to="/" />;
-          }
+          navigate('/login?register=success');
         }
       });
   };
@@ -47,66 +49,12 @@ const Register = () => {
   const [registerStep, setRegisterStep] = useState(1);
 
   // FIELDS
-  const [
-    username,
-    bindUsername,
-    clearUsername,
-    isErrorUsername,
-    setErrorUsername,
-    errorMsgUsername,
-    setErrorMsgUsername,
-    clearErrorMsgUsername
-  ] = useInput('', false, '');
-  const [
-    password,
-    bindPassword,
-    clearPassword,
-    isErrorPassword,
-    setErrorPassword,
-    errorMsgPassword,
-    setErrorMsgPassword,
-    clearErrorMsgPassword
-  ] = useInput('', false, '');
-  const [
-    cPassword,
-    bindCPassword,
-    clearCPassword,
-    isErrorCPassword,
-    setErrorCPassword,
-    errorMsgCPassword,
-    setErrorMsgCPassword,
-    clearErrorMsgCPassword
-  ] = useInput('', false, '');
-  const [
-    fullName,
-    bindFullName,
-    clearFullName,
-    isErrorFullName,
-    setErrorFullName,
-    errorMsgFullName,
-    setErrorMsgFullName,
-    clearErrorMsgFullName
-  ] = useInput('', false, '');
-  const [
-    email,
-    bindEmail,
-    clearEmail,
-    isErrorEmail,
-    setErrorEmail,
-    errorMsgEmail,
-    setErrorMsgEmail,
-    clearErrorMsgEmail
-  ] = useInput('', false, '');
-  const [
-    birth,
-    bindBirth,
-    clearBirth,
-    isErrorBirth,
-    setErrorBirth,
-    errorMsgBirth,
-    setErrorMsgBirth,
-    clearErrorMsgBirth
-  ] = useInput('', false, '');
+  const [username, setUsername] = useState({});
+  const [password, setPassword] = useState({});
+  const [cPassword, setCPassword] = useState({});
+  const [fullName, setFullName] = useState({});
+  const [email, setEmail] = useState({});
+  const [birth, setBirth] = useState({});
 
   // const [FIELDS, setFields] = useState({
   //   username: { name: 'Username', isError: false, errorMsg: '', step: 1 },
@@ -116,42 +64,35 @@ const Register = () => {
   //   email: { name: 'Email', isError: false, errorMsg: '', step: 2 },
   //   birth: { name: 'Birth Date', isError: false, errorMsg: '', step: 2 }
   // });
-  // TODO:
-  // - ERROR TEXT DISPLAY
-  // - BIND VALUE atau hide step lain
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (registerStep === 1) {
       let isError = false;
 
       // Username
-      if (Validator.isEmpty(username)) {
+      if (Validator.isEmpty(username.value)) {
         isError = true;
-        setErrorUsername(true);
-        setErrorMsgUsername(`Username is required`);
+        username.setError(`Username is required`);
       }
 
       // Password
-      if (Validator.isEmpty(password)) {
+      if (Validator.isEmpty(password.value)) {
         isError = true;
-        setErrorPassword(true);
-        setErrorMsgPassword(`Password is required`);
-      } else if (!Validator.isStrictAlphaNum(password)) {
+        password.setError(`Password is required`);
+      } else if (!Validator.isStrictAlphaNum(password.value)) {
         isError = true;
-        setErrorPassword(true);
-        setErrorMsgPassword(`Password must contains atleast 1 letter and 1 number`);
+        password.setError(`Password must contains atleast 1 letter and 1 number`);
       }
 
       // Confirm Password
-      if (Validator.isEmpty(cPassword)) {
+      if (Validator.isEmpty(cPassword.value)) {
         isError = true;
-        setErrorCPassword(true);
-        setErrorMsgCPassword(`Confirm Password is required`);
-      } else if (cPassword !== password) {
+        cPassword.setError(`Confirm Password is required`);
+      } else if (cPassword.value !== password.value) {
         isError = true;
-        setErrorCPassword(true);
-        setErrorMsgCPassword(`Confirm Password doesn't match Password`);
+        cPassword.setError(`Confirm Password doesn't match Password`);
       }
 
       // Jika tidak ada error, Lanjut step 2, ADUADUADU
@@ -162,45 +103,44 @@ const Register = () => {
       let isError = false;
 
       // Full Name
-      if (Validator.isEmpty(fullName)) {
+      if (Validator.isEmpty(fullName.value)) {
         isError = true;
-        setErrorFullName(true);
-        setErrorMsgFullName(`Full Name is required`);
+        fullName.setError(`Full Name is required`);
+      } else if (!Validator.isAlpha(fullName.value)) {
+        isError = true;
+        fullName.setError(`Full Name must only consist of letters`);
       }
+
       // Email
-      if (Validator.isEmpty(email)) {
+      if (Validator.isEmpty(email.value)) {
         isError = true;
-        setErrorEmail(true);
-        setErrorMsgEmail(`Email Address is required`);
-      } else if (!Validator.isEmailValid(email)) {
+        email.setError(`Email Address is required`);
+      } else if (!Validator.isEmailValid(email.value)) {
         isError = true;
-        setErrorEmail(true);
-        setErrorMsgEmail(`Email Address is invalid`);
+        email.setError(`Email Address is invalid`);
       }
 
       // Birth Date
-      if (Validator.isEmpty(birth)) {
+      if (Validator.isEmpty(birth.value)) {
         isError = true;
-        setErrorBirth(true);
-        setErrorMsgBirth(`Birth Date is required`);
+        birth.setError(`Date of Birth is required`);
       }
-      const userAge = _calculateAge(new Date(birth));
+      const userAge = _calculateAge(new Date(birth.value));
 
       if (userAge < 13) {
         isError = true;
-        setErrorBirth(true);
-        setErrorMsgBirth(`Age must be 13 or above`);
+        birth.setError(`Age must be 13 or above`);
       }
 
       // Jika tidak ada error, Lanjut register, ADUADUADU
       if (!isError) {
         register({
-          username,
-          name: fullName,
-          email,
+          username: username.value,
+          name: fullName.value,
+          email: email.value,
           age: userAge,
-          password,
-          confirm_password: cPassword
+          password: password.value,
+          confirm_password: cPassword.value
         });
       }
     }
@@ -244,92 +184,48 @@ const Register = () => {
                 moments, anywhere, anytime.
               </p>
               <p className="fw-bold text-muted text_small">Step {registerStep} of 2</p>
-              <Form.Group
-                className={`mb-3 input-container ${registerStep != 1 ? 'hidden' : ''}`}
-                controlId="formUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                  className={`${isErrorUsername ? 'is-invalid' : ''}`}
-                  type="text"
-                  name="username"
-                  {...bindUsername}
-                />
-                {isErrorUsername && (
-                  <div className="text-danger text_small">{errorMsgUsername}</div>
-                )}
-              </Form.Group>
-              <Form.Group
-                className={`mb-3 input-container ${registerStep != 1 ? 'hidden' : ''}`}
-                controlId="formPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  className={`${isErrorPassword ? 'is-invalid' : ''}`}
-                  type="password"
-                  placeholder="Password"
-                  name="password"
-                  placeholder="Must atleast contains 1 alphabet and 1 number"
-                  {...bindPassword}
-                />
-                {isErrorPassword && (
-                  <div className="text-danger text_small">{errorMsgPassword}</div>
-                )}
-              </Form.Group>
-              <Form.Group
-                className={`mb-3 input-container ${registerStep != 1 ? 'hidden' : ''}`}
-                controlId="formConfirmPassword">
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
-                  className={`${isErrorCPassword ? 'is-invalid' : ''}`}
-                  type="password"
-                  placeholder="Must match with Password"
-                  name="confPassword"
-                  {...bindCPassword}
-                />
-                {isErrorCPassword && (
-                  <div className="text-danger text_small">{errorMsgCPassword}</div>
-                )}
-              </Form.Group>
-
-              <Form.Group
-                className={`mb-3 input-container ${registerStep != 2 ? 'hidden' : ''}`}
-                controlId="formName">
-                <Form.Label>Full Name</Form.Label>
-                <Form.Control
-                  className={`${isErrorFullName ? 'is-invalid' : ''}`}
-                  type="text"
-                  placeholder="Enter Full Name"
-                  name="fullName"
-                  {...bindFullName}
-                />
-                {isErrorFullName && (
-                  <div className="text-danger text_small">{errorMsgFullName}</div>
-                )}
-              </Form.Group>
-              <Form.Group
-                className={`mb-3 input-container ${registerStep != 2 ? 'hidden' : ''}`}
-                controlId="formEmail">
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control
-                  className={`${isErrorEmail ? 'is-invalid' : ''}`}
-                  type="text"
-                  placeholder="Email will be used for confirmation and login"
-                  name="email"
-                  {...bindEmail}
-                />
-                {isErrorEmail && <div className="text-danger text_small">{errorMsgEmail}</div>}
-              </Form.Group>
-              <Form.Group
-                className={`mb-3 input-container ${registerStep != 2 ? 'hidden' : ''}`}
-                controlId="formAge">
-                <Form.Label>Birth Date</Form.Label>
-                <Form.Control
-                  className={`${isErrorBirth ? 'is-invalid' : ''}`}
-                  type="date"
-                  name="birth"
-                  {...bindBirth}
-                />
-                {isErrorBirth && <div className="text-danger text_small">{errorMsgBirth}</div>}
-              </Form.Group>
+              <CustomInput
+                updateObject={(obj) => setUsername(obj)}
+                name="username"
+                label="Username"
+                isHidden={registerStep != 1}
+              />
+              <CustomInput
+                updateObject={(obj) => setPassword(obj)}
+                name="password"
+                type="password"
+                label="Password"
+                placeholder="Must consist of 1 letter and 1 number"
+                isHidden={registerStep != 1}
+              />
+              <CustomInput
+                updateObject={(obj) => setCPassword(obj)}
+                name="cPassword"
+                type="password"
+                label="Confirm Password"
+                placeholder="Must match with Password"
+                isHidden={registerStep != 1}
+              />
+              <CustomInput
+                updateObject={(obj) => setFullName(obj)}
+                name="fullName"
+                label="Full Name"
+                isHidden={registerStep != 2}
+              />
+              <CustomInput
+                updateObject={(obj) => setEmail(obj)}
+                name="email"
+                label="Email Address"
+                placeholder="Will be used for confirmation and login"
+                isHidden={registerStep != 2}
+              />
+              <CustomInput
+                updateObject={(obj) => setBirth(obj)}
+                name="birth"
+                type="date"
+                label="Birth Date"
+                isHidden={registerStep != 2}
+              />
 
               <Button variant="primary" type="submit" className="form-control">
                 {registerStep === 2 ? 'Register' : 'Next'}
