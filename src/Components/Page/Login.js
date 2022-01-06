@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Form, Button } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 import loginImageSrc from 'Image/login-image.jpg';
 import 'css/Login.css';
 import axios from 'axios';
 
 const Login = () => {
-  const [errorUsername, setErrorUsername] = useState({ status: false, text: '' });
-  const [errorPassword, setErrorPassword] = useState({ status: false, text: '' });
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState({});
+  const [password, setPassword] = useState({});
 
   const login = async (username, password) => {
     const temp = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {

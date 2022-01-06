@@ -110,6 +110,13 @@ smaller,
   color: var(--clr-primary-0-dark);
 }
 
+.default-feedback {
+  width: 100%;
+  color: var(--clr-body-600);
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}
+
 .text_secondary {
   color: var(--clr-primary-900-dark);
 }

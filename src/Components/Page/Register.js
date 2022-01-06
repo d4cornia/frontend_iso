@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // Assets
 import registerImageSrc from 'Image/new-register.jpg';
@@ -16,6 +16,8 @@ import CustomInput from 'Components/Reusable/CustomInput';
 const Register = () => {
   const navigate = useNavigate();
 
+  // Axios Functions
+
   const register = async (obj) => {
     const askRegister = await axios
       .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/register`, {
@@ -28,71 +30,72 @@ const Register = () => {
         confirm_password: obj.confirm_password
       })
       .then((res) => {
-        let isError = false;
-        if (res.data.inputName === 'email') {
-          isError = true;
-          email.setError(res.data.error_msg);
-        }
+        navigate('/login?register=success');
+      });
+  };
 
-        if (res.data.inputName === 'username') {
-          isError = true;
-          setRegisterStep(1);
-          username.setError(res.data.error_msg);
-        }
-
-        if (!isError) {
-          navigate('/login?register=success');
+  const isUsernameAvailable = async () => {
+    const usernameData = await axios
+      .get(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/check/username/${username.current.value}`
+      )
+      .then((res) => {
+        if (res.data.error_msg) {
+          username.current.showError(res.data.error_msg);
         }
       });
   };
 
+  const isEmailAvailable = async () => {
+    const emailData = await axios
+      .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/check/email/${email.current.value}`)
+      .then((res) => {
+        if (res.data.error_msg) {
+          email.current.showError(res.data.error_msg);
+        }
+      });
+  };
+
+  // VARIABLES
+
   const [registerStep, setRegisterStep] = useState(1);
 
   // FIELDS
-  const [username, setUsername] = useState({});
-  const [password, setPassword] = useState({});
-  const [cPassword, setCPassword] = useState({});
-  const [fullName, setFullName] = useState({});
-  const [email, setEmail] = useState({});
-  const [birth, setBirth] = useState({});
-
-  // const [FIELDS, setFields] = useState({
-  //   username: { name: 'Username', isError: false, errorMsg: '', step: 1 },
-  //   password: { name: 'Password', isError: false, errorMsg: '', step: 1 },
-  //   confPassword: { name: 'Confirm Password', isError: false, errorMsg: '', step: 1 },
-  //   fullName: { name: 'Full Name', isError: false, errorMsg: '', step: 2 },
-  //   email: { name: 'Email', isError: false, errorMsg: '', step: 2 },
-  //   birth: { name: 'Birth Date', isError: false, errorMsg: '', step: 2 }
-  // });
+  const username = useRef();
+  const password = useRef();
+  const cPassword = useRef();
+  const fullName = useRef();
+  const email = useRef();
+  const birth = useRef();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (registerStep === 1) {
       let isError = false;
 
       // Username
-      if (Validator.isEmpty(username.value)) {
+      if (username.current.state === -1) isError = true;
+      else if (Validator.isEmpty(username.current.value)) {
         isError = true;
-        username.setError(`Username is required`);
+        username.current.showError(`Username is required`);
       }
 
       // Password
-      if (Validator.isEmpty(password.value)) {
+      if (Validator.isEmpty(password.current.value)) {
         isError = true;
-        password.setError(`Password is required`);
-      } else if (!Validator.isStrictAlphaNum(password.value)) {
+        password.current.showError(`Password is required`);
+      } else if (!Validator.isStrictAlphaNum(password.current.value)) {
         isError = true;
-        password.setError(`Password must contains atleast 1 letter and 1 number`);
+        password.current.showError(`Password must contains atleast 1 letter and 1 number`);
       }
 
       // Confirm Password
-      if (Validator.isEmpty(cPassword.value)) {
+      if (Validator.isEmpty(cPassword.current.value)) {
         isError = true;
-        cPassword.setError(`Confirm Password is required`);
-      } else if (cPassword.value !== password.value) {
+        cPassword.current.showError(`Confirm Password is required`);
+      } else if (cPassword.current.value !== password.current.value) {
         isError = true;
-        cPassword.setError(`Confirm Password doesn't match Password`);
+        cPassword.current.showError(`Confirm Password doesn't match Password`);
       }
 
       // Jika tidak ada error, Lanjut step 2, ADUADUADU
@@ -103,44 +106,45 @@ const Register = () => {
       let isError = false;
 
       // Full Name
-      if (Validator.isEmpty(fullName.value)) {
+      if (Validator.isEmpty(fullName.current.value)) {
         isError = true;
-        fullName.setError(`Full Name is required`);
-      } else if (!Validator.isAlpha(fullName.value)) {
+        fullName.current.showError(`Full Name is required`);
+      } else if (!Validator.isAlpha(fullName.current.value)) {
         isError = true;
-        fullName.setError(`Full Name must only consist of letters`);
+        fullName.current.showError(`Full Name must only consist of letters`);
       }
 
       // Email
-      if (Validator.isEmpty(email.value)) {
+      if (email.current.state === -1) isError = true;
+      else if (Validator.isEmpty(email.current.value)) {
         isError = true;
-        email.setError(`Email Address is required`);
-      } else if (!Validator.isEmailValid(email.value)) {
+        email.current.showError(`Email Address is required`);
+      } else if (!Validator.isEmailValid(email.current.value)) {
         isError = true;
-        email.setError(`Email Address is invalid`);
+        email.current.showError(`Email Address is invalid`);
       }
 
       // Birth Date
-      if (Validator.isEmpty(birth.value)) {
+      if (Validator.isEmpty(birth.current.value)) {
         isError = true;
-        birth.setError(`Date of Birth is required`);
+        birth.current.showError(`Date of Birth is required`);
       }
-      const userAge = _calculateAge(new Date(birth.value));
+      const userAge = _calculateAge(new Date(birth.current.value));
 
       if (userAge < 13) {
         isError = true;
-        birth.setError(`Age must be 13 or above`);
+        birth.current.showError(`Age must be 13 or above`);
       }
 
       // Jika tidak ada error, Lanjut register, ADUADUADU
       if (!isError) {
         register({
-          username: username.value,
-          name: fullName.value,
-          email: email.value,
+          username: username.current.value,
+          name: fullName.current.value,
+          email: email.current.value,
           age: userAge,
-          password: password.value,
-          confirm_password: cPassword.value
+          password: password.current.value,
+          confirm_password: cPassword.current.value
         });
       }
     }
@@ -185,45 +189,48 @@ const Register = () => {
               </p>
               <p className="fw-bold text-muted text_small">Step {registerStep} of 2</p>
               <CustomInput
-                updateObject={(obj) => setUsername(obj)}
+                ref={username}
                 name="username"
                 label="Username"
+                successMessage="Neat Username!"
+                blur={isUsernameAvailable}
                 isHidden={registerStep != 1}
               />
               <CustomInput
-                updateObject={(obj) => setPassword(obj)}
+                ref={password}
                 name="password"
                 type="password"
                 label="Password"
-                placeholder="Must consist of 1 letter and 1 number"
+                message="Must consists atleast 1 letter and 1 number"
                 isHidden={registerStep != 1}
               />
               <CustomInput
-                updateObject={(obj) => setCPassword(obj)}
+                ref={cPassword}
                 name="cPassword"
                 type="password"
                 label="Confirm Password"
-                placeholder="Must match with Password"
+                message="Must match with Password"
                 isHidden={registerStep != 1}
               />
               <CustomInput
-                updateObject={(obj) => setFullName(obj)}
+                ref={fullName}
                 name="fullName"
                 label="Full Name"
                 isHidden={registerStep != 2}
               />
               <CustomInput
-                updateObject={(obj) => setEmail(obj)}
+                ref={email}
                 name="email"
+                blur={isEmailAvailable}
                 label="Email Address"
-                placeholder="Will be used for confirmation and login"
+                message="Will be used for confirmation and login"
                 isHidden={registerStep != 2}
               />
               <CustomInput
-                updateObject={(obj) => setBirth(obj)}
+                ref={birth}
                 name="birth"
                 type="date"
-                label="Birth Date"
+                label="Date of Birth"
                 isHidden={registerStep != 2}
               />
 
