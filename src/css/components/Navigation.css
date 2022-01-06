@@ -7,6 +7,7 @@
   background-color: var(--clr-white);
   box-shadow: var(--shadow);
   position: sticky;
+  margin-bottom: 2rem;
   top: 0;
   z-index: 99;
 

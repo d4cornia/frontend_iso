@@ -46,11 +46,27 @@ const Home = () => {
   //     deleted_at: null
   //   });
   // };
-  const isFollowing = false;
+
+  const handleCommentSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(e.target.commentText.value);
+  };
+  const toggleCommentButton = (e) => {
+    if (e.target.value.length > 0 && !allowPost) {
+      setAllowPost(true);
+    } else {
+      setAllowPost(false);
+    }
+  };
+
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [allowPost, setAllowPost] = useState(false);
+
   return (
     <div className={'content-container center-items'}>
       <Navigation profileImage={profilImage} selected="home" />
-      <h1>Home</h1>
       <Card className="post-card">
         <Card.Body>
           <div className="card-head">
@@ -58,9 +74,18 @@ const Home = () => {
             <div className="card-head_profile">
               <h5 className="card-head_profile-name">Joe Sentosa</h5>
               <p className="card-head_profile-followers text_small fw-bold text-muted">
-                18k Followers {isFollowing && <span>• Following</span>}{' '}
-                {!isFollowing && <span className="follow-button link">Following</span>}
+                18k Followers • {isFollowing && <span>Following</span>}{' '}
+                {!isFollowing && (
+                  <span
+                    className="follow-button link"
+                    onClick={() => {
+                      setIsFollowing(true);
+                    }}>
+                    Follow
+                  </span>
+                )}
               </p>
+              <p className="post-created fw-bold text-muted">2h</p>
             </div>
           </div>
           <div className="card-content">
@@ -105,14 +130,98 @@ const Home = () => {
               iure optio ab quos nostrum consectetur amet dicta necessitatibus alias!
             </p>
           </div>
-        </Card.Body>
-        <Card.Footer>
-          <div className="caption">
-            <h6>joesentosa1511 </h6>
-            <div className="isi-caption">
-              <h6>Bunga yg indah...</h6>
+          <div className={`card-comments ${showComments ? 'show' : ''}`}>
+            <p className="text-muted fw-bold">Comments Section</p>
+            <div className="card-comments_item">
+              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
+              <p className="card-comments_item-content">
+                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga esse laudantium
+                placeat, temporibus dolorum expedita quibusdam laboriosam minus nostrum! Pariatur
+                ipsa odio quo repellendus asperiores molestias, aut inventore molestiae accusamus
+                ducimus perspiciatis distinctio veritatis nisi, enim dolorem ipsam explicabo unde.
+                Itaque provident neque quidem in? Labore doloribus atque harum debitis!
+              </p>
+              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
+            </div>
+            <div className="card-comments_item">
+              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
+              <p className="card-comments_item-content">
+                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos, officiis?
+              </p>
+              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
+            </div>
+            <div className="card-comments_item">
+              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
+              <p className="card-comments_item-content">
+                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga esse laudantium
+                placeat, temporibus dolorum expedita quibusdam laboriosam minus nostrum! Pariatur
+                ipsa odio quo repellendus asperiores molestias, aut inventore molestiae accusamus
+                ducimus perspiciatis distinctio veritatis nisi, enim dolorem ipsam explicabo unde.
+                Itaque provident neque quidem in? Labore doloribus atque harum debitis!
+              </p>
+              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
+            </div>
+            <div className="card-comments_item">
+              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
+              <p className="card-comments_item-content">
+                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos, officiis?
+              </p>
+              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
+            </div>
+            <div className="card-comments_item">
+              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
+              <p className="card-comments_item-content">
+                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga esse laudantium
+                placeat, temporibus dolorum expedita quibusdam laboriosam minus nostrum! Pariatur
+                ipsa odio quo repellendus asperiores molestias, aut inventore molestiae accusamus
+                ducimus perspiciatis distinctio veritatis nisi, enim dolorem ipsam explicabo unde.
+                Itaque provident neque quidem in? Labore doloribus atque harum debitis!
+              </p>
+              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
+            </div>
+            <div className="card-comments_item">
+              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
+              <p className="card-comments_item-content">
+                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos, officiis?
+              </p>
+              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
+            </div>
+            {showComments && (
+              <p
+                className="link fw-bold text-muted text-center"
+                onClick={() => {
+                  setShowComments(false);
+                }}>
+                Hide Comments
+              </p>
+            )}
+            <div className="card-comments_show-button">
+              <p
+                className="link fw-bold text-muted"
+                onClick={() => {
+                  setShowComments(true);
+                }}>
+                View more
+              </p>
             </div>
           </div>
+        </Card.Body>
+        <Card.Footer>
+          <form action="#" method="post" className="form-comment" onSubmit={handleCommentSubmit}>
+            <textarea
+              className="form-control comment-input"
+              placeholder="Add comment..."
+              name="commentText"
+              onBlur={toggleCommentButton}
+              onInput={toggleCommentButton}></textarea>
+            <p className={`post-comment ${allowPost ? '' : 'disabled'}`}>Post Comment</p>
+          </form>
         </Card.Footer>
       </Card>
       <hr />
