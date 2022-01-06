@@ -29,17 +29,17 @@ const Login = () => {
         password: passwordValue
       })
       .then((res) => {
-        if (res.data.status === 'Success') {
+        if (!res.data.error_msg) {
           localStorage.setItem('username', JSON.stringify(res.data.data.username));
           localStorage.setItem('email', JSON.stringify(res.data.data.email));
           localStorage.setItem('name', JSON.stringify(res.data.data.name));
           localStorage.setItem('x-auth-token', JSON.stringify(res.data.data.token));
           navigate('/home');
+
         } else {
           if (res.data.target === 'username') username.current.showError(res.data.error_msg);
           else if (res.data.target === 'password') password.current.showError(res.data.error_msg);
         }
-        console.log(res);
       })
       .catch((err) => {
         console.info(err);

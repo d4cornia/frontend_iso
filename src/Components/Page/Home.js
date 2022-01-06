@@ -6,7 +6,7 @@ import 'css/Home.css';
 import profilImage from 'Image/profil.jpg';
 
 import { db } from 'helper/fbconfig';
-import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { collection, getDocs, addDoc } from '@firebase/firestore';
 import Navigation from 'Components/Reusable/Navigation';
 
 const Home = () => {
