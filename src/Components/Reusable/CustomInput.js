@@ -4,7 +4,7 @@ import useInput from 'customHooks/useInput';
 
 const CustomInput = forwardRef((props, ref) => {
   // VARIABLES
-  const [input, bindInput, clearInput] = useInput('');
+  const [input, bindInput, clearInput] = useInput(props.defaultValue ? props.defaultValue : '');
   const [stateInput, setStateInput] = useState(0); // State Value - -1: Error, 0: default, 1: success
   const [messageInput, setMessageInput] = useState(props.message ? props.message : ''); // Message Value
   const [errorMessageInput, setErrorMessageInput] = useState(''); // ErrorSuccessMessage Value
@@ -55,7 +55,7 @@ const CustomInput = forwardRef((props, ref) => {
     <Form.Group
       className={`mb-3 input-container ${props.isHidden ? 'hidden' : ''}`}
       controlId={props.name}>
-      <Form.Label>{props.label}</Form.Label>
+      {props.label && <Form.Label>{props.label}</Form.Label>}
       <Form.Control
         className={`${stateInput === -1 ? 'is-invalid' : stateInput === 1 ? 'is-valid' : ''}`}
         type={props.type ? props.type : 'text'}

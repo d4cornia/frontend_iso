@@ -1,8 +1,8 @@
 @import url('https://api.fontshare.com/css?f[]=satoshi@300,301,400,401,500,501,700,701,900,901,1,2&display=swap');
 
 :root {
-  --fs-small-2: clamp(0.49rem, 0.26rem + 0.63vw, 0.63rem);
-  --fs-small-1: clamp(0.66rem, 0.35rem + 0.84vw, 0.84rem);
+  --fs-small-2: clamp(0.56rem, 0.45rem + 0.32vw, 0.63rem);
+  --fs-small-1: clamp(0.75rem, 0.6rem + 0.42vw, 0.84rem);
   --fs-body: 1rem;
   --fs-h5: clamp(1.17rem, 0.63rem + 1.5vw, 1.5rem);
   --fs-h4: clamp(1.56rem, 0.84rem + 1.99vw, 2rem);
@@ -42,6 +42,8 @@
   --clr-primary-0-dark: hsl(218, 68%, 59%);
   --clr-black: var(--clr-body-1000);
   --clr-white: var(--clr-body-0);
+  --shadow: 0 1.1px 5.3px rgba(0, 0, 0, 0.024), 0 3.8px 17.9px rgba(0, 0, 0, 0.036),
+    0 17px 80px rgba(0, 0, 0, 0.06);
   /* Override Bootstrap Variables */
   --bs-body-font-family: 'Satoshi', sans-serif !important;
   --bs-body-color: var(--cr-black) !important;
@@ -131,6 +133,14 @@ smaller,
   color: var(--clr-primary-900);
 }
 
+.logo {
+  width: 2.3rem;
+}
+
+.logo path {
+  fill: var(--clr-primary-0);
+}
+
 .gradient-text {
   background: linear-gradient(to right, #fbc2eb 20%, #a6c1ee 40%, #a6c1ee 60%, #fbc2eb 80%);
   background-size: 200% auto;
@@ -140,6 +150,19 @@ smaller,
   -webkit-text-fill-color: transparent;
 
   animation: shine 3s linear infinite;
+}
+
+/* Global Styles */
+
+.content-container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+.content-container.center {
+  align-items: center;
 }
 
 /* Override Bootstrap */
