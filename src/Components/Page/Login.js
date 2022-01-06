@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import loginImageSrc from 'Image/login-image.jpg';
 import 'css/Login.css';
 import axios from 'axios';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [errorUsername, setErrorUsername] = useState({ status: false, text: '' });
   const [errorPassword, setErrorPassword] = useState({ status: false, text: '' });
 
@@ -26,7 +27,7 @@ const Login = () => {
     document.title = 'Login';
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     const username = e.target.email.value;
@@ -35,10 +36,29 @@ const Login = () => {
     // if (this.inputValidation(username, password)) {
     //   this.login(username, password);
     // }
+    await axios
+    .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {
+        emailUsername: username,
+        password: password
+    })
+    .then((res) => {
+        let isError = false;
+        if (res.data.error_msg) {
+          isError = true;
+        }
+        else{
+          localStorage.setItem('username', JSON.stringify(res.data.data.username));
+          localStorage.setItem('email', JSON.stringify(res.data.data.email));
+          localStorage.setItem('name', JSON.stringify(res.data.data.name));
+          localStorage.setItem('x-auth-token', JSON.stringify(res.data.data.token));
+          navigate('/home');
+        }
+      
+    });
 
-    console.log('submit', e);
-    console.log('email', e.target.email.value);
-    console.log('password', e.target.password.value);
+    // console.log('submit', e);
+    // console.log('email', e.target.email.value);
+    // console.log('password', e.target.password.value);
   };
 
   const inputValidation = (username, password) => {

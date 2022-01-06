@@ -12,21 +12,22 @@ import _calculateAge from 'helper/functions';
 import 'helper/functions';
 // Components
 import CustomInput from 'Components/Reusable/CustomInput';
+import { trim } from 'jquery';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
 
-  const [forgotStep, setforgotStep] = useState(1);
+  
+
+  const [forgotStep, setForgotStep] = useState(1);
 
   // FIELDS
-  const [username, setUsername] = useState({});
+  const [otp, setOtp] = useState({});
   const [password, setPassword] = useState({});
   const [cPassword, setCPassword] = useState({});
-  const [fullName, setFullName] = useState({});
   const [email, setEmail] = useState({});
-  const [birth, setBirth] = useState({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     if (forgotStep === 1) {
@@ -41,12 +42,46 @@ const ForgotPassword = () => {
       }
       // Jika tidak ada error, Lanjut step 2, ADUADUADU
       if (!isError) {
-        setforgotStep(forgotStep + 1);
+        //Request ke API Forgot
+        console.log(email);
+           await axios
+            .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/profile/password/requestReset`, {
+                email: email.value,
+            })
+            .then((res) => {
+                let isError = false;
+                if (res.data.error_msg) {
+                isError = true;
+                email.setError(res.data.error_msg);
+                }
+
+                if (!isError) {
+                    setForgotStep(forgotStep + 1);
+                }
+                console.log(res);
+            });
+        // setForgotStep(forgotStep + 1);
       }
     } else if(forgotStep === 2){
       let isError = false;
       if (!isError) {
-        setforgotStep(forgotStep + 1);
+        await axios
+        .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/profile/password/verify`, {
+            email: email.value,
+            verification_code: otp.value
+        })
+        .then((res) => {
+            if(res.data.error_msg)
+            {
+                isError = true;
+                otp.setError(res.data.error_msg);
+            }
+            else
+            {
+                setForgotStep(forgotStep + 1);
+            }
+        });
+        
       }
     }
     else if(forgotStep === 3)
@@ -69,11 +104,28 @@ const ForgotPassword = () => {
         isError = true;
         cPassword.setError(`Confirm Password doesn't match Password`);
       }
+      if(!isError)
+      {
+        await axios
+        .patch(`${process.env.REACT_APP_BASE_API_URL}/api/users/profile/password/reset`, {
+            email: email.value,
+            new_password: password.value,
+            confirm_password: cPassword.value
+        })
+        .then((res) => {
+            if(res.data.error_msg)
+            {
+                isError = true;
+                otp.setError(res.data.error_msg);
+            }
+            navigate('/login');
+        });
+      }
     }
   };
 
   const previousStep = () => {
-    setforgotStep(forgotStep - 1);
+    setForgotStep(forgotStep - 1);
   };
 
   useEffect(() => {
@@ -118,10 +170,10 @@ const ForgotPassword = () => {
                 isHidden={forgotStep != 1}
               />
               <CustomInput
-                updateObject={(obj) => setPassword(obj)}
-                name="OTP"
+                updateObject={(obj) => setOtp(obj)}
+                name="otp"
                 type="text"
-                label="otp"
+                label="OTP"
                 placeholder="OTP Code"
                 isHidden={forgotStep != 2}
               />
@@ -144,7 +196,7 @@ const ForgotPassword = () => {
 
 
               <Button variant="primary" type="submit" className="form-control">
-                {forgotStep === 3 ? 'Register' : 'Next'}
+                {forgotStep === 3 ? 'Reset Password' : 'Next'}
               </Button>
               {forgotStep === 1 && (
                 <p className="text-muted text_small">

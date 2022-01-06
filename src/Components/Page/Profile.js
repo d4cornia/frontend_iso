@@ -1,12 +1,26 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Form, Button } from 'react-bootstrap';
 import profilImage from 'Image/profil.jpg';
 import 'css/Profile.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
+import axios from 'axios';
 import Col from 'react-bootstrap/Col';
 
 const Profile = () => {
+  useEffect(async() => {
+    // load all data
+    const temp = await axios.get(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/profile`, {
+            headers: {
+                'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
+            }
+        }
+    )
+    console.log(temp);
+    
+  }, []);
+  
   return (
     <div className={'container'}>
       <h3 className={'center'}>Profile</h3>
