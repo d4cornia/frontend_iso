@@ -29,6 +29,10 @@ const CustomInput = forwardRef((props, ref) => {
     clearError();
   }, [input]);
 
+  useEffect(() => {
+    console.log(input,props.name,props.defaultValue)
+  }, []);
+
   const setError = (message) => {
     setStateInput(-1);
     setErrorMessageInput(message);

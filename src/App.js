@@ -4,10 +4,12 @@ import Home from 'Components/Page/Home';
 import Login from 'Components/Page/Login';
 import Register from 'Components/Page/Register';
 import Profile from 'Components/Page/Profile';
+import EditProfile from 'Components/Page/EditProfile';
 import Chat_room from 'Components/Page/Chat-room';
 import PrivacyPolicy from 'Components/Page/PrivacyPolicy';
 import PageNotFound from 'Components/Page/PageNotFound';
 import ForgotPassword from 'Components/Page/ForgotPassword';
+import EditPassword from 'Components/Page/EditPassword';
 
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,7 +26,12 @@ function App() {
           <Route exact path={'/login'} element={<Login />} />
           <Route exact path={'/register'} element={<Register />} />
           <Route exact path={'/home'} element={<Home />} />
-          <Route exact path={'/profile'} element={<Profile />} />
+          <Route path={'/editProfile'} element={<EditProfile />} />
+          <Route path={'/editPassword'} element={<EditPassword />} />
+          <Route path="/profile">
+            <Route path=":username" element={<Profile />} />
+          </Route>
+
           <Route exact path={'/legal/privacy-policy'} element={<PrivacyPolicy />} />
           {/* <Route exact path={"/search"} element={<Search/>}/>
                 <Route exact path={"/post"} element={<Post/>}/>*/}

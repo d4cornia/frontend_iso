@@ -11,13 +11,15 @@ import registerImageSrc from 'Image/new-register.jpg';
 import axios from 'axios';
 import Col from 'react-bootstrap/Col';
 import { data } from 'jquery';
-import {useLocation, useSearchParams} from 'react-router-dom';
+import {useLocation, useSearchParams, useNavigate} from 'react-router-dom';
 
 const EditPassword = (param) => {
 
     const old_password = useRef();
     const new_password = useRef();
     const confirm_password = useRef();
+
+    const navigate = useNavigate();
 
     const [dataProfile, setDataProfile] = useState([]); // Data Following dan Followers
     const [dataProfileUser, setDataProfileUser] = useState([]); //Data Profile
@@ -81,8 +83,8 @@ const EditPassword = (param) => {
                       }
                   }
                 ).then((res) => {
-                  // console.log(res)
- 
+                  console.log(res)
+                    navigate('/editProfile');
                 })
             }
             updatePassword();
@@ -125,7 +127,6 @@ const EditPassword = (param) => {
                 name="oldPassword"
                 type="password"
                 label="Old Password"
-                defaultValue={dataProfileUser.password}
               />
               <CustomInput
                 ref={new_password}
