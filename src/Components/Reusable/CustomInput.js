@@ -16,6 +16,12 @@ const CustomInput = forwardRef((props, ref) => {
     state: stateInput,
     showError(message) {
       setError(message);
+    },
+    clearValue() {
+      clearInput();
+    },
+    changeMessage(message) {
+      setMessageInput(message);
     }
   }));
 
@@ -31,11 +37,6 @@ const CustomInput = forwardRef((props, ref) => {
   const clearError = () => {
     setStateInput(0);
     setErrorMessageInput('');
-  };
-
-  const setMessage = (message) => {
-    setStateInput(0);
-    setMessageInput(message);
   };
 
   const setSuccess = () => {
@@ -80,11 +81,11 @@ const CustomInput = forwardRef((props, ref) => {
 });
 // Template(Copy Only)
 // <CustomInput
-//  updateObject={(obj) => setPassword(obj)}
+//  ref={ref}
 //  name="password"
 //  type="password"
 //  label="Password"
 //  placeholder="Must consist of 1 letter and 1 number"
-//  isHidden={registerStep != 1}
+//  isHidden={Logic?}
 // />
 export default CustomInput;

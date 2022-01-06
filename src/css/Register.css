@@ -48,6 +48,10 @@
   width: 2.3rem;
 }
 
+.register-logo path {
+  fill: var(--clr-primary-0);
+}
+
 /* Large devices (desktops, less than 1200px) */
 @media (max-width: 1199.98px) {
   .register-form-container {

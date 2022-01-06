@@ -54,8 +54,8 @@
   width: 2.3rem;
 }
 
-.copyright-text {
-  opacity: 0.3;
+.login-logo path {
+  fill: var(--clr-primary-0);
 }
 
 /* Large devices (desktops, less than 1200px) */

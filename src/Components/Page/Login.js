@@ -1,77 +1,57 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import loginImageSrc from 'Image/login-image.jpg';
-import 'css/Login.css';
 import axios from 'axios';
+// Assets
+import 'css/Login.css';
+import loginImageSrc from 'Image/login-image.jpg';
+// Components
+import CustomInput from 'Components/Reusable/CustomInput';
 
 const Login = () => {
-  const navigate = useNavigate();
-
-  const [username, setUsername] = useState({});
-  const [password, setPassword] = useState({});
-
-  const login = async (username, password) => {
-    const temp = await axios.post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {
-      username: username,
-      password: password
-    });
-
-    if (temp.data.status === 'success') {
-      localStorage.setItem('username', JSON.stringify(temp.data.data.username));
-      localStorage.setItem('email', JSON.stringify(temp.data.data.email));
-      localStorage.setItem('name', JSON.stringify(temp.data.data.name));
-      localStorage.setItem('x-auth-token', JSON.stringify(temp.data.data.token));
-    }
-  };
   useEffect(() => {
     document.title = 'Login';
   }, []);
 
-  const handleSubmit = async(e) => {
-    e.preventDefault();
+  const navigate = useNavigate();
 
-    const username = e.target.email.value;
-    const password = e.target.password.value;
+  // VARIABLES
+  const username = useRef();
+  const password = useRef();
 
-    // if (this.inputValidation(username, password)) {
-    //   this.login(username, password);
-    // }
+  // AXIOS
+
+  const login = async (usernameValue, passwordValue) => {
     await axios
-    .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {
-        emailUsername: username,
-        password: password
-    })
-    .then((res) => {
-        let isError = false;
-        if (res.data.error_msg) {
-          isError = true;
-        }
-        else{
+      .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {
+        emailUsername: usernameValue,
+        password: passwordValue
+      })
+      .then((res) => {
+        if (res.data.status === 'success') {
           localStorage.setItem('username', JSON.stringify(res.data.data.username));
           localStorage.setItem('email', JSON.stringify(res.data.data.email));
           localStorage.setItem('name', JSON.stringify(res.data.data.name));
           localStorage.setItem('x-auth-token', JSON.stringify(res.data.data.token));
           navigate('/home');
+        } else {
+          if (res.data.target === 'username') username.current.showError(res.data.error_msg);
+          else if (res.data.target === 'password') password.current.showError(res.data.error_msg);
         }
-      
-    });
-
-    // console.log('submit', e);
-    // console.log('email', e.target.email.value);
-    // console.log('password', e.target.password.value);
+        console.log(res);
+      })
+      .catch((err) => {
+        console.info(err);
+      });
   };
 
-  const inputValidation = (username, password) => {
-    // Input Validation
-    // if (password === '') {
-    //   setErrorPassword(true);
-    //   return false;
-    // }
-  };
+  // HANDLRE
 
-  const handleInput = () => {
-    // Do Something onInput
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Try Login
+    login(username.current.value, password.current.value);
   };
 
   return (
@@ -102,28 +82,31 @@ const Login = () => {
             </svg>
             <Form className="login-form" onSubmit={handleSubmit}>
               <h2 className={'login-form-title fw-bold'}>Login</h2>
-              <Form.Group className="mb-3" controlId="loginEmail">
-                <Form.Label>Email Address or Username</Form.Label>
-                <Form.Control type="email" name="email" required onInput={handleInput} />
-                <div class="text-danger text_small">Example invalid form file feedback</div>
-              </Form.Group>
+              <CustomInput
+                ref={username}
+                name="username"
+                message="Email or username associated with your account"
+                label="Username"
+              />
 
-              <Form.Group className="mb-3" controlId="loginPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" name="password" required onInput={handleInput} />
-                {}
-                <div class="text-danger text_small">Example invalid form file feedback</div>
-              </Form.Group>
+              <CustomInput ref={password} name="password" type="password" label="Password" />
               <Button variant="primary" type="submit">
                 Log in
               </Button>
-              <p className="text-muted text_small">
+              <p className="text-muted">
                 Don't have any account?{' '}
                 <Link to="/register" className="link">
                   Register now
                 </Link>
               </p>
             </Form>
+
+            <p className="text-muted">
+              Forgot your password?{' '}
+              <Link to="/forgot-password" className="link">
+                Reset Password
+              </Link>
+            </p>
             <p className="text-muted small copyright-text">
               {'© 2022 Polarogram, Inc. All Rights Reserved'}
             </p>

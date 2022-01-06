@@ -6,7 +6,6 @@ import axios from 'axios';
 import registerImageSrc from 'Image/new-register.jpg';
 import 'css/Register.css';
 // Custom Functions
-import useInput from 'customHooks/useInput';
 import Validator from 'helper/validator';
 import _calculateAge from 'helper/functions';
 import 'helper/functions';
@@ -14,12 +13,27 @@ import 'helper/functions';
 import CustomInput from 'Components/Reusable/CustomInput';
 
 const Register = () => {
+  useEffect(() => {
+    document.title = 'Register';
+  }, []);
+
   const navigate = useNavigate();
 
-  // Axios Functions
+  // VARIABLES
+  const [registerStep, setRegisterStep] = useState(1);
+
+  // FIELDS
+  const username = useRef();
+  const password = useRef();
+  const cPassword = useRef();
+  const fullName = useRef();
+  const email = useRef();
+  const birth = useRef();
+
+  // AXIOS
 
   const register = async (obj) => {
-    const askRegister = await axios
+    await axios
       .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/register`, {
         username: obj.username,
         name: obj.name,
@@ -35,7 +49,7 @@ const Register = () => {
   };
 
   const isUsernameAvailable = async () => {
-    const usernameData = await axios
+    await axios
       .get(
         `${process.env.REACT_APP_BASE_API_URL}/api/users/check/username/${username.current.value}`
       )
@@ -47,7 +61,7 @@ const Register = () => {
   };
 
   const isEmailAvailable = async () => {
-    const emailData = await axios
+    await axios
       .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/check/email/${email.current.value}`)
       .then((res) => {
         if (res.data.error_msg) {
@@ -56,17 +70,7 @@ const Register = () => {
       });
   };
 
-  // VARIABLES
-
-  const [registerStep, setRegisterStep] = useState(1);
-
-  // FIELDS
-  const username = useRef();
-  const password = useRef();
-  const cPassword = useRef();
-  const fullName = useRef();
-  const email = useRef();
-  const birth = useRef();
+  // HANDLER
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -154,10 +158,6 @@ const Register = () => {
     setRegisterStep(registerStep - 1);
   };
 
-  useEffect(() => {
-    document.title = 'Register';
-  }, []);
-
   return (
     <div>
       <div className="register-container">
@@ -194,7 +194,7 @@ const Register = () => {
                 label="Username"
                 successMessage="Neat Username!"
                 blur={isUsernameAvailable}
-                isHidden={registerStep != 1}
+                isHidden={registerStep !== 1}
               />
               <CustomInput
                 ref={password}
@@ -202,7 +202,7 @@ const Register = () => {
                 type="password"
                 label="Password"
                 message="Must consists atleast 1 letter and 1 number"
-                isHidden={registerStep != 1}
+                isHidden={registerStep !== 1}
               />
               <CustomInput
                 ref={cPassword}
@@ -210,13 +210,13 @@ const Register = () => {
                 type="password"
                 label="Confirm Password"
                 message="Must match with Password"
-                isHidden={registerStep != 1}
+                isHidden={registerStep !== 1}
               />
               <CustomInput
                 ref={fullName}
                 name="fullName"
                 label="Full Name"
-                isHidden={registerStep != 2}
+                isHidden={registerStep !== 2}
               />
               <CustomInput
                 ref={email}
@@ -224,14 +224,14 @@ const Register = () => {
                 blur={isEmailAvailable}
                 label="Email Address"
                 message="Will be used for confirmation and login"
-                isHidden={registerStep != 2}
+                isHidden={registerStep !== 2}
               />
               <CustomInput
                 ref={birth}
                 name="birth"
                 type="date"
                 label="Date of Birth"
-                isHidden={registerStep != 2}
+                isHidden={registerStep !== 2}
               />
 
               <Button variant="primary" type="submit" className="form-control">
@@ -262,7 +262,7 @@ const Register = () => {
           </div>
         </div>
         <div className="register-image-container d-none d-xl-block">
-          <img className="register-image" src={registerImageSrc} alt="Register Image" />
+          <img className="register-image" src={registerImageSrc} alt="Register" />
         </div>
       </div>
       {/* <div className={'register-container'}>
