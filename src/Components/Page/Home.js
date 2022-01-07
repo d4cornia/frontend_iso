@@ -24,10 +24,29 @@ const Home = () => {
     }
   );
 
+  useEffect(() => {
+    getReport();
+    getPosts();
+  }, []);
+
+
+  const [report, setReport] = useState([]);
+  const dataReport = collection(db, 'report');
   const getReport = async () => {
     const data = await getDocs(dataReport);
     setReport(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
+
+
+  // const addReport = async () => {
+  //   await addDoc(dataReport, {
+  //     user_id: id1,
+  //     reported_user_id: id2,
+  //     created_at: new Date(),
+  //     deleted_at: null
+  //   });
+  // };
+
 
   const [posts, setPosts] = useState([]);
   const getPosts = async () => {
@@ -46,6 +65,7 @@ const Home = () => {
       .then((res) => {
         console.log(res);
         setPosts(res.data.data);
+        setAllowPost(false)
       });
   };
 
@@ -59,28 +79,48 @@ const Home = () => {
               'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
           }
       }
-    ).then(async (res) => {
+    ).then((res) => {
       console.log(res)
-      await getPosts()
+      getPosts()
     })
   }
 
+  const likePost = async (target_id) => {
+    await axios
+    .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/like`,{
+            'target_post_id': target_id
+        }
+      , 
+      {
+          headers: {
+              'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+      }
+    ).then((res) => {
+      console.log(res)
+      getPosts()
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
+  
+  const unlikePost = async (target_id) => {
+    await axios.post(
+      `${process.env.REACT_APP_BASE_API_URL}/api/users/post/unlike`, 
+      {
+        'target_post_id': target_id
+      }, {
+          headers: {
+              'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+      }
+    ).then((res) => {
+      console.log(res)
+      getPosts()
+    })
+  }
 
-  const [report, setReport] = useState([]);
-  const dataReport = collection(db, 'report');
-  useEffect(() => {
-    getReport();
-    getPosts();
-  }, []);
-
-  // const addReport = async () => {
-  //   await addDoc(dataReport, {
-  //     user_id: id1,
-  //     reported_user_id: id2,
-  //     created_at: new Date(),
-  //     deleted_at: null
-  //   });
-  // };
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
@@ -89,7 +129,7 @@ const Home = () => {
   };
 
   const toggleCommentButton = (e) => {
-    if (e.target.value.length > 0 && !allowPost) {
+    if (e.target.value.length > 0) {
       setAllowPost(true);
     } else {
       setAllowPost(false);
@@ -111,6 +151,7 @@ const Home = () => {
         .then((res) => {
           setIsFollowing(true);
           setAutoRefresh(autoRefresh+1);
+          getPosts()
         })
         .catch((err) => {
           console.info(err);
@@ -135,7 +176,7 @@ const Home = () => {
 
       {posts.map((post) => {
         return (
-          <Card className="post-card">
+          <Card className="post-card" key={post.id}>
             <Card.Body>
               <div className="card-head">
                 <Image
@@ -151,7 +192,7 @@ const Home = () => {
                   <p className="card-head_profile-followers text_small fw-bold text-muted">
                     {post.user.followersCtr} Followers •{' '}
                     {post.user.isFollowing && <span>Following</span>}{' '}
-                    {post.user.username != user && <span>Me</span>}
+                    {post.user.username == user && <span>Me</span>}
                     {!post.user.isFollowing && post.user.username != user && (
                       <span
                         className="follow-button link"
@@ -185,7 +226,9 @@ const Home = () => {
                       <path
                         d="M923 283.6C909.596 252.564 890.269 224.439 866.1 200.8C841.913 177.091 813.396 158.249 782.1 145.3C749.648 131.819 714.841 124.919 679.7 125C630.4 125 582.3 138.5 540.5 164C530.5 170.1 521 176.8 512 184.1C503 176.8 493.5 170.1 483.5 164C441.7 138.5 393.6 125 344.3 125C308.8 125 274.4 131.8 241.9 145.3C210.5 158.3 182.2 177 157.9 200.8C133.7 224.412 114.368 252.544 101 283.6C87.1 315.9 80 350.2 80 385.5C80 418.8 86.8 453.5 100.3 488.8C111.6 518.3 127.8 548.9 148.5 579.8C181.3 628.7 226.4 679.7 282.4 731.4C375.2 817.1 467.1 876.3 471 878.7L494.7 893.9C505.2 900.6 518.7 900.6 529.2 893.9L552.9 878.7C556.8 876.2 648.6 817.1 741.5 731.4C797.5 679.7 842.6 628.7 875.4 579.8C896.1 548.9 912.4 518.3 923.6 488.8C937.1 453.5 943.9 418.8 943.9 385.5C944 350.2 936.9 315.9 923 283.6V283.6ZM512 814.8C512 814.8 156 586.7 156 385.5C156 283.6 240.3 201 344.3 201C417.4 201 480.8 241.8 512 301.4C543.2 241.8 606.6 201 679.7 201C783.7 201 868 283.6 868 385.5C868 586.7 512 814.8 512 814.8Z"
                         fill="#111111"
+                        onClick={() => {unlikePost(post.id)}}
                       />
+                      {post.id}
                     </svg>
                     <svg
                       className={`like-icon filled ${post.isLiked ? 'selected' : ''}`}
@@ -195,7 +238,9 @@ const Home = () => {
                       <path
                         d="M923 283.6C909.596 252.564 890.269 224.439 866.1 200.8C841.913 177.091 813.396 158.249 782.1 145.3C749.648 131.819 714.841 124.919 679.7 125C630.4 125 582.3 138.5 540.5 164C530.5 170.1 521 176.8 512 184.1C503 176.8 493.5 170.1 483.5 164C441.7 138.5 393.6 125 344.3 125C308.8 125 274.4 131.8 241.9 145.3C210.5 158.3 182.2 177 157.9 200.8C133.7 224.412 114.368 252.544 101 283.6C87.1 315.9 80 350.2 80 385.5C80 418.8 86.8 453.5 100.3 488.8C111.6 518.3 127.8 548.9 148.5 579.8C181.3 628.7 226.4 679.7 282.4 731.4C375.2 817.1 467.1 876.3 471 878.7L494.7 893.9C505.2 900.6 518.7 900.6 529.2 893.9L552.9 878.7C556.8 876.2 648.6 817.1 741.5 731.4C797.5 679.7 842.6 628.7 875.4 579.8C896.1 548.9 912.4 518.3 923.6 488.8C937.1 453.5 943.9 418.8 943.9 385.5C944 350.2 936.9 315.9 923 283.6V283.6Z"
                         fill="#111111"
+                        onClick={() => {likePost(post.id)}}
                       />
+                      {post.id}
                     </svg>
                   </div>
                   <p className="like-count text-muted">{post.likesCtr} likes</p>

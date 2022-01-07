@@ -17,8 +17,7 @@ const Navigation = (props) => {
       return await axios
         .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/notifications`, {
           headers: {
-            'x-auth-token':
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvYmJ5IiwiZW1haWwiOiJyb2JieUBnbWFpbC5jb20iLCJwYXNzd29yZCI6ImM4ODhjOWNlOWUwOThkNTg2NGQzZGVkNmViY2MxNDBhMTIxNDIyNjNiYWNlM2EyM2EzNmY5OTA1ZjEyYmQ2NGEiLCJpYXQiOjE2NDE1MTI0MjJ9.0gNxQkYAeEEdFoVJwPGWVtM0yoGPqHrL9GXYN4Qm9Pw'
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
           }
         })
         .then((res) => {
