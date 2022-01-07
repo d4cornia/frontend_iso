@@ -31,19 +31,23 @@ const Home = () => {
 
   const [posts, setPosts] = useState([]);
   const getPosts = async () => {
-    await axios.post(
-      `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`, {
-        'size': 100000
-      }, {
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
+        {
+          size: 100000
+        },
+        {
           headers: {
-              'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
           }
-      }
-    ).then((res) => {
-      console.log(res)
-      setPosts(res.data.data)
-    })
-  }
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        setPosts(res.data.data);
+      });
+  };
 
   const sendComment = async (target_id, text) => {
     await axios.post(
@@ -63,12 +67,10 @@ const Home = () => {
 
 
   const [report, setReport] = useState([]);
-
   const dataReport = collection(db, 'report');
-
   useEffect(() => {
     getReport();
-    getPosts()
+    getPosts();
   }, []);
 
   // const addReport = async () => {
@@ -85,6 +87,7 @@ const Home = () => {
 
     console.log(e.target.commentText.value);
   };
+
   const toggleCommentButton = (e) => {
     if (e.target.value.length > 0 && !allowPost) {
       setAllowPost(true);
@@ -93,38 +96,67 @@ const Home = () => {
     }
   };
 
+  const followUser = async (idUser) => {
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/follow`,
+        {
+          target_user_id: idUser
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        setIsFollowing(true);
+      })
+      .catch((err) => {
+        console.info(err);
+      });
+  };
+
+  const btnFollow = (e) => {
+    followUser(e);
+  };
+
   const [isFollowing, setIsFollowing] = useState(false); // database
   const [showComments, setShowComments] = useState(false); //dipisah per item
   const [allowPost, setAllowPost] = useState(false); // dipisah per item
-
+  const [autoRefresh, setAutoRefresh] = useState(0);
   const isLiked = true;
+
+  const user = JSON.parse(localStorage.getItem('username'));
 
   return (
     <div className={'content-container center-items'}>
       <Navigation profileImage={profilImage} selected="home" />
-      
-      {posts.map(post => {
+
+      {posts.map((post) => {
         return (
           <Card className="post-card">
             <Card.Body>
               <div className="card-head">
                 <Image
-                    cloud_name={'projekiso'}
-                    publicId={"user/profiles/" + post.user.image_id}
-                    fetch-format="auto"
-                    quality="auto"
-                    className="card-head_image"
+                  cloud_name={'projekiso'}
+                  publicId={'user/profiles/' + post.user.image_id}
+                  fetch-format="auto"
+                  quality="auto"
+                  className="card-head_image"
                 />
                 {/* <img className={'card-head_image'} src={profilImage} alt="Profil Image" /> */}
                 <div className="card-head_profile">
                   <h5 className="card-head_profile-name">{post.user.username}</h5>
                   <p className="card-head_profile-followers text_small fw-bold text-muted">
-                    {post.user.followersCtr} Followers • {post.user.isFollowing && <span>Following</span>}{' '}
-                    {!post.user.isFollowing && (
+                    {post.user.followersCtr} Followers •{' '}
+                    {post.user.isFollowing && <span>Following</span>}{' '}
+                    {post.user.username != user && <span>Me</span>}
+                    {!post.user.isFollowing && post.user.username != user && (
                       <span
                         className="follow-button link"
                         onClick={() => {
-                          setIsFollowing(true); // ganti call api
+                          btnFollow(post.user.id);
                         }}>
                         Follow
                       </span>
@@ -136,7 +168,7 @@ const Home = () => {
               <div className="card-content">
                 <Image
                   cloud_name={'projekiso'}
-                  publicId={"user/posts/" + post.cloudinary_id}
+                  publicId={'user/posts/' + post.cloudinary_id}
                   fetch-format="auto"
                   quality="auto"
                   className="card-content_image"
@@ -175,30 +207,35 @@ const Home = () => {
               </div>
               <div className={`card-comments ${showComments ? 'show' : ''}`}>
                 <p className="text-muted fw-bold">Comments Section</p>
-                {post.comments.map(comment => {
+                {post.comments.map((comment) => {
                   return (
                     <div className="card-comments_item">
                       <Image
                         cloud_name={'projekiso'}
-                        publicId={"user/profiles/" + comment.user.image_id}
+                        publicId={'user/profiles/' + comment.user.image_id}
                         fetch-format="auto"
                         quality="auto"
                         className="card-comments_item-profile"
                       />
                       <p className="card-comments_item-content">
-                        <span className="card-comments_item-content_sender fw-bold">{comment.user.username}</span>
+                        <span className="card-comments_item-content_sender fw-bold">
+                          {comment.user.username}
+                        </span>
                         {comment.comment}
                       </p>
-                      <p className="card-comments_item-createdTime text_small fw-bold">{comment.dateNow}</p>
-                    </div>   
-                  )
+                      <p className="card-comments_item-createdTime text_small fw-bold">
+                        {comment.dateNow}
+                      </p>
+                    </div>
+                  );
                 })}
-                
+
                 {showComments && (
                   <p
                     className="link fw-bold text-muted text-center"
                     onClick={() => {
-                      setShowComments(false);
+                      setIsFollowing(true); // ganti call api
+                      btnFollow();
                     }}>
                     Hide Comments
                   </p>
@@ -215,7 +252,11 @@ const Home = () => {
               </div>
             </Card.Body>
             <Card.Footer>
-              <form action="#" method="post" className="form-comment" onSubmit={handleCommentSubmit}>
+              <form
+                action="#"
+                method="post"
+                className="form-comment"
+                onSubmit={handleCommentSubmit}>
                 <textarea
                   className="form-control comment-input"
                   placeholder="Add comment..."
@@ -226,7 +267,7 @@ const Home = () => {
               </form>
             </Card.Footer>
           </Card>
-        )
+        );
       })}
       <hr />
       {/* <Card style={{ width: '42.5rem' }}>
