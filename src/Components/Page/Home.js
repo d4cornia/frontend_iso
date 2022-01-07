@@ -45,6 +45,23 @@ const Home = () => {
     })
   }
 
+  const sendComment = async (target_id, text) => {
+    await axios.post(
+      `${process.env.REACT_APP_BASE_API_URL}/api/users/post/comment`, {
+        'target_post_id': target_id,
+        'commentTexts': text
+      }, {
+          headers: {
+              'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+      }
+    ).then(async (res) => {
+      console.log(res)
+      await getPosts()
+    })
+  }
+
+
   const [report, setReport] = useState([]);
 
   const dataReport = collection(db, 'report');
@@ -205,7 +222,7 @@ const Home = () => {
                   name="commentText"
                   onBlur={toggleCommentButton}
                   onInput={toggleCommentButton}></textarea>
-                <p className={`post-comment ${post.hasComments ? '' : 'disabled'}`}>Post Comment</p>
+                <p className={`post-comment ${allowPost ? '' : 'disabled'}`} onClick={(e) => {sendComment(post.id, e.target.value)}} >Post Comment</p>
               </form>
             </Card.Footer>
           </Card>
