@@ -87,7 +87,7 @@ const Home = () => {
         })
         .then((res) => {
           setIsFollowing(true);
-          
+          setAutoRefresh(autoRefresh+1);
         })
         .catch((err) => {
           console.info(err);
@@ -127,7 +127,7 @@ const Home = () => {
                   <h5 className="card-head_profile-name">{post.user.username}</h5>
                   <p className="card-head_profile-followers text_small fw-bold text-muted">
                     {post.user.followersCtr} Followers • {post.user.isFollowing && <span>Following</span>}{' '}
-                    {post.user.username != user && <span>Me</span>}
+                    {post.user.username == user && <span>Me</span>}
                     {!post.user.isFollowing && post.user.username != user && (
                       <span
                         className="follow-button link"
