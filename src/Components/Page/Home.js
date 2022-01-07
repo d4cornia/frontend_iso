@@ -132,6 +132,7 @@ const Home = () => {
           </div>
           <div className={`card-comments ${showComments ? 'show' : ''}`}>
             <p className="text-muted fw-bold">Comments Section</p>
+            <p className="empty-state-text">Be the first to comment...</p>
             <div className="card-comments_item">
               <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
               <p className="card-comments_item-content">
@@ -141,54 +142,6 @@ const Home = () => {
                 ipsa odio quo repellendus asperiores molestias, aut inventore molestiae accusamus
                 ducimus perspiciatis distinctio veritatis nisi, enim dolorem ipsam explicabo unde.
                 Itaque provident neque quidem in? Labore doloribus atque harum debitis!
-              </p>
-              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
-            </div>
-            <div className="card-comments_item">
-              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
-              <p className="card-comments_item-content">
-                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos, officiis?
-              </p>
-              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
-            </div>
-            <div className="card-comments_item">
-              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
-              <p className="card-comments_item-content">
-                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga esse laudantium
-                placeat, temporibus dolorum expedita quibusdam laboriosam minus nostrum! Pariatur
-                ipsa odio quo repellendus asperiores molestias, aut inventore molestiae accusamus
-                ducimus perspiciatis distinctio veritatis nisi, enim dolorem ipsam explicabo unde.
-                Itaque provident neque quidem in? Labore doloribus atque harum debitis!
-              </p>
-              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
-            </div>
-            <div className="card-comments_item">
-              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
-              <p className="card-comments_item-content">
-                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos, officiis?
-              </p>
-              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
-            </div>
-            <div className="card-comments_item">
-              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
-              <p className="card-comments_item-content">
-                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga esse laudantium
-                placeat, temporibus dolorum expedita quibusdam laboriosam minus nostrum! Pariatur
-                ipsa odio quo repellendus asperiores molestias, aut inventore molestiae accusamus
-                ducimus perspiciatis distinctio veritatis nisi, enim dolorem ipsam explicabo unde.
-                Itaque provident neque quidem in? Labore doloribus atque harum debitis!
-              </p>
-              <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
-            </div>
-            <div className="card-comments_item">
-              <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
-              <p className="card-comments_item-content">
-                <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Eos, officiis?
               </p>
               <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
             </div>

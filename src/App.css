@@ -142,6 +142,12 @@ smaller,
   fill: var(--clr-primary-0);
 }
 
+.empty-state-text {
+  font-weight: 600;
+  opacity: 0.6;
+  color: var(--clr-body-800);
+}
+
 .gradient-text {
   background: linear-gradient(to right, #fbc2eb 20%, #a6c1ee 40%, #a6c1ee 60%, #fbc2eb 80%);
   background-size: 200% auto;
