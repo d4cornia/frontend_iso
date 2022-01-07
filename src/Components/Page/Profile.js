@@ -9,6 +9,7 @@ import axios from 'axios';
 import Col from 'react-bootstrap/Col';
 import { data } from 'jquery';
 import {useLocation, useSearchParams} from 'react-router-dom';
+import Navigation from 'Components/Reusable/Navigation';
 
 const Profile = (param) => {
   
@@ -42,71 +43,75 @@ const Profile = (param) => {
   console.log(dataProfileUser.image_id)
    
   return (
-    <div className={'container'}>
-      <h3 className={'center'}>Profile</h3>
-      <div className={'profile'}>
-        <div className="profile-photo">
-          {/* <img className={'profile-image'} src={profilImage} alt="Profil Image" /> */}
-          <Image
-            cloud_name={'projekiso'}
-            publicId={"user/profiles/" + dataProfileUser.image_id} 
-            fetch-format="auto"
-            quality="auto"
-            className="profilepict"
-            />
-        </div>
-        <div className={'profile-description'}>
-          <div className="profile-username">
-            <h5>{dataProfileUser.username}</h5>
-            <Button variant="secondary" type="submit" className="form-control">
-              Edit Profile
-            </Button>
-          </div>
-          <div className="followers">
-            <h6 className="count">{dataProfile.postsCtr} posts</h6>
-            <h6 className="count">{dataProfileUser.followersCtr} followers</h6>
-            <h6 className="count">{dataProfileUser.followingCtr} following</h6>
-          </div>
-          <div className="profile-name">
-            <h4>{dataProfileUser.name}</h4>
-          </div>
-        </div>
-      </div>
-      <div className="profile-post">
-        <Container>
-          <Row>
-          {posts.map(post => {
-            if(parseInt(post.status) == 1){
-              return (
-                <Col xs={4} sm={4} md={4} lg={4}>
-                  <Image
-                  cloud_name={'projekiso'}
-                  publicId={"user/posts/" + post.cloudinary_id} 
-                  fetch-format="auto"
-                  quality="auto"
-                  className="post"
-                  />
-                </Col>
-              )
-            }
-            else if(parseInt(post.status) == 2)
-            {
-              <Col xs={4} sm={4} md={4} lg={4}>
-                <Video
-                
-                cloudName={'projekiso'}
-                publicId={"user/posts/" + post.cloudinary_id} 
-                controls={true}
+    <div>
+      <Navigation profileImage={profilImage} selected="home" />
+      <div className={'container'}>
+          <h3 className={'center'}>Profile</h3>
+          <div className={'profile'}>
+            <div className="profile-photo">
+              {/* <img className={'profile-image'} src={profilImage} alt="Profil Image" /> */}
+              <Image
+                cloud_name={'projekiso'}
+                publicId={"user/profiles/" + dataProfileUser.image_id} 
+                fetch-format="auto"
                 quality="auto"
-                className="post"
+                className="profilepict"
                 />
-              </Col>
-            }
-          })}
-          </Row>
-        </Container>
+            </div>
+            <div className={'profile-description'}>
+              <div className="profile-username">
+                <h5>{dataProfileUser.username}</h5>
+                <Button variant="secondary" type="submit" className="form-control">
+                  Edit Profile
+                </Button>
+              </div>
+              <div className="followers">
+                <h6 className="count">{dataProfile.postsCtr} posts</h6>
+                <h6 className="count">{dataProfileUser.followersCtr} followers</h6>
+                <h6 className="count">{dataProfileUser.followingCtr} following</h6>
+              </div>
+              <div className="profile-name">
+                <h4>{dataProfileUser.name}</h4>
+              </div>
+            </div>
+          </div>
+          <div className="profile-post">
+            <Container>
+              <Row>
+              {posts.map(post => {
+                if(parseInt(post.status) == 1){
+                  return (
+                    <Col xs={4} sm={4} md={4} lg={4}>
+                      <Image
+                      cloud_name={'projekiso'}
+                      publicId={"user/posts/" + post.cloudinary_id} 
+                      fetch-format="auto"
+                      quality="auto"
+                      className="post"
+                      />
+                    </Col>
+                  )
+                }
+                else if(parseInt(post.status) == 2)
+                {
+                  <Col xs={4} sm={4} md={4} lg={4}>
+                    <Video
+                    
+                    cloudName={'projekiso'}
+                    publicId={"user/posts/" + post.cloudinary_id} 
+                    controls={true}
+                    quality="auto"
+                    className="post"
+                    />
+                  </Col>
+                }
+              })}
+              </Row>
+            </Container>
+          </div>
       </div>
     </div>
+    
   );
 };
 

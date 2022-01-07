@@ -5,10 +5,11 @@ import LogoText from './LogoText';
 import profilImage from 'Image/profil.jpg';
 import axios from 'axios';
 import { Image } from 'cloudinary-react';
+import {Navigate, useLocation, useSearchParams, useNavigate} from 'react-router-dom';
 
 const Navigation = (props) => {
   const search = useRef();
-
+  const navigate = useNavigate();
   const [allNotif, setAllNotif] = useState([]);
   // let allNotif = [];
 
@@ -108,7 +109,9 @@ const Navigation = (props) => {
         <ul className="navigation-links">
           <li
             className={`navigation-link ${props.selected === 'home' ? 'selected' : ''}`}
-            id="home">
+            id="home" onClick={() => {
+              navigate('/home');
+              }}> 
             <svg
               className="home"
               viewBox="0 0 97 97"
@@ -256,7 +259,9 @@ const Navigation = (props) => {
             </li>
           )}
           <div className="profile-container">
-            <img src={props.profileImage} alt="Profile" className="profile-img" />
+            <img src={props.profileImage} alt="Profile" className="profile-img" onClick={() => {
+                    navigate('/profile/' + JSON.parse(localStorage.getItem('username')));
+                    }}/>
           </div>
         </ul>
       </div>
