@@ -50,9 +50,7 @@ const Home = () => {
   };
 
   const [report, setReport] = useState([]);
-
   const dataReport = collection(db, 'report');
-
   useEffect(() => {
     getReport();
     getPosts();
@@ -72,6 +70,7 @@ const Home = () => {
 
     console.log(e.target.commentText.value);
   };
+
   const toggleCommentButton = (e) => {
     if (e.target.value.length > 0 && !allowPost) {
       setAllowPost(true);
@@ -80,11 +79,38 @@ const Home = () => {
     }
   };
 
+  const followUser = async (idUser) => {
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/follow`,
+        {
+          target_user_id: idUser
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        setIsFollowing(true);
+      })
+      .catch((err) => {
+        console.info(err);
+      });
+  };
+
+  const btnFollow = (e) => {
+    followUser(e);
+  };
+
   const [isFollowing, setIsFollowing] = useState(false); // database
   const [showComments, setShowComments] = useState(false); //dipisah per item
   const [allowPost, setAllowPost] = useState(false); // dipisah per item
-
+  const [autoRefresh, setAutoRefresh] = useState(0);
   const isLiked = true;
+
+  const user = JSON.parse(localStorage.getItem('username'));
 
   return (
     <div className={'content-container center-items'}>
@@ -108,11 +134,12 @@ const Home = () => {
                   <p className="card-head_profile-followers text_small fw-bold text-muted">
                     {post.user.followersCtr} Followers •{' '}
                     {post.user.isFollowing && <span>Following</span>}{' '}
-                    {!post.user.isFollowing && (
+                    {post.user.username != user && <span>Me</span>}
+                    {!post.user.isFollowing && post.user.username != user && (
                       <span
                         className="follow-button link"
                         onClick={() => {
-                          setIsFollowing(true); // ganti call api
+                          btnFollow(post.user.id);
                         }}>
                         Follow
                       </span>
@@ -190,7 +217,8 @@ const Home = () => {
                   <p
                     className="link fw-bold text-muted text-center"
                     onClick={() => {
-                      setShowComments(false);
+                      setIsFollowing(true); // ganti call api
+                      btnFollow();
                     }}>
                     Hide Comments
                   </p>
