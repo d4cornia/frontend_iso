@@ -254,7 +254,7 @@ const Home = () => {
                 <p className="text-muted fw-bold">Comments Section</p>
                 {post.comments.map((comment) => {
                   return (
-                    <div className="card-comments_item">
+                    <div className="card-comments_item" key={comment.id}>
                       <Image
                         cloud_name={'projekiso'}
                         publicId={'user/profiles/' + comment.user.image_id}
