@@ -55,14 +55,6 @@
   width: 100%;
 }
 
-.caption {
-  display: flex;
-}
-
-.isi-caption {
-  margin-left: 2%;
-}
-
 .card-caption {
   display: flex;
   flex-flow: column;
@@ -203,4 +195,18 @@
 .post-comment.disabled {
   pointer-events: none;
   opacity: 0.3;
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  .content-container {
+    --width: calc(100% - 4rem);
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 767.98px) {
+  .content-container {
+    --width: calc(100% - 2rem);
+  }
 }

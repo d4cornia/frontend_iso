@@ -19,22 +19,20 @@ const Navigation = (props) => {
     <div className="navigation-container">
       <div className="navigation-wrapper">
         <div className="notification-popup">
-          <h5>NOTIFICATION</h5>
-          <div className="notification-content">
-            <img className={'card-head_image'} src={profilImage} alt="Profil Image" />
-            <div className="card-head_profile">
-              <p className="card-head_profile-followers text_small fw-bold text-muted" style={{"margin-left": "1rem"}}>
-                <b>joesentosa1511</b> Started following you! 
-              </p>
-            </div>
+          <div className="notification-header">
+            <h5>Notifications</h5>
           </div>
-          <hr />
           <div className="notification-content">
-            <img className={'card-head_image'} src={profilImage} alt="Profil Image" />
-            <div className="card-head_profile">
-              <p className="card-head_profile-followers text_small fw-bold text-muted" style={{"margin-left": "1rem"}}>
-                <b>joesentosa1511</b> Started following you! 
-              </p>
+            <div className="notification-item">
+              <img className={'notification-item_image'} src={profilImage} alt="Profil Image" />
+              <div className="notification-item_content">
+                <p className="notification-item_content-followers">
+                  <span className="fw-bold">joesentosa1511</span> Started following you!
+                </p>
+                <p className="notification-item_content-created text-muted fw-bold text_small">
+                  1h ago
+                </p>
+              </div>
             </div>
           </div>
         </div>

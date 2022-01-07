@@ -58,6 +58,7 @@ body {
   font-family: var(--bs-body-font-family);
   font-weight: 400;
   line-height: 1.75;
+  font-size: 16px;
   color: var(--clr-black);
 }
 

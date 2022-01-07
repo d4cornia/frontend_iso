@@ -29,8 +29,6 @@ const Home = () => {
   };
 
   const [report, setReport] = useState([]);
-  // const [id1, setId1] = useState('');
-  // const [id2, setId2] = useState('');
 
   const dataReport = collection(db, 'report');
 
