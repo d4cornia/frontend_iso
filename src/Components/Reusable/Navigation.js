@@ -1,11 +1,38 @@
-import { useRef } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import 'css/components/Navigation.css';
 import CustomInput from './CustomInput';
 import LogoText from './LogoText';
 import profilImage from 'Image/profil.jpg';
+import axios from "axios";
+import {Image} from "cloudinary-react";
 
 const Navigation = (props) => {
   const search = useRef();
+
+  const [allNotif,setAllNotif] = useState([]);
+  // let allNotif = [];
+
+  useEffect(() => {
+    const getNotif = async () => {
+      return await axios
+          .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/notifications`, {
+            headers: {
+              'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvYmJ5IiwiZW1haWwiOiJyb2JieUBnbWFpbC5jb20iLCJwYXNzd29yZCI6ImM4ODhjOWNlOWUwOThkNTg2NGQzZGVkNmViY2MxNDBhMTIxNDIyNjNiYWNlM2EyM2EzNmY5OTA1ZjEyYmQ2NGEiLCJpYXQiOjE2NDE1MTI0MjJ9.0gNxQkYAeEEdFoVJwPGWVtM0yoGPqHrL9GXYN4Qm9Pw'
+            }
+          })
+          .then((res) => {
+            // allNotif = res.data.data;
+            // console.log(allNotif);
+            setAllNotif((res.data.data))
+            console.log(allNotif);
+          })
+          .catch((err) => {
+            console.info(err);
+          });
+    };
+    getNotif();
+  }, []);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,21 +46,31 @@ const Navigation = (props) => {
     <div className="navigation-container">
       <div className="navigation-wrapper">
         <div className="notification-popup">
-          <div className="notification-header">
-            <h5>Notifications</h5>
-          </div>
-          <div className="notification-content">
-            <div className="notification-item">
-              <img className={'notification-item_image'} src={profilImage} alt="Profil Image" />
-              <div className="notification-item_content">
-                <p className="notification-item_content-followers">
-                  <span className="fw-bold">joesentosa1511</span> Started following you!
-                </p>
-                <p className="notification-item_content-created text-muted fw-bold text_small">
-                  1h ago
-                </p>
-              </div>
+            <div className="notification-header">
+                <h5>Notifications</h5>
             </div>
+          <div className="notification-content">
+          {allNotif.map(notif => {
+            return (
+                    <div className="notification-item">
+                        <Image
+                            cloud_name={'projekiso'}
+                            publicId={"user/profiles/" + notif.detailUser[0].image_id}
+                            fetch-format="auto"
+                            quality="auto"
+                            className="notification-item_image"
+                        />
+                        <div className="notification-item_content">
+                            <p className="notification-item_content-followers">
+                                <span className="fw-bold">{notif.detailUser[0].username}</span> {notif.message}
+                            </p>
+                            <p className="notification-item_content-created text-muted fw-bold text_small">
+                                {/*1h ago*/}
+                            </p>
+                        </div>
+                    </div>
+            )
+          })}
           </div>
         </div>
         <LogoText className="nav-logo" />
