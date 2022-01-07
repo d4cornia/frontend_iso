@@ -1,38 +1,38 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'css/components/Navigation.css';
 import CustomInput from './CustomInput';
 import LogoText from './LogoText';
 import profilImage from 'Image/profil.jpg';
-import axios from "axios";
-import {Image} from "cloudinary-react";
+import axios from 'axios';
+import { Image } from 'cloudinary-react';
 
 const Navigation = (props) => {
   const search = useRef();
 
-  const [allNotif,setAllNotif] = useState([]);
+  const [allNotif, setAllNotif] = useState([]);
   // let allNotif = [];
 
   useEffect(() => {
     const getNotif = async () => {
       return await axios
-          .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/notifications`, {
-            headers: {
-              'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvYmJ5IiwiZW1haWwiOiJyb2JieUBnbWFpbC5jb20iLCJwYXNzd29yZCI6ImM4ODhjOWNlOWUwOThkNTg2NGQzZGVkNmViY2MxNDBhMTIxNDIyNjNiYWNlM2EyM2EzNmY5OTA1ZjEyYmQ2NGEiLCJpYXQiOjE2NDE1MTI0MjJ9.0gNxQkYAeEEdFoVJwPGWVtM0yoGPqHrL9GXYN4Qm9Pw'
-            }
-          })
-          .then((res) => {
-            // allNotif = res.data.data;
-            // console.log(allNotif);
-            setAllNotif((res.data.data))
-            console.log(allNotif);
-          })
-          .catch((err) => {
-            console.info(err);
-          });
+        .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/notifications`, {
+          headers: {
+            'x-auth-token':
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvYmJ5IiwiZW1haWwiOiJyb2JieUBnbWFpbC5jb20iLCJwYXNzd29yZCI6ImM4ODhjOWNlOWUwOThkNTg2NGQzZGVkNmViY2MxNDBhMTIxNDIyNjNiYWNlM2EyM2EzNmY5OTA1ZjEyYmQ2NGEiLCJpYXQiOjE2NDE1MTI0MjJ9.0gNxQkYAeEEdFoVJwPGWVtM0yoGPqHrL9GXYN4Qm9Pw'
+          }
+        })
+        .then((res) => {
+          // allNotif = res.data.data;
+          // console.log(allNotif);
+          setAllNotif(res.data.data);
+          console.log(allNotif);
+        })
+        .catch((err) => {
+          console.info(err);
+        });
     };
     getNotif();
   }, []);
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,36 +42,50 @@ const Navigation = (props) => {
     console.log('url', searchUrl);
   };
 
+  const notifications = 0;
+
+  const [isNotificationOpen, setNotificationOpen] = useState(false);
+
+  const openNotification = (value) => {
+    setNotificationOpen(value);
+  };
+
   return (
     <div className="navigation-container">
       <div className="navigation-wrapper">
-        <div className="notification-popup">
-            <div className="notification-header">
-                <h5>Notifications</h5>
-            </div>
-          <div className="notification-content">
-          {allNotif.map(notif => {
-            return (
-                    <div className="notification-item">
-                        <Image
-                            cloud_name={'projekiso'}
-                            publicId={"user/profiles/" + notif.detailUser[0].image_id}
-                            fetch-format="auto"
-                            quality="auto"
-                            className="notification-item_image"
-                        />
-                        <div className="notification-item_content">
-                            <p className="notification-item_content-followers">
-                                <span className="fw-bold">{notif.detailUser[0].username}</span> {notif.message}
-                            </p>
-                            <p className="notification-item_content-created text-muted fw-bold text_small">
-                                {/*1h ago*/}
-                            </p>
-                        </div>
-                    </div>
-            )
-          })}
+        <div className={`notification-popup ${!isNotificationOpen ? 'hidden' : ''}`}>
+          <div className="notification-header">
+            <h5>Notifications</h5>
           </div>
+          {allNotif.length > 0 && (
+            <div className="notification-content">
+              {allNotif.map((notif) => {
+                return (
+                  <div className="notification-item">
+                    <Image
+                      cloud_name={'projekiso'}
+                      publicId={'user/profiles/' + notif.detailUser[0].image_id}
+                      fetch-format="auto"
+                      quality="auto"
+                      className="notification-item_image"
+                    />
+                    <div className="notification-item_content">
+                      <p className="notification-item_content-followers">
+                        <span className="fw-bold">{notif.detailUser[0].username}</span>{' '}
+                        {notif.message}
+                      </p>
+                      <p className="notification-item_content-created text-muted fw-bold text_small">
+                        {/*1h ago*/}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {allNotif.length === 0 && (
+            <p className="empty-state-Text">You have no notifications at the moment.</p>
+          )}
         </div>
         <LogoText className="nav-logo" />
         <form action="#" method="post" className="form-search" onSubmit={handleSubmit}>
@@ -158,6 +172,90 @@ const Navigation = (props) => {
               />
             </svg>
           </li>
+          {notifications === 0 && (
+            <li
+              className={`navigation-link ${isNotificationOpen ? 'selected' : ''}`}
+              id="notification"
+              onClick={() => {
+                openNotification(!isNotificationOpen);
+              }}>
+              <svg
+                className="notification-icon"
+                viewBox="0 0 51 51"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M46.0558 39.4258C44.6897 38.2079 43.4937 36.8118 42.5 35.2749C41.4151 33.1536 40.7649 30.8369 40.5875 28.4608V21.4624C40.5968 17.7304 39.2431 14.1234 36.7805 11.3191C34.318 8.51478 30.9161 6.70625 27.2141 6.23328V4.40578C27.2141 3.90419 27.0149 3.42314 26.6602 3.06846C26.3055 2.71378 25.8245 2.51453 25.3229 2.51453C24.8213 2.51453 24.3402 2.71378 23.9856 3.06846C23.6309 3.42314 23.4316 3.90419 23.4316 4.40578V6.26161C19.7628 6.76867 16.4021 8.58814 13.9719 11.383C11.5417 14.1779 10.2067 17.7588 10.2141 21.4624V28.4608C10.0367 30.8369 9.38649 33.1536 8.30163 35.2749C7.32538 36.8083 6.14858 38.2042 4.80247 39.4258C4.65135 39.5585 4.53024 39.7219 4.44719 39.9051C4.36414 40.0883 4.32106 40.2871 4.3208 40.4883V42.4149C4.3208 42.7907 4.47006 43.151 4.73573 43.4167C5.00141 43.6824 5.36174 43.8316 5.73747 43.8316H45.1208C45.4965 43.8316 45.8569 43.6824 46.1225 43.4167C46.3882 43.151 46.5375 42.7907 46.5375 42.4149V40.4883C46.5372 40.2871 46.4941 40.0883 46.4111 39.9051C46.328 39.7219 46.2069 39.5585 46.0558 39.4258ZM7.26747 40.9983C8.58555 39.725 9.74607 38.2981 10.7241 36.7483C12.0907 34.1862 12.888 31.3593 13.0616 28.4608V21.4624C13.0055 19.8022 13.2839 18.1476 13.8805 16.5971C14.4771 15.0467 15.3796 13.6322 16.5342 12.4379C17.6889 11.2435 19.072 10.2937 20.6014 9.645C22.1307 8.99632 23.775 8.66202 25.4362 8.66202C27.0975 8.66202 28.7417 8.99632 30.271 9.645C31.8004 10.2937 33.1836 11.2435 34.3382 12.4379C35.4928 13.6322 36.3953 15.0467 36.9919 16.5971C37.5885 18.1476 37.867 19.8022 37.8108 21.4624V28.4608C37.9844 31.3593 38.7818 34.1862 40.1483 36.7483C41.1264 38.2981 42.2869 39.725 43.605 40.9983H7.26747Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M25.5 48.5634C26.3924 48.5428 27.2488 48.2073 27.9177 47.6162C28.5866 47.0251 29.0249 46.2165 29.155 45.3334H21.7034C21.8372 46.2405 22.296 47.0681 22.9944 47.6622C23.6928 48.2564 24.5832 48.5766 25.5 48.5634V48.5634Z"
+                  fill="#111111"
+                />
+              </svg>
+              <svg
+                className="notification-icon filled"
+                width="51"
+                height="51"
+                viewBox="0 0 51 51"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M46.5375 39.8508L46.0558 39.4258C44.6893 38.2083 43.4933 36.8121 42.5 35.2749C41.4151 33.1536 40.7649 30.8369 40.5875 28.4608V21.4624C40.5968 17.7304 39.2431 14.1234 36.7805 11.3191C34.318 8.51478 30.9161 6.70625 27.2141 6.23328V4.40578C27.2141 3.90419 27.0149 3.42314 26.6602 3.06846C26.3055 2.71378 25.8245 2.51453 25.3229 2.51453C24.8213 2.51453 24.3402 2.71378 23.9856 3.06846C23.6309 3.42314 23.4316 3.90419 23.4316 4.40578V6.26161C19.7628 6.76867 16.4021 8.58814 13.9719 11.383C11.5417 14.1779 10.2067 17.7588 10.2141 21.4624V28.4608C10.0367 30.8369 9.38649 33.1536 8.30163 35.2749C7.32538 36.8083 6.14858 38.2042 4.80247 39.4258L4.3208 39.8508V43.8458H46.5375V39.8508Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M21.7034 45.3334C21.8276 46.2314 22.2726 47.0541 22.9561 47.6496C23.6396 48.245 24.5156 48.5731 25.4221 48.5731C26.3287 48.5731 27.2046 48.245 27.8881 47.6496C28.5717 47.0541 29.0166 46.2314 29.1409 45.3334H21.7034Z"
+                  fill="#111111"
+                />
+              </svg>
+            </li>
+          )}
+          {notifications > 0 && (
+            <li
+              className={`navigation-link ${isNotificationOpen ? 'selected' : ''}`}
+              onClick={() => {
+                openNotification(!isNotificationOpen);
+              }}
+              id="notification">
+              <svg
+                className="notification-icon badged"
+                viewBox="0 0 51 51"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M25.5 48.5634C26.3924 48.5428 27.2488 48.2073 27.9177 47.6162C28.5866 47.0251 29.0249 46.2165 29.155 45.3334H21.7034C21.8372 46.2405 22.296 47.0681 22.9944 47.6622C23.6928 48.2564 24.5832 48.5766 25.5 48.5634V48.5634Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M46.0558 39.4258C44.6897 38.2079 43.4937 36.8118 42.5 35.2749C41.4151 33.1536 40.7649 30.8369 40.5875 28.4608V21.4624C40.5817 20.6124 40.5059 19.7642 40.3608 18.9266C39.2458 18.7037 38.1741 18.3019 37.1875 17.7366C37.5636 18.9476 37.7546 20.2085 37.7541 21.4766V28.4749C37.9278 31.3735 38.7251 34.2004 40.0916 36.7624C41.0697 38.3123 42.2302 39.7392 43.5483 41.0124H7.26747C8.58555 39.7392 9.74607 38.3123 10.7241 36.7624C12.0907 34.2004 12.888 31.3735 13.0616 28.4749V21.4624C13.0542 19.8229 13.3702 18.198 13.9916 16.6808C14.613 15.1636 15.5276 13.7838 16.6829 12.6205C17.8383 11.4573 19.2118 10.5333 20.7248 9.90161C22.2377 9.2699 23.8604 8.94282 25.5 8.93911C27.8995 8.94103 30.2451 9.65063 32.2433 10.9791C32.023 10.1702 31.8994 9.33798 31.875 8.49994V7.60744C30.3958 6.87979 28.8067 6.40114 27.1716 6.19078V4.40578C27.1716 3.90419 26.9724 3.42314 26.6177 3.06846C26.263 2.71378 25.782 2.51453 25.2804 2.51453C24.7788 2.51453 24.2977 2.71378 23.9431 3.06846C23.5884 3.42314 23.3891 3.90419 23.3891 4.40578V6.26161C19.7281 6.77806 16.3774 8.60158 13.9559 11.3955C11.5343 14.1894 10.2052 17.7651 10.2141 21.4624V28.4608C10.0367 30.8369 9.38649 33.1536 8.30163 35.2749C7.32538 36.8083 6.14858 38.2042 4.80247 39.4258C4.65135 39.5585 4.53024 39.7219 4.44719 39.9051C4.36414 40.0883 4.32106 40.2871 4.3208 40.4883V42.4149C4.3208 42.7907 4.47006 43.151 4.73573 43.4167C5.00141 43.6824 5.36174 43.8316 5.73747 43.8316H45.1208C45.4965 43.8316 45.8569 43.6824 46.1225 43.4167C46.3882 43.151 46.5375 42.7907 46.5375 42.4149V40.4883C46.5372 40.2871 46.4941 40.0883 46.4111 39.9051C46.328 39.7219 46.2069 39.5585 46.0558 39.4258V39.4258Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M42.5 15.5833C46.412 15.5833 49.5833 12.412 49.5833 8.49996C49.5833 4.58794 46.412 1.41663 42.5 1.41663C38.5879 1.41663 35.4166 4.58794 35.4166 8.49996C35.4166 12.412 38.5879 15.5833 42.5 15.5833Z"
+                  fill="#FF5757"
+                />
+              </svg>
+              <svg
+                className="notification-icon filled badged"
+                viewBox="0 0 51 51"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M25.5 48.5634C26.3924 48.5428 27.2488 48.2073 27.9177 47.6162C28.5866 47.0251 29.0249 46.2165 29.155 45.3334H21.7034C21.8372 46.2405 22.296 47.0681 22.9944 47.6622C23.6928 48.2564 24.5832 48.5766 25.5 48.5634V48.5634Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M46.5375 39.8508L46.0558 39.4258C44.6893 38.2083 43.4933 36.8121 42.5 35.2749C41.4151 33.1536 40.7649 30.8369 40.5875 28.4608V21.4624C40.5817 20.6124 40.5059 19.7642 40.3608 18.9266C37.9611 18.4334 35.8056 17.1261 34.2592 15.226C32.7128 13.3259 31.8705 10.9498 31.875 8.49994V7.60744C30.3959 6.87954 28.8067 6.40088 27.1716 6.19078V4.40578C27.1716 3.90419 26.9724 3.42314 26.6177 3.06846C26.263 2.71378 25.782 2.51453 25.2804 2.51453C24.7788 2.51453 24.2977 2.71378 23.9431 3.06846C23.5884 3.42314 23.3891 3.90419 23.3891 4.40578V6.26161C19.7281 6.77806 16.3774 8.60158 13.9559 11.3955C11.5343 14.1894 10.2052 17.7651 10.2141 21.4624V28.4608C10.0367 30.8369 9.38649 33.1536 8.30163 35.2749C7.32538 36.8083 6.14858 38.2042 4.80247 39.4258L4.3208 39.8508V43.8458H46.5375V39.8508Z"
+                  fill="#111111"
+                />
+                <path
+                  d="M42.5 15.5833C46.412 15.5833 49.5833 12.412 49.5833 8.49996C49.5833 4.58794 46.412 1.41663 42.5 1.41663C38.5879 1.41663 35.4166 4.58794 35.4166 8.49996C35.4166 12.412 38.5879 15.5833 42.5 15.5833Z"
+                  fill="#FF5757"
+                />
+              </svg>
+            </li>
+          )}
           <div className="profile-container">
             <img src={props.profileImage} alt="Profile" className="profile-img" />
           </div>

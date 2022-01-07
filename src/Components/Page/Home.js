@@ -133,7 +133,7 @@ const Home = () => {
           <div className={`card-comments ${showComments ? 'show' : ''}`}>
             <p className="text-muted fw-bold">Comments Section</p>
             <p className="empty-state-text">Be the first to comment...</p>
-            <div className="card-comments_item">
+            {/* <div className="card-comments_item">
               <img className={'card-comments_item-profile'} src={profilImage} alt="Profil Image" />
               <p className="card-comments_item-content">
                 <span className="card-comments_item-content_sender fw-bold">joesentosa1511 </span>
@@ -144,8 +144,8 @@ const Home = () => {
                 Itaque provident neque quidem in? Labore doloribus atque harum debitis!
               </p>
               <p className="card-comments_item-createdTime text_small fw-bold">8m ago</p>
-            </div>
-            {showComments && (
+            </div> */}
+            {/* {showComments && (
               <p
                 className="link fw-bold text-muted text-center"
                 onClick={() => {
@@ -153,8 +153,8 @@ const Home = () => {
                 }}>
                 Hide Comments
               </p>
-            )}
-            <div className="card-comments_show-button">
+            )} */}
+            {/* <div className="card-comments_show-button">
               <p
                 className="link fw-bold text-muted"
                 onClick={() => {
@@ -162,7 +162,7 @@ const Home = () => {
                 }}>
                 View more
               </p>
-            </div>
+            </div> */}
           </div>
         </Card.Body>
         <Card.Footer>
