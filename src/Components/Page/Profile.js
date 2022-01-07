@@ -8,7 +8,7 @@ import { Image, Video } from 'cloudinary-react';
 import axios from 'axios';
 import Col from 'react-bootstrap/Col';
 import { data } from 'jquery';
-import {useLocation, useSearchParams} from 'react-router-dom';
+import {useLocation, useSearchParams, useNavigate, navigate} from 'react-router-dom';
 import Navigation from 'Components/Reusable/Navigation';
 
 const Profile = (param) => {
@@ -17,7 +17,7 @@ const Profile = (param) => {
   const [dataProfileUser, setDataProfileUser] = useState([]); //Data Profile
 
   const params = useLocation();
-
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   
   // console.log(params.pathname.substring(9));
@@ -61,7 +61,9 @@ const Profile = (param) => {
             <div className={'profile-description'}>
               <div className="profile-username">
                 <h5>{dataProfileUser.username}</h5>
-                <Button variant="secondary" type="submit" className="form-control">
+                <Button variant="secondary" type="submit" className="form-control" onClick={() => {
+                  navigate('/editProfile');
+                  }}>
                   Edit Profile
                 </Button>
               </div>
