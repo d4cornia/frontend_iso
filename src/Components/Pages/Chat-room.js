@@ -11,8 +11,9 @@ import AccountList from '../Reusable/AccountList';
 
 const Chat_room = () => {
   // Variables
-  const [username, setUsername] = useState('username');
-  const [target, setTarget] = useState({});
+  const [username, setUsername] = useState(JSON.parse(localStorage.getItem('username')));
+  const [userId, setUserId] = useState(JSON.parse(localStorage.getItem('id')));
+  const [target, setTarget] = useState([]);
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [rooms, setRooms] = useState([]);
@@ -29,6 +30,7 @@ const Chat_room = () => {
     // load all data
     // getAllMessage();
     getRooms();
+    
   }, []);
 
   // AXIOS
@@ -45,25 +47,38 @@ const Chat_room = () => {
   };
 
   const getRooms = async () => {
-    const temp = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats/`, {
+    const temp = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm`, {
       headers: {
         'x-auth-token':
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
       }
     })
     .then((res) => {
-      console.log(res);
+      console.log(res)
+      for (let i = 0; i < res.data.data.length; i++) {
+        setRooms([
+          ...rooms,
+          {
+            id: res.data.data[i].id,
+            username: res.data.data[i].target_user.username,
+            subtitle:  res.data.data[i].lastChat.message,
+            image_id: res.data.data[i].target_user.image_id,
+            followersCtr: res.data.data[i].target_user.followersCtr, 
+            chats: res.data.data[i].chats
+          }
+        ])
+      }
     });
 
-    setRooms([
-      ...rooms,
-      {
-        id: 1,
-        username: 'Yosuu',
-        subtitle: 'Ini adalah pesan terakhir yang sudah kuberikan kepada anda seorang',
-        image_id: 'default-user'
-      }
-    ]);
+    // setRooms([
+    //   ...rooms,
+    //   {
+    //     id: 1,
+    //     username: 'Yosuu',
+    //     subtitle: 'Ini adalah pesan terakhir yang sudah kuberikan kepada anda seorang',
+    //     image_id: 'default-user'
+    //   }
+    // ]);
   };
 
   // HANDLER
@@ -78,9 +93,7 @@ const Chat_room = () => {
 
   const roomClick = (data) => {
     console.log('clicking', data);
-    setTarget({
-      id: 5
-    });
+    setTarget(data)
   };
   // await axios.post(
   //   `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats`,
@@ -185,7 +198,7 @@ const Chat_room = () => {
               key={rooms.length}
               title="Direct Messages"
               subtitle="100 new messages"
-              selectedId={1}
+              selectedId={target.id}
               Clicked={roomClick}
             />
           </div>
@@ -203,27 +216,42 @@ const Chat_room = () => {
                 />
               </div>
               <div className="chat-header_detail">
-                <div className="chat-header_detail-title fw-bold">{'Daviddd'}</div>
+                <div className="chat-header_detail-title fw-bold">{target.username}</div>
                 <div className="chat-header_detail-subtitle text-muted fw-bold text_small">
-                  {'1.3k followers'}
+                  {`${target.followersCtr} followers`}
                 </div>
               </div>
             </div>
             <div className="chat-wrapper">
-              <div className="chat-bubble-section">
-                <div className="timespan fw-bold text_small text-center">Yesterday</div>
-                <div className="chat-bubble-wrapper left">
-                  <div className="chat-bubble">
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam, reprehenderit
-                    cupiditate vel magni dolores velit officia dolore vero expedita nisi!
-                  </div>
-                  <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
+              {target.chats.map((chat) => {
+                return (
+                  <div className="chat-bubble-section">
+                      <div className="timespan fw-bold text_small text-center">{chat.momentDate}</div>
+                      
+                      {chat.value.map((chatValue) => {
+                        if(chatValue.user_sender_id == userId){
+                          return (
+                            <div className="chat-bubble-wrapper right">
+                              <div className="chat-bubble">
+                                {chatValue.message}
+                              </div>
+                              <p className="text-muted text_small fw-bold chat-bubble-created">{chatValue.moment}</p>
+                            </div>
+                          )
+                        } else {
+                          return (
+                            <div className="chat-bubble-wrapper left">
+                              <div className="chat-bubble">
+                                {chatValue.message}
+                              </div>
+                              <p className="text-muted text_small fw-bold chat-bubble-created">{chatValue.moment}</p>
+                            </div>
+                          )
+                        }
+                      })}
                 </div>
-                <div className="chat-bubble-wrapper right">
-                  <div className="chat-bubble">Lorem ipsum dolor sit amet.</div>
-                  <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-                </div>
-              </div>
+                )
+              })}
             </div>
             <div className="chat-input-container">
               <form

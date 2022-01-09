@@ -13,10 +13,13 @@ const authentication = {
       const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
       const credential = {
+        id: localStorage.getItem('id'),
         username: localStorage.getItem('username'),
         email: localStorage.getItem('email'),
         token: localStorage.getItem('x-auth-token')
       };
+
+      // console.log(credential, decryptedData)
 
       // Jika credential Token sama dengan localstrogae maka user authenticated
       if (JSON.stringify(credential) === JSON.stringify(decryptedData)) {
@@ -35,6 +38,7 @@ const authentication = {
       .then((res) => {
         if (!res.data.error_msg) {
           const credential = {
+            id : JSON.stringify(res.data.data.id), 
             username: JSON.stringify(res.data.data.username),
             email: JSON.stringify(res.data.data.email),
             token: JSON.stringify(res.data.data.token)
@@ -44,6 +48,7 @@ const authentication = {
             process.env.REACT_APP_SECRET_AUTH_CODE
           ).toString();
 
+          localStorage.setItem('id', credential.id);
           localStorage.setItem('username', credential.username);
           localStorage.setItem('email', credential.email);
           localStorage.setItem('x-auth-token', credential.token);
