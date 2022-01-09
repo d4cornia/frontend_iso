@@ -30,9 +30,9 @@ function App() {
         {/* <Navbar/> */}
         <Routes>
           {/* disini jika path sama dengan yang ada di URL maka di append component dalam element */}
-          {/* <Route exact path={'/'} element={<Navigate to="/login " />} /> */}
           <Route element={<ProtectedRoute />}>
-            <Route exact path={'/'} element={<Home />} />
+            <Route exact path={'/'} element={<Navigate to="/home" />} />
+            <Route exact path={'/home'} element={<Home />} />
             <Route path={'/editProfile'} element={<EditProfile />} />
             <Route path={'/editPassword'} element={<EditPassword />} />
             <Route path="/profile/:username" element={<Profile />} />

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 
 // ASSETS
@@ -14,23 +15,29 @@ import { collection, getDocs, addDoc } from '@firebase/firestore';
 // Components
 import Post from '../Reusable/Post';
 import AccountList from '../Reusable/AccountList';
+import DetailPost from '../Reusable/DetailPost';
 
 const Home = () => {
   useEffect(() => {
     setIsFetchingData(true);
     // getReport();
     getPosts();
-    getFollowers();
     setIsFetchingData(false);
 
     // Tambahan script Masonry
     masonryScript();
+
+    // Check jika ada url post
+    if (searchParams.get('post')) {
+      setShowPost(true);
+    }
   }, []);
 
   // Variables
+  const [searchParams, setSearchParams] = useSearchParams();
   const [report, setReport] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [followers, setFollowers] = useState([]);
+  const [showPost, setShowPost] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
   const dataReport = collection(db, 'report');
 
@@ -113,19 +120,6 @@ const Home = () => {
     // setPosts(axiosResponse);
   };
 
-  const getFollowers = () => {
-    setFollowers([
-      ...followers,
-      {
-        id: 1,
-        username: 'Yosuu',
-        subtitle: '1.3k Followers',
-        image_id: 'default-user',
-        onlineStatus: true
-      }
-    ]);
-  };
-
   // Reports(Firebase)
   const getReport = async () => {
     const data = await getDocs(dataReport);
@@ -142,13 +136,17 @@ const Home = () => {
   // };
 
   // Handler
-
   const masonryScript = () => {
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js';
     script.async = true;
 
     document.body.appendChild(script);
+  };
+
+  const showDetailPost = (id) => {
+    window.history.pushState('', '', `/home?post=${id}`);
+    setShowPost(true);
   };
 
   return (
@@ -160,11 +158,25 @@ const Home = () => {
           {!isFetchingData &&
             posts.map((post, index) => {
               return (
-                <div className="post-wrapper" key={index}>
+                <div
+                  className="post-wrapper"
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    showDetailPost(post.id);
+                  }}>
                   <Post post={post} />
                 </div>
               );
             })}
+        </div>
+        <div className={`popup-detailpost ${showPost ? 'show' : ''}`}>
+          <div
+            className="bg-dimmed"
+            onClick={() => {
+              setShowPost(!showPost);
+            }}></div>
+          <DetailPost key={showPost} />
         </div>
       </div>
       {/* <Card style={{ width: '42.5rem' }}>

@@ -23,13 +23,12 @@ const Chat_room = () => {
   Pusher.logToConsole = true;
 
   let liveMessages = [];
-  let channel = ''
+  let channel = '';
 
   useEffect(() => {
     // load all data
     // getAllMessage();
     getRooms();
-    
   }, []);
 
   // AXIOS
@@ -46,38 +45,38 @@ const Chat_room = () => {
   // };
 
   const getRooms = async () => {
-    const temp = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm`, {
-      headers: {
-        'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-      }
-    })
-    .then((res) => {
-      console.log(res)
-      for (let i = 0; i < res.data.data.length; i++) {
-        if(res.data.data[i].id != -1){
-          setRooms([
-            ...rooms,
-            {
-              user_id: res.data.data[i].target_user.id, 
-              room_id: res.data.data[i].id,
-              dm_relation: res.data.data[i].dm_relation,
-              username: res.data.data[i].target_user.username,
-              subtitle:  res.data.data[i].lastChat.message,
-              image_id: res.data.data[i].target_user.image_id,
-              followersCtr: res.data.data[i].target_user.followersCtr, 
-              chats: res.data.data[i].chats
-            }
-          ])
-        } else{
-          setNewmsg(res.data.data[i].unreadCtr)
-          console.log(newMsg)
+    const temp = await axios
+      .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm`, {
+        headers: {
+          'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
         }
-      }
-    });
+      })
+      .then((res) => {
+        console.log(res);
+        for (let i = 0; i < res.data.data.length; i++) {
+          if (res.data.data[i].id != -1) {
+            setRooms([
+              ...rooms,
+              {
+                user_id: res.data.data[i].target_user.id,
+                room_id: res.data.data[i].id,
+                dm_relation: res.data.data[i].dm_relation,
+                username: res.data.data[i].target_user.username,
+                subtitle: res.data.data[i].lastChat.message,
+                image_id: res.data.data[i].target_user.image_id,
+                followersCtr: res.data.data[i].target_user.followersCtr,
+                chats: res.data.data[i].chats
+              }
+            ]);
+          } else {
+            setNewmsg(res.data.data[i].unreadCtr);
+            console.log(newMsg);
+          }
+        }
+      });
   };
 
   // HANDLER
-
 
   const roomClick = async (data) => {
     console.log('clicking', data);
@@ -89,17 +88,17 @@ const Chat_room = () => {
       },
       {
         headers: {
-          'x-auth-token':
-          JSON.parse(localStorage.getItem('x-auth-token'))}
+          'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+        }
       }
     );
 
-    setTarget(data)
-    
+    setTarget(data);
+
     channel = pusher.subscribe(data.dm_relation + ''); // channe; ini = dm_relation, seperti ruangan chat
     // didalam channel ini ada getAllMessage
     channel.bind('sendMessage', function (data) {
-      liveMessages.push(data)
+      liveMessages.push(data);
       console.log(liveMessages);
       setMessages(liveMessages);
     });
@@ -107,21 +106,20 @@ const Chat_room = () => {
 
   const sendMessage = async () => {
     const textValue = document.querySelector('.chat-input').value;
-
+    document.querySelector('.chat-input').value = '';
     await axios.post(
-        `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chat/send`,
-        {
-          dm_relation: target.dm_relation,
-          target_user_id: target.user_id,
-          message: textValue
-        },
-        {
-          headers: {
-            'x-auth-token':
-            JSON.parse(localStorage.getItem('x-auth-token'))}
+      `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chat/send`,
+      {
+        dm_relation: target.dm_relation,
+        target_user_id: target.user_id,
+        message: textValue
+      },
+      {
+        headers: {
+          'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
         }
-      );
-
+      }
+    );
   };
 
   const onKeyDown = (e) => {
@@ -220,59 +218,59 @@ const Chat_room = () => {
               {target.chats.map((chat, index) => {
                 return (
                   <div className="chat-bubble-section" key={index}>
-                      <div className="timespan fw-bold text_small text-center">{chat.momentDate}</div>
-                      
-                      {chat.value.map((chatValue) => {
-                        if(chatValue.user_sender_id == userId){
-                          return (
-                            <div className="chat-bubble-wrapper right">
-                              <div className="chat-bubble">
-                                {chatValue.message}
-                              </div>
-                              <p className="text-muted text_small fw-bold chat-bubble-created">{chatValue.moment}</p>
-                            </div>
-                          )
-                        } else {
-                          return (
-                            <div className="chat-bubble-wrapper left">
-                              <div className="chat-bubble">
-                                {chatValue.message}
-                              </div>
-                              <p className="text-muted text_small fw-bold chat-bubble-created">{chatValue.moment}</p>
-                            </div>
-                          )
-                        }
-                      })}
+                    <div className="timespan fw-bold text_small text-center">{chat.momentDate}</div>
+
+                    {chat.value.map((chatValue) => {
+                      if (chatValue.user_sender_id == userId) {
+                        return (
+                          <div className="chat-bubble-wrapper right">
+                            <div className="chat-bubble">{chatValue.message}</div>
+                            <p className="text-muted text_small fw-bold chat-bubble-created">
+                              {chatValue.moment}
+                            </p>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div className="chat-bubble-wrapper left">
+                            <div className="chat-bubble">{chatValue.message}</div>
+                            <p className="text-muted text_small fw-bold chat-bubble-created">
+                              {chatValue.moment}
+                            </p>
+                          </div>
+                        );
+                      }
+                    })}
                   </div>
-                )
+                );
               })}
-              
+
               {messages.map((chat) => {
-                console.log('chattt', chat)
-                console.log('bool ', parseInt(chat.user_sender_id) == parseInt(userId))
-                    if(parseInt(chat.user_sender_id) == parseInt(userId)){
-                      return (
-                      <div className="chat-bubble-section" key={chat.moment}>
-                        <div className="chat-bubble-wrapper right">
-                          <div className="chat-bubble">
-                            {chat.message}
-                          </div>
-                          <p className="text-muted text_small fw-bold chat-bubble-created">{chat.moment}</p>
-                        </div>
+                console.log('chattt', chat);
+                console.log('bool ', parseInt(chat.user_sender_id) == parseInt(userId));
+                if (parseInt(chat.user_sender_id) == parseInt(userId)) {
+                  return (
+                    <div className="chat-bubble-section" key={chat.moment}>
+                      <div className="chat-bubble-wrapper right">
+                        <div className="chat-bubble">{chat.message}</div>
+                        <p className="text-muted text_small fw-bold chat-bubble-created">
+                          {chat.moment}
+                        </p>
                       </div>
-                      )
-                    } else {
-                      return (
-                      <div className="chat-bubble-section">
-                        <div className="chat-bubble-wrapper left">
-                          <div className="chat-bubble">
-                            {chat.message}
-                          </div>
-                          <p className="text-muted text_small fw-bold chat-bubble-created">{chat.moment}</p>
-                        </div>
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="chat-bubble-section">
+                      <div className="chat-bubble-wrapper left">
+                        <div className="chat-bubble">{chat.message}</div>
+                        <p className="text-muted text_small fw-bold chat-bubble-created">
+                          {chat.moment}
+                        </p>
                       </div>
-                      )
-                    }    
+                    </div>
+                  );
+                }
               })}
             </div>
             <div className="chat-input-container">

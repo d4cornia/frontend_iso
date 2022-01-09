@@ -19,7 +19,7 @@ const authentication = {
         token: localStorage.getItem('x-auth-token')
       };
 
-      // console.log(credential, decryptedData)
+      console.log(credential, decryptedData);
 
       // Jika credential Token sama dengan localstrogae maka user authenticated
       if (JSON.stringify(credential) === JSON.stringify(decryptedData)) {
@@ -38,7 +38,7 @@ const authentication = {
       .then((res) => {
         if (!res.data.error_msg) {
           const credential = {
-            id : JSON.stringify(res.data.data.id), 
+            id: JSON.stringify(res.data.data.id),
             username: JSON.stringify(res.data.data.username),
             email: JSON.stringify(res.data.data.email),
             token: JSON.stringify(res.data.data.token)
@@ -53,7 +53,7 @@ const authentication = {
           localStorage.setItem('email', credential.email);
           localStorage.setItem('x-auth-token', credential.token);
           localStorage.setItem('credential-token', credToken);
-          navigate('/');
+          navigate('/home');
         } else {
           if (res.data.target === 'username') usernameInput.current.showError(res.data.error_msg);
           else if (res.data.target === 'password')
