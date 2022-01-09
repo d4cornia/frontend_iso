@@ -51,48 +51,50 @@ const Home = () => {
 
   // Get Post cma untuk awal saja, untuk update data selanjutnya bisa di dalam component post,
   // Nanti pas user refresh halaman baru get post ini kepanggil lagi jdi urutan post gk bakal berubah kecuali user refresh halamannya
-  const getPosts = () => {
-    // Cuma masukkin dummy, klo misal mau disambungin, yg axios yg di uncomment
-    setPosts((posts) => [
-      ...posts,
-      {
-        id: 1,
-        user: {
-          isFollowing: false,
-          username: 'robby',
-          followersCtr: '1.3k',
-          image_id: 'robby_pfoish'
-        },
-        dateNow: '1h',
-        cloudinary_id: 'post-dummy',
-        isLiked: true,
-        likesCtr: '835',
-        commentsCtr: '15.3k',
-        caption:
-          'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, soluta? Corporis, tempore consequuntur? Dolores, adipisci!',
-        comments: [
-          {
-            id: 3,
-            user: {
-              image_id: 'default-user',
-              username: 'Yoyuu'
-            },
-            comment: 'Lorem ipsum dolor sit amet.',
-            dateNow: '3m ago'
-          },
 
-          {
-            id: 2,
-            user: {
-              image_id: 'default-user',
-              username: 'd4cornia'
-            },
-            comment: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-            dateNow: '7m ago'
-          }
-        ]
-      }
-    ]);
+  const getPosts = async () => {
+    // Cuma masukkin dummy, klo misal mau disambungin, yg axios yg di uncomment
+    // setPosts((posts) => [
+    //   ...posts,
+    //   {
+    //     id: 1,
+    //     user: {
+    //       isFollowing: false,
+    //       username: 'robby',
+    //       followersCtr: '1.3k',
+    //       image_id: 'robby_pfoish'
+    //     },
+    //     dateNow: '1h',
+    //     cloudinary_id: 'post-dummy',
+    //     isLiked: true,
+    //     likesCtr: '835',
+    //     commentsCtr: '15.3k',
+    //     caption:
+    //       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, soluta? Corporis, tempore consequuntur? Dolores, adipisci!',
+    //     comments: [
+    //       {
+    //         id: 3,
+    //         user: {
+    //           image_id: 'default-user',
+    //           username: 'Yoyuu'
+    //         },
+    //         comment: 'Lorem ipsum dolor sit amet.',
+    //         dateNow: '3m ago'
+    //       },
+    //
+    //       {
+    //         id: 2,
+    //         user: {
+    //           image_id: 'default-user',
+    //           username: 'd4cornia'
+    //         },
+    //         comment: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+    //         dateNow: '7m ago'
+    //       }
+    //     ]
+    //   }
+    // ]);
+
 
     // const axiosResponse = await axios
     //   .post(
@@ -109,7 +111,46 @@ const Home = () => {
     //   .then((res) => {
     //     return res.data.data;
     //   });
-    // // Waktu itu aku kesusahan gimana caranya pake useState array of object, nnti coba cari bareng" ae
+
+     await axios
+        .post(
+            `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
+            {
+              size: 20
+            },
+            {
+              headers: {
+                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+              }
+            }
+        )
+        .then((res) => {
+        console.log(res.data.data)
+          for (let i = 0; i < res.data.data.length; i++) {
+            setPosts((posts) => [
+              ...posts,
+              {
+                id: res.data.data[i].id,
+                user: {
+                  isFollowing: res.data.data[i].user.isFollowing,
+                  username: res.data.data[i].user.username,
+                  followersCtr: res.data.data[i].user.followersCtr,
+                  image_id: res.data.data[i].user.image_id
+                },
+                dateNow: res.data.data[i].dateNow,
+                cloudinary_id: res.data.data[i].cloudinary_id,
+                isLiked: res.data.data[i].isLiked,
+                likesCtr: res.data.data[i].likesCtr,
+                commentsCtr: res.data.data[i].commentsCtr,
+                caption: res.data.data[i].caption
+              }
+            ]);
+          }
+
+
+        });
+
+    // Waktu itu aku kesusahan gimana caranya pake useState array of object, nnti coba cari bareng" ae
     // setPosts(axiosResponse);
   };
 
