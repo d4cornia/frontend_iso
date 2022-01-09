@@ -44,7 +44,17 @@ const Chat_room = () => {
     console.log('load', allMessages);
   };
 
-  const getRooms = () => {
+  const getRooms = async () => {
+    const temp = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats/`, {
+      headers: {
+        'x-auth-token':
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
+      }
+    })
+    .then((res) => {
+      console.log(res);
+    });
+
     setRooms([
       ...rooms,
       {
@@ -86,9 +96,23 @@ const Chat_room = () => {
 
   // setMessage('');
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const textValue = document.querySelector('.chat-input').value;
-    const hello = 'a';
+
+    await axios.post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chat/send`,
+        {
+          dm_relation: '',
+          target_user_id: target,
+          message: textValue
+        },
+        {
+          headers: {
+            'x-auth-token':
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
+          }
+        }
+      );
   };
 
   const onKeyDown = (e) => {
