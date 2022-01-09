@@ -14,7 +14,10 @@ import dummyImage from '../../Image/bgregister.jpg';
 import ProfileImage from './ProfileImage';
 
 function Post(props) {
+
   // Variables
+  // const [isLike,setIsLike] = useState(props.post.isLiked);
+  // const [isFollowing,setIsFollowing] = useState(props.post.isFollowing);
   const [post, setPost] = useState(props.post);
   const [showComments, setShowComments] = useState(false);
   const [allowPost, setAllowPost] = useState(false);
@@ -36,6 +39,14 @@ function Post(props) {
       )
       .then((res) => {
         // Update Follower Count
+        setPost((prevState) => ({
+          ...prevState,user:{
+            ...prevState.user,
+            isFollowing:true,
+            followersCtr: prevState.user.followersCtr+1
+          }
+        }))
+
       })
       .catch((err) => {
         console.info(err);
@@ -76,8 +87,13 @@ function Post(props) {
         }
       )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         // Update Like Count
+        setPost((prevState) => ({
+          ...prevState,
+          isLiked:true,
+          likesCtr:prevState.likesCtr+1
+        }))
       })
       .catch((err) => {
         console.log(err);
@@ -100,6 +116,11 @@ function Post(props) {
       .then((res) => {
         console.log(res);
         // Update Like Count
+        setPost((prevState) => ({
+          ...prevState,
+          isLiked:false,
+          likesCtr:prevState.likesCtr-1
+        }))
       });
   };
 
@@ -115,17 +136,35 @@ function Post(props) {
       <span
         className="follow-button link"
         onClick={() => {
-          btnFollow(post.user.id);
+          btnFollow(post.id);
         }}>
         Follow
       </span>
     );
   };
+
+  // const contentIsLiked = () => {
+  //   if (post.isLiked == true) {
+  //     return <span>Me</span>;
+  //   }
+  //   if (post.user.isFollowing) {
+  //     return <span>Following</span>;
+  //   }
+  //   return (
+  //       <span
+  //           className="follow-button link"
+  //           onClick={() => {
+  //             btnFollow(post.id);
+  //           }}>
+  //       Follow
+  //     </span>
+  //   );
+  // };
+
   // Handler
 
   const handleCommentSubmit = (e) => {
     e.preventDefault();
-
     console.log(e.target.commentText.value);
   };
 
@@ -145,7 +184,7 @@ function Post(props) {
           {/* <img className={'card-head_image'} src={profilImage} alt="Profil Image" /> */}
           <div className="card-head_profile">
             <p className="card-head_profile-name fw-bold">{post.user.username}</p>
-            <p className="card-head_profile-followers text_small fw-bold text-muted">
+            <p key={post.user.isFollowing} className="card-head_profile-followers text_small fw-bold text-muted">
               {post.user.followersCtr} Followers • {contentIsFollowing()}
             </p>
             <p className="post-created fw-bold text-muted">{post.dateNow}</p>
@@ -164,7 +203,7 @@ function Post(props) {
         </div>
         <div className="card-caption">
           <div className="card-caption_action">
-            <div className={`card-caption_action-button`}>
+            <div key={post.isLiked} className={`card-caption_action-button`}>
               <svg
                 className={`action-button-icon filled ${post.isLiked ? 'selected' : ''}`}
                 viewBox="0 0 1024 1024"
@@ -176,7 +215,12 @@ function Post(props) {
                   onClick={(e) => {
                     e.stopPropagation();
                     // ganti Toggle Like
-                    likePost(post.id);
+                    if(post.isLiked == true){
+                      unlikePost(post.id);
+                    }else{
+                      likePost(post.id);
+                    }
+
                   }}
                 />
               </svg>
