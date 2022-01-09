@@ -219,64 +219,6 @@ const Chat_room = () => {
                 <div className="chat-bubble">Lorem ipsum dolor sit amet.</div>
                 <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
               </div>
-              <div className="chat-bubble-wrapper left">
-                <div className="chat-bubble">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam, reprehenderit
-                  cupiditate vel magni dolores velit officia dolore vero expedita nisi!
-                </div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper right">
-                <div className="chat-bubble">Lorem ipsum dolor sit amet.</div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper left">
-                <div className="chat-bubble">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam, reprehenderit
-                  cupiditate vel magni dolores velit officia dolore vero expedita nisi!
-                </div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper right">
-                <div className="chat-bubble">Lorem ipsum dolor sit amet.</div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-            </div>
-            <div className="chat-bubble-section">
-              <div className="timespan fw-bold text_small text-center">Today</div>
-              <div className="chat-bubble-wrapper left">
-                <div className="chat-bubble">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam, reprehenderit
-                  cupiditate vel magni dolores velit officia dolore vero expedita nisi!
-                </div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper right">
-                <div className="chat-bubble">Lorem ipsum dolor sit amet.</div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper left">
-                <div className="chat-bubble">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam, reprehenderit
-                  cupiditate vel magni dolores velit officia dolore vero expedita nisi!
-                </div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper right">
-                <div className="chat-bubble">Lorem ipsum dolor sit amet.</div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper left">
-                <div className="chat-bubble">
-                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ullam, reprehenderit
-                  cupiditate vel magni dolores velit officia dolore vero expedita nisi!
-                </div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
-              <div className="chat-bubble-wrapper right">
-                <div className="chat-bubble">Lorem ipsum dolor sit amet.</div>
-                <p className="text-muted text_small fw-bold chat-bubble-created">1m ago</p>
-              </div>
             </div>
           </div>
           <div className="chat-input-container">
