@@ -89,7 +89,7 @@ const Chat_room = () => {
   };
 
   const sendMessage = () => {
-    console.log('send', document.querySelector('.chat-input').value);
+    const textValue = document.querySelector('.chat-input').value;
   };
 
   const onKeyDown = (e) => {
