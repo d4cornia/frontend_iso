@@ -114,7 +114,7 @@ const Home = () => {
       {
         id: 1,
         username: 'Yosuu',
-        subtitle: '1.3k',
+        subtitle: '1.3k Followers',
         image_id: 'default-user',
         onlineStatus: true
       }
