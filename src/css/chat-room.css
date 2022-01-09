@@ -21,6 +21,10 @@
   display: none;
 }
 
+.room-wrapper {
+  height: 100%;
+}
+
 .expander-icon {
   width: 2.5rem;
   height: 2.5rem;
