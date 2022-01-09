@@ -31,6 +31,25 @@
   opacity: 0.3;
 }
 
+.empty-chat {
+  width: 32rem;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px var(--clr-body-400);
+  border-radius: 0.75rem;
+}
+
+.empty-chat-icon {
+  width: 3rem;
+}
+
+.empty-chat-icon path {
+  fill: var(--clr-body-400);
+}
+
 .chat-container {
   width: 32rem;
   height: 100%;

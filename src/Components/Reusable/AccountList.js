@@ -26,7 +26,7 @@ function AccountList(props) {
           return (
             <div
               className={`accountlists-content_item ${
-                index === props.selectedIndex ? 'selected' : ''
+                account.id === props.selectedId ? 'selected' : ''
               }`}
               onClick={() => {
                 props.Clicked(account);
