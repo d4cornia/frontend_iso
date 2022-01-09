@@ -139,7 +139,7 @@ const Chat_room = () => {
   };
 
   return (
-    <div className="content-container chatroom">
+    <div className="content-container chatroom full-height">
       <div className="content-wrapper">
         <div className="rooms-container" tabIndex={0}>
           <div className="room-container-expander">
@@ -162,6 +162,7 @@ const Chat_room = () => {
               subtitle="100 new messages"
               selectedId={1}
               Clicked={roomClick}
+              childClassName="room-item"
             />
           </div>
         </div>

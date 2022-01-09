@@ -10,6 +10,9 @@ import { Image, Video } from 'cloudinary-react';
 // Dummy Image
 import dummyImage from '../../Image/bgregister.jpg';
 
+// Components
+import ProfileImage from './ProfileImage';
+
 function Post(props) {
   // Variables
   const [post, setPost] = useState(props.post);
@@ -134,11 +137,9 @@ function Post(props) {
     <Card className="post-card">
       <Card.Body>
         <div className="card-head">
-          <Image
-            cloud_name={'projekiso'}
-            publicId={'user/profiles/' + post.user.image_id}
-            fetch-format="auto"
-            quality="auto"
+          <ProfileImage
+            username={post.user.username}
+            publicId={post.user.image_id}
             className="card-head_image"
           />
           {/* <img className={'card-head_image'} src={profilImage} alt="Profil Image" /> */}
@@ -163,9 +164,9 @@ function Post(props) {
         </div>
         <div className="card-caption">
           <div className="card-caption_action">
-            <div className={`card-caption_action-like-button`}>
+            <div className={`card-caption_action-button`}>
               <svg
-                className={`like-icon filled ${post.isLiked ? 'selected' : ''}`}
+                className={`action-button-icon filled ${post.isLiked ? 'selected' : ''}`}
                 viewBox="0 0 1024 1024"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg">
@@ -177,9 +178,21 @@ function Post(props) {
                     likePost(post.id);
                   }}
                 />
-                {post.id}
               </svg>
-              <p className="like-count text-muted fw-bold">{post.likesCtr} likes</p>
+              <p className="action-button-text text-muted fw-bold">{post.likesCtr} likes</p>
+            </div>
+            <div className={`card-caption_action-button`}>
+              <svg
+                className="action-button-icon filled"
+                viewBox="0 0 97 97"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M48.5001 9.09375C41.6563 9.09323 34.9303 10.8751 28.9845 14.2639C23.0386 17.6527 18.0778 22.5316 14.5905 28.4203C11.1032 34.3089 9.20962 41.0043 9.09623 47.8471C8.98284 54.69 10.6535 61.4444 13.9438 67.4453L10.7231 78.7746C10.4202 79.8171 10.401 80.9215 10.6674 81.9739C10.9338 83.0263 11.4763 83.9886 12.2387 84.7613C13.0011 85.5274 13.9567 86.0728 15.0041 86.3397C16.0515 86.6065 17.1515 86.5849 18.1876 86.277L29.5548 83.0563C34.8226 85.9435 40.6809 87.5882 46.6818 87.8645C52.6826 88.1409 58.6673 87.0416 64.1782 84.6508C69.6892 82.2599 74.5805 78.6407 78.4785 74.0699C82.3765 69.499 85.1778 64.0975 86.6684 58.2781C88.159 52.4588 88.2995 46.3757 87.079 40.4937C85.8584 34.6118 83.3093 29.0867 79.6264 24.3409C75.9435 19.595 71.2243 15.754 65.8296 13.1114C60.4348 10.4688 54.5073 9.09458 48.5001 9.09375V9.09375ZM30.3126 53.0469C29.4133 53.0469 28.5342 52.7802 27.7865 52.2806C27.0387 51.781 26.4559 51.0709 26.1118 50.24C25.7677 49.4092 25.6776 48.495 25.8531 47.613C26.0285 46.7309 26.4615 45.9208 27.0974 45.2849C27.7333 44.649 28.5435 44.2159 29.4255 44.0405C30.3075 43.8651 31.2217 43.9551 32.0526 44.2992C32.8834 44.6434 33.5935 45.2262 34.0932 45.9739C34.5928 46.7216 34.8594 47.6007 34.8594 48.5C34.8594 49.7059 34.3804 50.8624 33.5277 51.7151C32.675 52.5678 31.5185 53.0469 30.3126 53.0469ZM48.5001 53.0469C47.6008 53.0469 46.7217 52.7802 45.974 52.2806C45.2262 51.781 44.6434 51.0709 44.2993 50.24C43.9552 49.4092 43.8651 48.495 44.0406 47.613C44.216 46.7309 44.649 45.9208 45.2849 45.2849C45.9208 44.649 46.731 44.2159 47.613 44.0405C48.495 43.8651 49.4092 43.9551 50.2401 44.2992C51.0709 44.6434 51.781 45.2262 52.2806 45.9739C52.7803 46.7216 53.0469 47.6007 53.0469 48.5C53.0469 49.7059 52.5679 50.8624 51.7152 51.7151C50.8625 52.5678 49.706 53.0469 48.5001 53.0469ZM66.6876 53.0469C65.7883 53.0469 64.9092 52.7802 64.1615 52.2806C63.4137 51.781 62.8309 51.0709 62.4868 50.24C62.1427 49.4092 62.0526 48.495 62.2281 47.613C62.4035 46.7309 62.8365 45.9208 63.4724 45.2849C64.1083 44.649 64.9185 44.2159 65.8005 44.0405C66.6825 43.8651 67.5967 43.9551 68.4276 44.2992C69.2584 44.6434 69.9685 45.2262 70.4682 45.9739C70.9678 46.7216 71.2344 47.6007 71.2344 48.5C71.2344 49.7059 70.7554 50.8624 69.9027 51.7151C69.05 52.5678 67.8935 53.0469 66.6876 53.0469Z"
+                  fill="#111111"
+                />
+              </svg>
+              <p className="action-button-text text-muted fw-bold">{post.commentsCtr} comments</p>
             </div>
           </div>
           <p className="card-caption_content">
@@ -187,65 +200,7 @@ function Post(props) {
             {post.caption}
           </p>
         </div>
-        <div className={`card-comments`}>
-          <div className="card-comments-header">
-            <p className="text-muted fw-bold">Comments Section</p>
-            <p className="total-comments text-muted text_small fw-bold">{'1.3k'}</p>
-          </div>
-          {post.comments.map((comment) => {
-            return (
-              <div className="card-comments_item" key={comment.id}>
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/' + comment.user.image_id}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">
-                    {comment.user.username}
-                  </span>
-                  {comment.comment}
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">
-                  {comment.dateNow}
-                </p>
-              </div>
-            );
-          })}
-          <div className="card-comments_show-button">
-            <p
-              className="link fw-bold text-muted"
-              onClick={() => {
-                setShowComments(true);
-              }}>
-              View more
-            </p>
-          </div>
-        </div>
       </Card.Body>
-      <Card.Footer>
-        <form action="#" method="post" className="form-comment" onSubmit={handleCommentSubmit}>
-          <textarea
-            className="form-control comment-input"
-            placeholder="Add comment..."
-            name="commentText"
-            onBlur={(e) => {
-              setAllowPost(e.target.value !== '');
-            }}
-            onChange={(e) => {
-              setAllowPost(e.target.value.length !== '');
-            }}></textarea>
-          <p
-            className={`post-comment ${allowPost ? '' : 'disabled'}`}
-            onClick={(e) => {
-              sendComment(post.id, e.target.value);
-            }}>
-            Post Comment
-          </p>
-        </form>
-      </Card.Footer>
     </Card>
   );
 }

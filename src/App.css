@@ -167,11 +167,15 @@ body {
 
 .content-container {
   width: 100%;
-  height: calc(100vh - 6rem);
   display: flex;
   flex-flow: column;
   align-items: center;
+  margin-top: 6rem;
   --width: 60rem;
+}
+
+.content-container.full-height {
+  height: calc(100vh - 6rem);
 }
 
 .content-wrapper {
@@ -179,6 +183,10 @@ body {
   padding: 0 2rem;
   display: flex;
   gap: 1rem;
+}
+
+.user-image {
+  cursor: pointer;
 }
 
 /* Override Bootstrap */
@@ -226,13 +234,22 @@ body {
   .content-container {
     --width: calc(100% - 2rem);
   }
+
+  .content-container.full-height {
+    margin-top: 5rem;
+    height: calc(100vh - 5rem);
+  }
 }
 
 /* X-Small devices (portrait phones, less than 576px) */
 @media (max-width: 575.98px) {
   .content-container {
     --width: calc(100%);
-    height: calc(100vh - 4rem);
+  }
+
+  .content-container.full-height {
+    margin-top: 4rem;
+    height: calc(100vh - 8rem);
   }
 }
 

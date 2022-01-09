@@ -22,7 +22,11 @@ const Home = () => {
     getPosts();
     getFollowers();
     setIsFetchingData(false);
+
+    // Tambahan script Masonry
+    masonryScript();
   }, []);
+
   // Variables
   const [report, setReport] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -49,7 +53,7 @@ const Home = () => {
   // Nanti pas user refresh halaman baru get post ini kepanggil lagi jdi urutan post gk bakal berubah kecuali user refresh halamannya
   const getPosts = () => {
     // Cuma masukkin dummy, klo misal mau disambungin, yg axios yg di uncomment
-    setPosts([
+    setPosts((posts) => [
       ...posts,
       {
         id: 1,
@@ -63,6 +67,7 @@ const Home = () => {
         cloudinary_id: 'post-dummy',
         isLiked: true,
         likesCtr: '835',
+        commentsCtr: '15.3k',
         caption:
           'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, soluta? Corporis, tempore consequuntur? Dolores, adipisci!',
         comments: [
@@ -138,19 +143,28 @@ const Home = () => {
 
   // Handler
 
+  const masonryScript = () => {
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js';
+    script.async = true;
+
+    document.body.appendChild(script);
+  };
+
   return (
-    <div className={'content-container center-items'}>
+    <div className={'content-container home'}>
       <div className="content-wrapper">
-        <div className="posts-container">
+        <div
+          className="posts-container js-masonry"
+          data-masonry-options='{ "itemSelector": ".post-wrapper", "horizontalOrder": "true", "columnWidth": ".post-wrapper" }'>
           {!isFetchingData &&
-            posts.map((post) => {
-              return <Post key={post.id} post={post} />;
+            posts.map((post, index) => {
+              return (
+                <div className="post-wrapper" key={index}>
+                  <Post post={post} />
+                </div>
+              );
             })}
-        </div>
-        <div className="followers-container">
-          {!isFetchingData && (
-            <AccountList accounts={followers} title="Followers" subtitle={'1.1k followers'} />
-          )}
         </div>
       </div>
       {/* <Card style={{ width: '42.5rem' }}>
@@ -182,13 +196,13 @@ const Home = () => {
         </Card.Footer>
       </Card> */}
 
-      <button
+      {/* <button
         onClick={() => {
           widget.open();
         }}
         className="cloudinary-button">
         Upload files
-      </button>
+      </button> */}
       {/*{report.map((rep)=> {*/}
       {/*  return (*/}
       {/*      <div>*/}

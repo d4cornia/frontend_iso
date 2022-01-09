@@ -25,6 +25,10 @@
   height: 100%;
 }
 
+.room-item {
+  border-bottom: solid 1px var(--clr-body-200);
+}
+
 .expander-icon {
   width: 2.5rem;
   height: 2.5rem;
@@ -186,6 +190,7 @@
   .rooms-container:focus-within {
     width: 20rem;
     height: calc(100vh - 10rem);
+    box-shadow: var(--shadow);
   }
 
   .room-container-expander {
@@ -204,7 +209,8 @@
     opacity: 1;
   }
 
-  .chat-container {
+  .chat-container,
+  .empty-chat {
     width: 100%;
   }
 
@@ -218,6 +224,7 @@
 @media (max-width: 767.98px) {
   .rooms-container {
     left: 1rem;
+    top: 5rem;
   }
 }
 
@@ -225,7 +232,7 @@
 @media (max-width: 575.98px) {
   .chatroom .content-wrapper {
     height: 100%;
-    padding-bottom: 4rem;
+    padding-bottom: 0;
   }
 
   .rooms-container {
