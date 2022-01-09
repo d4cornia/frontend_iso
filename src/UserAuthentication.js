@@ -6,21 +6,22 @@ const authentication = {
     const user = { isLoggedIn: false };
 
     // Decrypt Credential Token
-    const bytes = CryptoJS.AES.decrypt(
-      localStorage.getItem('credential-token'),
-      process.env.REACT_APP_SECRET_AUTH_CODE
-    );
-    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    const cred_token = localStorage.getItem('credential-token');
 
-    const credential = {
-      username: localStorage.getItem('username'),
-      email: localStorage.getItem('email'),
-      token: localStorage.getItem('x-auth-token')
-    };
+    if (cred_token) {
+      const bytes = CryptoJS.AES.decrypt(cred_token, process.env.REACT_APP_SECRET_AUTH_CODE);
+      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-    // Jika credential Token sama dengan localstrogae maka user authenticated
-    if (JSON.stringify(credential) === JSON.stringify(decryptedData)) {
-      user.isLoggedIn = true;
+      const credential = {
+        username: localStorage.getItem('username'),
+        email: localStorage.getItem('email'),
+        token: localStorage.getItem('x-auth-token')
+      };
+
+      // Jika credential Token sama dengan localstrogae maka user authenticated
+      if (JSON.stringify(credential) === JSON.stringify(decryptedData)) {
+        user.isLoggedIn = true;
+      }
     }
 
     return user && user.isLoggedIn;

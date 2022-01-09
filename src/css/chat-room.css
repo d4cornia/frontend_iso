@@ -5,7 +5,7 @@
 
 .rooms-container {
   flex: 1;
-  height: 100%;
+  height: calc(100vh - 8rem);
   padding: 1rem;
   background-color: var(--clr-white);
   border-radius: 0.75rem;
