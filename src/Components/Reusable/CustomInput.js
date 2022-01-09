@@ -1,6 +1,6 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import { Form } from 'react-bootstrap';
-import useInput from 'customHooks/useInput';
+import useInput from '../../customHooks/useInput';
 
 const CustomInput = forwardRef((props, ref) => {
   // VARIABLES
@@ -29,10 +29,6 @@ const CustomInput = forwardRef((props, ref) => {
     clearError();
   }, [input]);
 
-  useEffect(() => {
-    console.log(input,props.name,props.defaultValue)
-  }, []);
-
   const setError = (message) => {
     setStateInput(-1);
     setErrorMessageInput(message);
@@ -57,7 +53,7 @@ const CustomInput = forwardRef((props, ref) => {
 
   return (
     <Form.Group
-      className={`mb-3 input-container ${props.isHidden ? 'hidden' : ''}`}
+      className={`mb-3 input-container ${props.isHidden ? 'hidden' : ''} ${props.className}`}
       controlId={props.name}>
       {props.label && <Form.Label>{props.label}</Form.Label>}
       <Form.Control

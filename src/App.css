@@ -161,15 +161,24 @@ smaller,
 
 /* Global Styles */
 
-.content-container {
-  width: 100%;
-  min-height: 100%;
-  display: flex;
-  flex-flow: column;
+body {
+  background-color: var(--clr-body-200) !important;
 }
 
-.content-container.center-items {
+.content-container {
+  width: 100%;
+  height: calc(100vh - 6rem);
+  display: flex;
+  flex-flow: column;
   align-items: center;
+  --width: 60rem;
+}
+
+.content-wrapper {
+  width: var(--width);
+  padding: 0 2rem;
+  display: flex;
+  gap: 1rem;
 }
 
 /* Override Bootstrap */
@@ -198,6 +207,32 @@ smaller,
 @keyframes shine {
   to {
     background-position: 200% center;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 991.98px) {
+  .content-container {
+    --width: calc(100% - 4rem);
+  }
+
+  .content-wrapper {
+    padding: 0;
+  }
+}
+
+/* Medium devices (tablets, less than 992px) */
+@media (max-width: 767.98px) {
+  .content-container {
+    --width: calc(100% - 2rem);
+  }
+}
+
+/* X-Small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+  .content-container {
+    --width: calc(100%);
+    height: calc(100vh - 4rem);
   }
 }
 

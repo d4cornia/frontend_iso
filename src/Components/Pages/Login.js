@@ -1,17 +1,18 @@
 import React, { useEffect, useRef } from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import userAuth from '../../UserAuthentication';
 // Assets
-import 'css/Login.css';
-import loginImageSrc from 'Image/login-image.jpg';
+import '../../css/Login.css';
+import loginImageSrc from '../../Image/login-image.jpg';
 // Components
-import Logo from 'Components/Reusable/Logo';
-import CustomInput from 'Components/Reusable/CustomInput';
+import Logo from '../Reusable/Logo';
+import CustomInput from '../Reusable/CustomInput';
 
 const Login = () => {
   useEffect(() => {
     document.title = 'Login';
+    userAuth.logout();
   }, []);
 
   const navigate = useNavigate();
@@ -20,39 +21,12 @@ const Login = () => {
   const username = useRef();
   const password = useRef();
 
-  // AXIOS
-
-  const login = async (usernameValue, passwordValue) => {
-    await axios
-      .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/login`, {
-        emailUsername: usernameValue,
-        password: passwordValue
-      })
-      .then((res) => {
-        if (!res.data.error_msg) {
-          localStorage.setItem('username', JSON.stringify(res.data.data.username));
-          localStorage.setItem('email', JSON.stringify(res.data.data.email));
-          localStorage.setItem('name', JSON.stringify(res.data.data.name));
-          localStorage.setItem('x-auth-token', JSON.stringify(res.data.data.token));
-          navigate('/home');
-
-        } else {
-          if (res.data.target === 'username') username.current.showError(res.data.error_msg);
-          else if (res.data.target === 'password') password.current.showError(res.data.error_msg);
-        }
-      })
-      .catch((err) => {
-        console.info(err);
-      });
-  };
-
-  // HANDLRE
-
+  // HANDLER
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Try Login
-    login(username.current.value, password.current.value);
+    userAuth.login(username, password, navigate);
   };
 
   return (

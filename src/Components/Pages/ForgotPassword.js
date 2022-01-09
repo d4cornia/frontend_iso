@@ -3,15 +3,15 @@ import { Form, Button } from 'react-bootstrap';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // Assets
-import registerImageSrc from 'Image/new-register.jpg';
-import 'css/ForgotPassword.css';
+import forgotPasswordSrc from '../../Image/forgot-password.jpg';
+import '../../css/ForgotPassword.css';
 // Custom Functions
-import useInput from 'customHooks/useInput';
-import Validator from 'helper/validator';
-import 'helper/functions';
+import useInput from '../../customHooks/useInput';
+import Validator from '../../helper/validator';
+import '../../helper/functions';
 // Components
-import Logo from 'Components/Reusable/Logo';
-import CustomInput from 'Components/Reusable/CustomInput';
+import Logo from '../Reusable/Logo';
+import CustomInput from '../Reusable/CustomInput';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -22,6 +22,7 @@ const ForgotPassword = () => {
 
   // VARIABLES
   const [forgotStep, setForgotStep] = useState(1);
+  const [loadingSendOtp, setLoadingSendOtp] = useState(false);
 
   // FIELDS
   const otp = useRef();
@@ -43,6 +44,21 @@ const ForgotPassword = () => {
           setForgotStep(forgotStep + 1);
         }
       });
+  };
+
+  const resendOtp = async (emailAddress) => {
+    setLoadingSendOtp(true);
+    await axios
+      .post(`${process.env.REACT_APP_BASE_API_URL}/api/users/profile/password/resendOtp`, {
+        email: emailAddress.current.value
+      })
+      .then((res) => {
+        if (res.data.error_msg) {
+          setForgotStep(forgotStep - 1);
+          emailAddress.current.showError(res.data.error_msg);
+        }
+      });
+    setLoadingSendOtp(false);
   };
 
   const validateOtp = async (emailAddress, verificationCode) => {
@@ -147,17 +163,50 @@ const ForgotPassword = () => {
     <div>
       <div className="forgotpassword-container">
         <div className="forgotpassword-image-container d-none d-xl-block">
-          <img className="forgotpassword-image" src={registerImageSrc} alt="Register Image" />
+          <img
+            className="forgotpassword-image"
+            src={forgotPasswordSrc}
+            alt="Register Image"
+          />
         </div>
         <div className="forgotpassword-form-container">
           <div className="forgotpassword-form-wrapper">
             <Logo className={'logo'} />
             <Form className="forgotpassword-form" onSubmit={handleSubmit}>
               <h2 className={'forgotpassword-form-title fw-bold'}>Forgot Password</h2>
-              <p>
-                Please enter your <span className="fw-bold text_primary">Email Address</span> to
-                receive the Confirmation Pin
-              </p>
+
+              {forgotStep == 1 && (
+                <p>
+                  Please enter your <span className="fw-bold text_primary">Email Address</span> to
+                  receive the Confirmation Pin
+                </p>
+              )}
+
+              {forgotStep == 2 && (
+                <p>
+                  We have sent the Confirmation Pin to{' '}
+                  <span className="fw-bold text_primary">{email.current.value}</span>.{' '}
+                  {loadingSendOtp && <span className="fw-bold text-muted">Email Sent!</span>}
+                  {!loadingSendOtp && (
+                    <React.Fragment>
+                      <span
+                        className="link"
+                        onClick={() => {
+                          resendOtp(email);
+                        }}>
+                        Resend Pin
+                      </span>{' '}
+                      in case you haven't receive any.
+                    </React.Fragment>
+                  )}
+                </p>
+              )}
+              {forgotStep == 3 && (
+                <p>
+                  You now can change your password. Make sure your password is{' '}
+                  <span className="fw-bold text_primary">secure</span> and you remember them.
+                </p>
+              )}
               <p className="fw-bold text-muted text_small">Step {forgotStep} of 3</p>
               <CustomInput
                 ref={email}

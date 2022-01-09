@@ -1,0 +1,94 @@
+.accountlists-container {
+  width: 100%;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+}
+
+.accountlists-header_title,
+.accountlists-header_subtitle {
+  margin-bottom: 0;
+}
+
+.accountlists-header_subtitle {
+  color: rgb(var(--bs-danger-rgb)) !important;
+  opacity: 0.6;
+}
+
+.accountlists-content {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+  gap: 1rem;
+  overflow: auto;
+}
+
+.accountlists-content_item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: solid 1px var(--clr-body-200);
+  cursor: pointer;
+  border-radius: 0.75rem;
+  opacity: 0.6;
+  position: relative;
+  transition: all 0.1s;
+}
+
+.accountlists-content_item:hover {
+  opacity: 1;
+}
+
+.accountlists-content_item.selected {
+  opacity: 1;
+}
+
+.accountlists-content_item-detail_subtitle {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+.accountlists-content_item-image {
+  width: 3rem;
+  height: 3rem;
+}
+
+.accountlists-content_item-image_content {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.accountlists-content_item-detail {
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+}
+
+.accountlists-content_item-detail_title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.accountlists-content_item-detail_online-status {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  opacity: 0.3;
+}
+
+.accountlists-content_item-detail_online-status.online {
+  background-color: rgb(var(--bs-success-rgb));
+}
+
+.accountlists-content_item-detail_online-status.offline {
+  background-color: rgb(var(--bs-danger-rgb));
+}

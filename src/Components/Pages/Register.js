@@ -3,15 +3,15 @@ import { Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 // Assets
-import registerImageSrc from 'Image/new-register.jpg';
-import 'css/Register.css';
+import registerImageSrc from '../../Image/new-register.jpg';
+import '../../css/Register.css';
 // Custom Functions
-import Validator from 'helper/validator';
-import _calculateAge from 'helper/functions';
-import 'helper/functions';
+import Validator from '../../helper/validator';
+import _calculateAge from '../../helper/functions';
+import '../../helper/functions';
 // Components
-import CustomInput from 'Components/Reusable/CustomInput';
-import Logo from 'Components/Reusable/Logo';
+import Logo from '../Reusable/Logo';
+import CustomInput from '../Reusable/CustomInput';
 
 const Register = () => {
   useEffect(() => {
