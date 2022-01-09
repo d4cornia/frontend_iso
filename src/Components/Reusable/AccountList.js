@@ -27,7 +27,10 @@ function AccountList(props) {
             <div
               className={`accountlists-content_item ${
                 index === props.selectedIndex ? 'selected' : ''
-              }`}>
+              }`}
+              onClick={() => {
+                props.Clicked(account);
+              }}>
               <div className="accountlists-content_item-image">
                 <Image
                   cloud_name={'projekiso'}

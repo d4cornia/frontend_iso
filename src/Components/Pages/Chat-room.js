@@ -66,30 +66,29 @@ const Chat_room = () => {
     console.log(allMessages);
   });
 
-  const handleSubmit = (e) => {
-    console.log('submit');
-    e.preventDefault();
-
-    // await axios.post(
-    //   `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats`,
-    //   {
-    //     dm_relation: 1,
-    //     target_user_id: target,
-    //     message: message
-    //   },
-    //   {
-    //     headers: {
-    //       'x-auth-token':
-    //         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
-    //     }
-    //   }
-    // );
-
-    // setMessage('');
+  const roomClick = (data) => {
+    console.log('clicking', data);
   };
+  // await axios.post(
+  //   `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats`,
+  //   {
+  //     dm_relation: 1,
+  //     target_user_id: target,
+  //     message: message
+  //   },
+  //   {
+  //     headers: {
+  //       'x-auth-token':
+  //         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
+  //     }
+  //   }
+  // );
+
+  // setMessage('');
 
   const sendMessage = () => {
     const textValue = document.querySelector('.chat-input').value;
+    const hello = 'a';
   };
 
   const onKeyDown = (e) => {
@@ -160,6 +159,7 @@ const Chat_room = () => {
               title="Direct Messages"
               subtitle="100 new messages"
               selectedIndex={0}
+              Clicked={roomClick}
             />
           </div>
         </div>
@@ -256,7 +256,12 @@ const Chat_room = () => {
             </div>
           </div>
           <div className="chat-input-container">
-            <form action="#" method="post" onSubmit={handleSubmit}>
+            <form
+              action="#"
+              method="post"
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}>
               <textarea
                 className="form-control chat-input"
                 placeholder="Type here..."
