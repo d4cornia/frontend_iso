@@ -11,11 +11,10 @@ import AccountList from '../Reusable/AccountList';
 
 const Chat_room = () => {
   // Variables
-  const [username, setUsername] = useState(JSON.parse(localStorage.getItem('username')));
+  const [newMsg, setNewmsg] = useState(0);
   const [userId, setUserId] = useState(JSON.parse(localStorage.getItem('id')));
   const [target, setTarget] = useState([]);
   const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState('');
   const [rooms, setRooms] = useState([]);
   const pusher = new Pusher('f1a87665adcea5a04ace', {
     cluster: 'ap1'
@@ -23,8 +22,8 @@ const Chat_room = () => {
   // setting up pusher
   Pusher.logToConsole = true;
 
-  let allMessages = [];
-  let ctr = 0;
+  let liveMessages = [];
+  let channel = ''
 
   useEffect(() => {
     // load all data
@@ -35,82 +34,76 @@ const Chat_room = () => {
 
   // AXIOS
 
-  const getAllMessage = async () => {
-    const temp = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats/`, {
-      headers: {
-        'x-auth-token':
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
-      }
-    });
-    allMessages = temp.data.data;
-    console.log('load', allMessages);
-  };
+  // const getAllMessage = async () => {
+  //   const temp = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats/`, {
+  //     headers: {
+  //       'x-auth-token':
+  //         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
+  //     }
+  //   });
+  //   allMessages = temp.data.data;
+  //   console.log('load', allMessages);
+  // };
 
   const getRooms = async () => {
     const temp = await axios.get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm`, {
       headers: {
-        'x-auth-token':
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
+        'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
       }
     })
     .then((res) => {
       console.log(res)
       for (let i = 0; i < res.data.data.length; i++) {
-        setRooms([
-          ...rooms,
-          {
-            id: res.data.data[i].id,
-            username: res.data.data[i].target_user.username,
-            subtitle:  res.data.data[i].lastChat.message,
-            image_id: res.data.data[i].target_user.image_id,
-            followersCtr: res.data.data[i].target_user.followersCtr, 
-            chats: res.data.data[i].chats
-          }
-        ])
+        if(res.data.data[i].id != -1){
+          setRooms([
+            ...rooms,
+            {
+              user_id: res.data.data[i].target_user.id, 
+              room_id: res.data.data[i].id,
+              dm_relation: res.data.data[i].dm_relation,
+              username: res.data.data[i].target_user.username,
+              subtitle:  res.data.data[i].lastChat.message,
+              image_id: res.data.data[i].target_user.image_id,
+              followersCtr: res.data.data[i].target_user.followersCtr, 
+              chats: res.data.data[i].chats
+            }
+          ])
+        } else{
+          setNewmsg(res.data.data[i].unreadCtr)
+          console.log(newMsg)
+        }
       }
     });
-
-    // setRooms([
-    //   ...rooms,
-    //   {
-    //     id: 1,
-    //     username: 'Yosuu',
-    //     subtitle: 'Ini adalah pesan terakhir yang sudah kuberikan kepada anda seorang',
-    //     image_id: 'default-user'
-    //   }
-    // ]);
   };
 
   // HANDLER
 
-  const channel = pusher.subscribe('1'); // channe; ini = dm_relation, seperti ruangan chat
-  // didalam channel ini ada getAllMessage
-  channel.bind('sendMessage', function (data) {
-    allMessages.push(data);
-    setMessages(allMessages);
-    console.log(allMessages);
-  });
 
-  const roomClick = (data) => {
+  const roomClick = async (data) => {
     console.log('clicking', data);
-    setTarget(data)
-  };
-  // await axios.post(
-  //   `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chats`,
-  //   {
-  //     dm_relation: 1,
-  //     target_user_id: target,
-  //     message: message
-  //   },
-  //   {
-  //     headers: {
-  //       'x-auth-token':
-  //         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
-  //     }
-  //   }
-  // );
 
-  // setMessage('');
+    await axios.patch(
+      `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chat/read`,
+      {
+        target_user_id: data.user_id
+      },
+      {
+        headers: {
+          'x-auth-token':
+          JSON.parse(localStorage.getItem('x-auth-token'))}
+      }
+    );
+
+    setTarget(data)
+    
+    channel = pusher.subscribe(data.dm_relation + ''); // channe; ini = dm_relation, seperti ruangan chat
+    // didalam channel ini ada getAllMessage
+    channel.bind('sendMessage', function (data) {
+      liveMessages.push(data)
+      console.log(liveMessages);
+      setMessages(liveMessages);
+    });
+  };
 
   const sendMessage = async () => {
     const textValue = document.querySelector('.chat-input').value;
@@ -118,17 +111,17 @@ const Chat_room = () => {
     await axios.post(
         `${process.env.REACT_APP_BASE_API_URL}/api/users/dm/chat/send`,
         {
-          dm_relation: '',
-          target_user_id: target,
+          dm_relation: target.dm_relation,
+          target_user_id: target.user_id,
           message: textValue
         },
         {
           headers: {
             'x-auth-token':
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImQ0Y29ybmlhIiwiZW1haWwiOiJkNGNvcm5pYUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IjY0ZTYwNDc4N2NiZjE5NDg0MWU3YjY4ZDdjZDI4Nzg2ZjZjOWEwYTNhYjlmOGIwYTBlODdjYjQzODdhYjAxMDciLCJpYXQiOjE2NDEyMDAyNTN9.RhpMRdTdbotaP9HLTVQ-WhE_uRGKtE2y5900xbZT81M'
-          }
+            JSON.parse(localStorage.getItem('x-auth-token'))}
         }
       );
+
   };
 
   const onKeyDown = (e) => {
@@ -197,8 +190,8 @@ const Chat_room = () => {
               accounts={rooms}
               key={rooms.length}
               title="Direct Messages"
-              subtitle="100 new messages"
-              selectedId={target.id}
+              subtitle={`${newMsg} new messages`}
+              selectedId={target.room_id}
               Clicked={roomClick}
             />
           </div>
@@ -223,9 +216,9 @@ const Chat_room = () => {
               </div>
             </div>
             <div className="chat-wrapper">
-              {target.chats.map((chat) => {
+              {target.chats.map((chat, index) => {
                 return (
-                  <div className="chat-bubble-section">
+                  <div className="chat-bubble-section" key={index}>
                       <div className="timespan fw-bold text_small text-center">{chat.momentDate}</div>
                       
                       {chat.value.map((chatValue) => {
@@ -249,8 +242,36 @@ const Chat_room = () => {
                           )
                         }
                       })}
-                </div>
+                  </div>
                 )
+              })}
+              
+              {messages.map((chat) => {
+                console.log('chattt', chat)
+                console.log('bool ', parseInt(chat.user_sender_id) == parseInt(userId))
+                    if(parseInt(chat.user_sender_id) == parseInt(userId)){
+                      return (
+                      <div className="chat-bubble-section" key={chat.moment}>
+                        <div className="chat-bubble-wrapper right">
+                          <div className="chat-bubble">
+                            {chat.message}
+                          </div>
+                          <p className="text-muted text_small fw-bold chat-bubble-created">{chat.moment}</p>
+                        </div>
+                      </div>
+                      )
+                    } else {
+                      return (
+                      <div className="chat-bubble-section">
+                        <div className="chat-bubble-wrapper left">
+                          <div className="chat-bubble">
+                            {chat.message}
+                          </div>
+                          <p className="text-muted text_small fw-bold chat-bubble-created">{chat.moment}</p>
+                        </div>
+                      </div>
+                      )
+                    }    
               })}
             </div>
             <div className="chat-input-container">
