@@ -7,11 +7,9 @@
   align-items: center;
   background-color: var(--clr-white);
   box-shadow: var(--shadow);
-  position: sticky;
-  margin-bottom: 2rem;
+  position: fixed;
   top: 0;
   z-index: 99;
-
   --width: 60rem;
 }
 

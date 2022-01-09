@@ -15,7 +15,7 @@ function AccountList(props) {
 
   return (
     <div className="accountlists-container">
-      <div className="accountlists-header">
+      <div className={`accountlists-header ${props.headerClassName}`}>
         <p className="accountlists-header_title fw-bold">{props.title}</p>
         <p className="accountlists-header_subtitle text-muted fw-bold text_small">
           {props.subtitle}
@@ -27,7 +27,7 @@ function AccountList(props) {
             <div
               className={`accountlists-content_item ${
                 account.id === props.selectedId ? 'selected' : ''
-              }`}
+              } ${props.childClassName}`}
               onClick={() => {
                 props.Clicked(account);
               }}>

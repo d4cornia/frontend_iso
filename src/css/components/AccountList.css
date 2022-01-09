@@ -30,7 +30,6 @@
   gap: 0.5rem;
   height: 5rem;
   padding-bottom: 0.5rem;
-  border-bottom: solid 1px var(--clr-body-200);
   cursor: pointer;
   border-radius: 0.75rem;
   opacity: 0.6;
