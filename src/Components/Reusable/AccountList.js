@@ -42,10 +42,6 @@ function AccountList(props) {
               </div>
               <div className="accountlists-content_item-detail">
                 <div className="accountlists-content_item-detail_title fw-bold">
-                  <div
-                    className={`accountlists-content_item-detail_online-status ${
-                      account.onlineStatus ? 'online' : 'offline'
-                    }`}></div>
                   {account.username}
                 </div>
                 <div className="accountlists-content_item-detail_subtitle text-muted fw-bold text_small">

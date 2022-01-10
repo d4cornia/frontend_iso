@@ -13,7 +13,7 @@ const Chat_room = () => {
   // Variables
   const [newMsg, setNewmsg] = useState(0);
   const [userId, setUserId] = useState(JSON.parse(localStorage.getItem('id')));
-  const [target, setTarget] = useState([]);
+  const [target, setTarget] = useState({});
   const [messages, setMessages] = useState([]);
   const [rooms, setRooms] = useState([]);
   const pusher = new Pusher('f1a87665adcea5a04ace', {
@@ -58,8 +58,8 @@ const Chat_room = () => {
             setRooms([
               ...rooms,
               {
+                id: res.data.data[i].id,
                 user_id: res.data.data[i].target_user.id,
-                room_id: res.data.data[i].id,
                 dm_relation: res.data.data[i].dm_relation,
                 username: res.data.data[i].target_user.username,
                 subtitle: res.data.data[i].lastChat.message,
@@ -99,9 +99,13 @@ const Chat_room = () => {
     // didalam channel ini ada getAllMessage
     channel.bind('sendMessage', function (data) {
       liveMessages.push(data);
-      console.log(liveMessages);
-      setMessages(liveMessages);
+      console.log('UPDATE', liveMessages);
+      setMessages((prevState) => [...prevState, data]);
+      const wrapper = document.querySelector('.chat-wrapper');
+      wrapper.scrollTop = wrapper.scrollHeight - wrapper.clientHeight;
     });
+    const wrapper = document.querySelector('.chat-wrapper');
+    wrapper.scrollTop = wrapper.scrollHeight - wrapper.clientHeight;
   };
 
   const sendMessage = async () => {
@@ -189,7 +193,7 @@ const Chat_room = () => {
               key={rooms.length}
               title="Direct Messages"
               subtitle={`${newMsg} new messages`}
-              selectedId={target.room_id}
+              selectedId={target.id}
               Clicked={roomClick}
               childClassName="room-item"
             />
