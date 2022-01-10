@@ -215,9 +215,12 @@ const Home = () => {
           <div
             className="bg-dimmed"
             onClick={() => {
-              setShowPost(!showPost);
+              setShowPost(false);
+              window.history.pushState('', '', `/home`);
             }}></div>
-          <DetailPost key={showPost} />
+          {showPost &&
+          <DetailPost isShowing={showPost} key={showPost} />
+}
         </div>
       </div>
       {/* <Card style={{ width: '42.5rem' }}>

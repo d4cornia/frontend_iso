@@ -52,26 +52,6 @@ function Post(props) {
       });
   };
 
-  const sendComment = async (target_id, text) => {
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/comment`,
-        {
-          target_post_id: target_id,
-          commentTexts: text
-        },
-        {
-          headers: {
-            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-          }
-        }
-      )
-      .then((res) => {
-        console.log(res);
-        // Update Comment Section
-      });
-  };
-
   const likePost = async (target_id) => {
     await axios
       .post(

@@ -9,20 +9,60 @@ import { Image, Video } from 'cloudinary-react';
 import dummyImage from '../../Image/bgregister.jpg';
 import ProfileImage from './ProfileImage';
 
-function DetailPost() {
+import axios from 'axios';
+
+function DetailPost(props) {
   // variables
   const [searchParams, setSearchParams] = useSearchParams();
   const [post, setPost] = useState({});
 
-  useEffect(() => {
-    const postId = searchParams.get('post');
+  useEffect( () => {
+    setTimeout(() => {
+      const postId = searchParams.get('post');
+
+      getPost(postId)
+    }, 500);
   }, []);
 
   // Handler
+  const getPost = async(postId) => {
+    console.log(postId);
+    await axios.get(
+      `${process.env.REACT_APP_BASE_API_URL}/api/users/post/search/${postId}`,
+      {
+        headers: {
+          'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+        }
+      }
+    ).then((res) => {
+      console.log(res)
+      setPost((prevPost) => (res.data.data))
+    });
+  }
 
-  const sendMessage = async () => {
+  const sendComment = async () => {
     const textValue = document.querySelector('.chat-input').value;
     document.querySelector('.chat-input').value = '';
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/comment`,
+        {
+          target_post_id: post.id,
+          commentTexts: textValue
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        // Update Comment Section
+        const postId = searchParams.get('post');
+        getPost(postId)
+      });
   };
 
   const onKeyDown = (e) => {
@@ -41,7 +81,7 @@ function DetailPost() {
 
         // Scroll ikut turun
         input.scrollTop = input.scrollHeight - input.clientHeight;
-      } else sendMessage();
+      } else sendComment();
       // sendMessage();
     } else if (e.keyCode === 16) {
       //Shift
@@ -71,216 +111,81 @@ function DetailPost() {
   };
   return (
     <div className="detailpost-container">
+    {post && props.isShowing && Object.keys(post).length !== 0 && (
+      <React.Fragment>
       <div className="detailpost-image_container">
-        <img src={dummyImage} alt="" className="detailpost-image_content" />
+        <Image
+                  cloud_name={'projekiso'}
+                  publicId={'user/posts/' + post.cloudinary_id}
+                  fetch-format="auto"
+                  quality="auto"
+                  className="detailpost-image_content"
+        />
+        {/* <img src={dummyImage} alt="" className="detailpost-image_content" /> */}
       </div>
       <div className="detailpost-content">
         <div className="detailpost-content_header">
           <div className="detailpost-content_header-image">
-            <ProfileImage publicId="default-user" username="yosss" />
+            <ProfileImage publicId={post.target_user.image_id} username={post.target_user.username} />
           </div>
           <div className="detailpost-content_header-user">
-            <div className="detailpost-content_header-user_username fw-bold">Username</div>
+            <div className="detailpost-content_header-user_username fw-bold">{post.target_user.username}</div>
             <div className="detailpost-content_header-user_followers fw-bold text_small text-muted">
-              Followers
+              {post.target_user.followersCtr} Followers
             </div>
           </div>
         </div>
         <div className="detailpost-content_wrapper">
           <div className="detailpost-content_caption">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere, vero.</p>
-            <span className="fw-bold text-muted text_small">2h ago</span>
+            <p>{post.caption}</p>
+            <span className="fw-bold text-muted text_small">{post.moment}</span>
           </div>
-          <div className="detailpost-content_comments">
-            <div className="card-caption_action">
-              <div className={`card-caption_action-button`}>
-                <svg
-                  className={`action-button-icon filled ${post.isLiked ? 'selected' : ''}`}
-                  viewBox="0 0 1024 1024"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M923 283.6C909.596 252.564 890.269 224.439 866.1 200.8C841.913 177.091 813.396 158.249 782.1 145.3C749.648 131.819 714.841 124.919 679.7 125C630.4 125 582.3 138.5 540.5 164C530.5 170.1 521 176.8 512 184.1C503 176.8 493.5 170.1 483.5 164C441.7 138.5 393.6 125 344.3 125C308.8 125 274.4 131.8 241.9 145.3C210.5 158.3 182.2 177 157.9 200.8C133.7 224.412 114.368 252.544 101 283.6C87.1 315.9 80 350.2 80 385.5C80 418.8 86.8 453.5 100.3 488.8C111.6 518.3 127.8 548.9 148.5 579.8C181.3 628.7 226.4 679.7 282.4 731.4C375.2 817.1 467.1 876.3 471 878.7L494.7 893.9C505.2 900.6 518.7 900.6 529.2 893.9L552.9 878.7C556.8 876.2 648.6 817.1 741.5 731.4C797.5 679.7 842.6 628.7 875.4 579.8C896.1 548.9 912.4 518.3 923.6 488.8C937.1 453.5 943.9 418.8 943.9 385.5C944 350.2 936.9 315.9 923 283.6V283.6Z"
-                    fill="#111111"
-                    onClick={() => {
-                      // ganti Toggle Like
-                      // likePost(post.id);
-                    }}
-                  />
-                </svg>
-                <p className="action-button-text text-muted fw-bold">{post.likesCtr} likes</p>
+            <div className="detailpost-content_comments">
+              <div className="card-caption_action">
+                <div className={`card-caption_action-button`}>
+                  <svg
+                    className={`action-button-icon filled ${post.isLiked ? 'selected' : ''}`}
+                    viewBox="0 0 1024 1024"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M923 283.6C909.596 252.564 890.269 224.439 866.1 200.8C841.913 177.091 813.396 158.249 782.1 145.3C749.648 131.819 714.841 124.919 679.7 125C630.4 125 582.3 138.5 540.5 164C530.5 170.1 521 176.8 512 184.1C503 176.8 493.5 170.1 483.5 164C441.7 138.5 393.6 125 344.3 125C308.8 125 274.4 131.8 241.9 145.3C210.5 158.3 182.2 177 157.9 200.8C133.7 224.412 114.368 252.544 101 283.6C87.1 315.9 80 350.2 80 385.5C80 418.8 86.8 453.5 100.3 488.8C111.6 518.3 127.8 548.9 148.5 579.8C181.3 628.7 226.4 679.7 282.4 731.4C375.2 817.1 467.1 876.3 471 878.7L494.7 893.9C505.2 900.6 518.7 900.6 529.2 893.9L552.9 878.7C556.8 876.2 648.6 817.1 741.5 731.4C797.5 679.7 842.6 628.7 875.4 579.8C896.1 548.9 912.4 518.3 923.6 488.8C937.1 453.5 943.9 418.8 943.9 385.5C944 350.2 936.9 315.9 923 283.6V283.6Z"
+                      fill="#111111"
+                      onClick={() => {
+                        // ganti Toggle Like
+                        // likePost(post.id);
+                      }}
+                    />
+                  </svg>
+                  <p className="action-button-text text-muted fw-bold">{post.likesCtr} likes</p>
+                </div>
               </div>
+              <div className="detailpost-content_comments-header">
+                <div className="fw-bold text-muted">Comments</div>
+                <div className="fw-bold text-muted text_small">{post.commentsCtr}</div>
+              </div>
+                  <div className="detailpost-content_comments-content">
+                    {post.hasComments && post.comments.map((comment, index) => {
+                      return(
+                          <div className="card-comments_item" key={index}>
+                            <Image
+                              cloud_name={'projekiso'}
+                              publicId={'user/profiles/' + comment.user.image_id}
+                              fetch-format="auto"
+                              quality="auto"
+                              className="card-comments_item-profile"
+                            />
+                            <p className="card-comments_item-content">
+                              <span className="card-comments_item-content_sender fw-bold">{comment.user.username}</span>
+                              {comment.comment}
+                            </p>
+                            <p className="card-comments_item-createdTime text_small fw-bold">{comment.moment}</p>
+                          </div>
+                          
+                      )
+                    })}
+                  </div>
             </div>
-            <div className="detailpost-content_comments-header">
-              <div className="fw-bold text-muted">Comments</div>
-              <div className="fw-bold text-muted text_small">1.3k</div>
-            </div>
-            <div className="detailpost-content_comments-content">
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-
-              <div className="card-comments_item">
-                <Image
-                  cloud_name={'projekiso'}
-                  publicId={'user/profiles/default-user'}
-                  fetch-format="auto"
-                  quality="auto"
-                  className="card-comments_item-profile"
-                />
-                <p className="card-comments_item-content">
-                  <span className="card-comments_item-content_sender fw-bold">username</span>
-                  Lorem ipsum dolor sit amet.
-                </p>
-                <p className="card-comments_item-createdTime text_small fw-bold">2h ago</p>
-              </div>
-            </div>
-          </div>
         </div>
         <div className="chat-input-container comment-input">
           <form
@@ -296,7 +201,7 @@ function DetailPost() {
               onKeyDown={onKeyDown}
               onKeyUp={onKeyUp}></textarea>
             <svg
-              onClick={sendMessage}
+              onClick={sendComment}
               className="send-icon"
               viewBox="0 0 24 24"
               fill="none"
@@ -309,6 +214,8 @@ function DetailPost() {
           </form>
         </div>
       </div>
+      </React.Fragment>
+    )}
     </div>
   );
 }
