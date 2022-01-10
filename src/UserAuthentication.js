@@ -19,7 +19,7 @@ const authentication = {
         token: localStorage.getItem('x-auth-token')
       };
 
-      console.log(credential, decryptedData);
+      // console.log(credential, decryptedData);
 
       // Jika credential Token sama dengan localstrogae maka user authenticated
       if (JSON.stringify(credential) === JSON.stringify(decryptedData)) {
