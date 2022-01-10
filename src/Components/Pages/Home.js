@@ -42,19 +42,6 @@ const Home = () => {
   const [isFetchingData, setIsFetchingData] = useState(true);
   const dataReport = collection(db, 'report');
 
-  const widget = window.cloudinary.createUploadWidget(
-    {
-      cloudName: 'projekiso',
-      uploadPreset: 'upload-posts',
-      public_id: 'random gen'
-    },
-    (error, result) => {
-      if (!error && result && result.event === 'success') {
-        console.log('Done! Here is the image info: ', result.info);
-      }
-    }
-  );
-
   // AXIOS
 
   // Get Post cma untuk awal saja, untuk update data selanjutnya bisa di dalam component post,

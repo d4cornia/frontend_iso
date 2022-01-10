@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Button } from 'react-bootstrap';
 import '../../css/components/Navigation.css';
 import CustomInput from './CustomInput';
 import LogoText from './LogoText';
@@ -6,6 +7,7 @@ import axios from 'axios';
 import { useNavigate, NavLink } from 'react-router-dom';
 import { Image } from 'cloudinary-react';
 import profileImage from '../../Image/profil.jpg';
+import Logo from './Logo';
 
 import AccountList from './AccountList';
 
@@ -50,11 +52,34 @@ const Navigation = (props) => {
       image_id: 'default-user'
     }
   ]);
+  const [isAddingPost, setIsAddingPost] = useState(false);
+  const [publicId, setPublicId] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isSearchPopup, setIsSearchPopup] = useState(false);
+  const [isAddPost, setIsAddPost] = useState(false);
+  const [widget, setWidget] = useState({});
 
   useEffect(() => {
     getNotif();
+    const widgetCloud = window.cloudinary.createUploadWidget(
+      {
+        cloudName: 'projekiso',
+        uploadPreset: 'upload-posts',
+        public_id: generateId(100, 1)
+      },
+      (error, result) => {
+        if (!error && result && result.event === 'success') {
+          console.log(result);
+          const publicIDs = result.info.public_id.replace('user/posts/', '');
+          const imageUrls = result.info.secure_url;
+          setPublicId(publicIDs);
+          setImageUrl(imageUrls);
+        }
+      }
+    );
+
+    setWidget(widgetCloud);
   }, []);
 
   // Axios
@@ -95,55 +120,62 @@ const Navigation = (props) => {
     navigate(`/profile/${item.username}`);
   };
 
+  const handleSubmitAddPost = async (e) => {
+    e.preventDefault();
+    const data = {
+      image_id: publicId,
+      description: e.target.description.value
+    };
+
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/upload`,
+        {
+          caption: data.description,
+          cloudinary_id: data.image_id,
+          type: 1,
+          tag: 'tag_1'
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.info(err);
+      });
+  };
+
+  const generateId = (length, mode) => {
+    const alphabets = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+    let key = '';
+
+    for (let i = 0; i < length; i++) {
+      let hash = Math.floor(Math.random() * 2) + 1;
+      let model = Math.floor(Math.random() * 2) + 1;
+      let randAlpha = Math.floor(Math.random() * alphabets.length);
+
+      if (hash === 1 || mode == 2) {
+        key += Math.floor(Math.random() * 10);
+      } else if (mode != 2) {
+        if (model === 1) key += alphabets[randAlpha];
+        else key += alphabets[randAlpha];
+      }
+    }
+
+    return key;
+  };
+
   return (
     <React.Fragment>
       <div className="navigation-container">
         <div className="navigation-wrapper">
-          <div className={`search-popup ${!isSearchPopup ? 'hidden' : ''}`}>
-            <AccountList
-              accounts={searchAccounts}
-              key={searchAccounts.length}
-              title={`Found ${searchAccounts.length} accounts`}
-              Clicked={searchAccountClick}
-              headerClassName="searchaccounts-header"
-              childClassName="searchaccounts-item"
-            />
-          </div>
-          <div className={`notification-popup ${!isNotificationOpen ? 'hidden' : ''}`}>
-            <div className="notification-header">
-              <h5>Notifications</h5>
-            </div>
-            {allNotif.length > 0 && (
-              <div className="notification-content">
-                {allNotif.map((notif) => {
-                  return (
-                    <div className="notification-item">
-                      <Image
-                        cloud_name={'projekiso'}
-                        publicId={'user/profiles/' + notif.detailUser[0].image_id}
-                        fetch-format="auto"
-                        quality="auto"
-                        className="notification-item_image"
-                      />
-                      <div className="notification-item_content">
-                        <p className="notification-item_content-followers">
-                          <span className="fw-bold">{notif.detailUser[0].username}</span>{' '}
-                          {notif.message}
-                        </p>
-                        <p className="notification-item_content-created text-muted fw-bold text_small">
-                          {/*1h ago*/}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-            {allNotif.length === 0 && (
-              <p className="empty-state-Text">You have no notifications at the moment.</p>
-            )}
-          </div>
-          <NavLink to="/">
+          <NavLink to="/home">
             <LogoText className="nav-logo" />
           </NavLink>
           <form action="#" method="post" className="form-search" onSubmit={handleSubmit}>
@@ -206,9 +238,12 @@ const Navigation = (props) => {
                 </svg>
               </NavLink>
             </li>
-            {/* <li
-              className={`navigation-link ${props.selected === 'addPost' ? 'selected' : ''}`}
-              id="addPost">
+            <li
+              className={`navigation-link navlink ${isAddPost ? 'selected' : ''}`}
+              id="addPost"
+              onClick={() => {
+                setIsAddPost(true);
+              }}>
               <svg
                 className="navigation-icon"
                 viewBox="0 0 97 97"
@@ -229,7 +264,7 @@ const Navigation = (props) => {
                   fill="#111111"
                 />
               </svg>
-            </li> */}
+            </li>
             <li className={`navigation-link`} id="directMessage">
               <NavLink
                 className={(navData) => (navData.isActive ? 'selected navlink' : 'navlink')}
@@ -354,6 +389,90 @@ const Navigation = (props) => {
               />
             </div>
           </ul>
+
+          <div className={`addpost-popup ${!isAddPost ? 'hidden' : ''}`}>
+            <div
+              className="bg-dimmed"
+              onClick={() => {
+                setIsAddPost(false);
+              }}></div>
+            <div className="addpost-container">
+              <div
+                className="addpost-image"
+                onClick={() => {
+                  widget.open();
+                }}>
+                {imageUrl.length > 0 && (
+                  <img src={imageUrl} alt="" className="addpost-image_content" />
+                )}
+                {imageUrl.length === 0 && (
+                  <React.Fragment>
+                    <Logo className={'addpost-icon'} />
+                    <p className="text-muted fw-bold">Click to add image</p>
+                  </React.Fragment>
+                )}
+              </div>
+              <div className="addpost-description">
+                <form
+                  action="#"
+                  method="post"
+                  onSubmit={handleSubmitAddPost}
+                  className="form-addpost">
+                  <textarea
+                    name="description"
+                    className="addpost-textarea form-control"
+                    placeholder="Post Description"></textarea>
+                  <Button variant="primary" type="submit">
+                    Post
+                  </Button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div className={`search-popup ${!isSearchPopup ? 'hidden' : ''}`}>
+            <AccountList
+              accounts={searchAccounts}
+              key={searchAccounts.length}
+              title={`Found ${searchAccounts.length} accounts`}
+              Clicked={searchAccountClick}
+              headerClassName="searchaccounts-header"
+              childClassName="searchaccounts-item"
+            />
+          </div>
+          <div className={`notification-popup ${!isNotificationOpen ? 'hidden' : ''}`}>
+            <div className="notification-header">
+              <h5>Notifications</h5>
+            </div>
+            {allNotif.length > 0 && (
+              <div className="notification-content">
+                {allNotif.map((notif) => {
+                  return (
+                    <div className="notification-item">
+                      <Image
+                        cloud_name={'projekiso'}
+                        publicId={'user/profiles/' + notif.detailUser[0].image_id}
+                        fetch-format="auto"
+                        quality="auto"
+                        className="notification-item_image"
+                      />
+                      <div className="notification-item_content">
+                        <p className="notification-item_content-followers">
+                          <span className="fw-bold">{notif.detailUser[0].username}</span>{' '}
+                          {notif.message}
+                        </p>
+                        <p className="notification-item_content-created text-muted fw-bold text_small">
+                          {/*1h ago*/}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {allNotif.length === 0 && (
+              <p className="empty-state-Text">You have no notifications at the moment.</p>
+            )}
+          </div>
         </div>
       </div>
       <div className="navigation-mobile">
@@ -384,7 +503,12 @@ const Navigation = (props) => {
               </svg>
             </NavLink>
           </li>
-          {/* <li className={`navigation-link`} id="addPost">
+          <li
+            className={`navigation-link navlink ${isAddPost ? 'selected' : ''}`}
+            id="addPost"
+            onClick={() => {
+              setIsAddPost(true);
+            }}>
             <svg
               className="navigation-icon"
               viewBox="0 0 97 97"
@@ -405,7 +529,7 @@ const Navigation = (props) => {
                 fill="#111111"
               />
             </svg>
-          </li> */}
+          </li>
           <li className={`navigation-link`} id="directMessage">
             <NavLink
               className={(navData) => (navData.isActive ? 'selected navlink' : 'navlink')}
