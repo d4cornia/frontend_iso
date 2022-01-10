@@ -197,6 +197,13 @@ const Profile = (param) => {
           <div className="profile-post-item" key={index}>
             <div className="profile-post-item-wrapper">
               <div className={`profile-post-item_detail`}>
+                      <Image
+                        cloud_name={'projekiso'}
+                        publicId={'user/posts/' + post.cloudinary_id}
+                        fetch-format="auto"
+                        quality="auto"
+                        className="profile-post-item_image"
+                      />
                 <svg
                   className={`profile-post-item_detail-icon filled`}
                   viewBox="0 0 1024 1024"
