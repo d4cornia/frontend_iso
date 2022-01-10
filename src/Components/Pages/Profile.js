@@ -7,10 +7,62 @@ import profilImage from '../../Image/profil.jpg';
 import '../../css/Profile.css';
 import { Image, Video } from 'cloudinary-react';
 import { Button } from 'react-bootstrap';
+import AccountList from '../Reusable/AccountList';
 
 const Profile = (param) => {
   const [dataProfile, setDataProfile] = useState([]); // Data Following dan Followers
   const [dataProfileUser, setDataProfileUser] = useState([]); //Data Profile
+  const [followers, setFollowers] = useState([
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    },
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    },
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    },
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    },
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    },
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    },
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    },
+    {
+      id: 1,
+      image_id: 'default-user',
+      username: 'yossuu',
+      subtitle: 'Yosua Yuwono'
+    }
+  ]);
+  const [showAccounts, setShowAccounts] = useState(false);
   const { username } = useParams();
 
   const navigate = useNavigate();
@@ -36,11 +88,30 @@ const Profile = (param) => {
         setPosts(res.data.data.posts);
       });
   };
-  getData();
 
   return (
     <div className="content-container profile">
       <div className="content-wrapper">
+        {showAccounts && (
+          <div className="popup-accounts">
+            <div
+              className="bg-dimmed"
+              onClick={() => {
+                setShowAccounts(false);
+              }}></div>
+            <div className="popup-container">
+              <AccountList
+                accounts={followers}
+                key={followers.length}
+                title="Followers"
+                subtitle="13.k"
+                Clicked={setFollowers}
+                headerClassName="accounts-header"
+                childClassName="accounts-item"
+              />
+            </div>
+          </div>
+        )}
         <div className="profile-header">
           <div className="profile-header_image-container">
             <img src={profilImage} alt="" className="profile-header_image" />
@@ -57,18 +128,40 @@ const Profile = (param) => {
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Deleniti, eum?
           </p>
         </div>
-        {
-          <Button className="button-edit" variant="primary">
-            Edit Profile
-          </Button>
-        }
+        <div className="profile-action">
+          {/* <Button variant="danger">Unfollow</Button> */}
+          <Button variant="primary">Follow</Button>
+          <div className="button-message">
+            <svg
+              className="button-message-icon"
+              viewBox="0 0 103 103"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M57.2222 28.6111H52.53C46.1783 28.6111 40.0556 35.4778 40.0556 40.9711V51.5L22.8889 68.6667V51.5H11.4444C5.15 51.5 0 46.35 0 40.0556V11.4444C0 5.15 5.15 0 11.4444 0H45.7778C52.0722 0 57.2222 5.15 57.2222 11.4444V28.6111ZM57.2222 34.3333H91.5556C97.85 34.3333 103 39.4833 103 45.7778V74.3889C103 80.6833 97.85 85.8333 91.5556 85.8333H80.1111V103L62.9444 85.8333H57.2222C50.9278 85.8333 45.7778 80.6833 45.7778 74.3889V45.7778C45.7778 39.4833 50.9278 34.3333 57.2222 34.3333Z"
+                fill="#111111"
+              />
+            </svg>
+          </div>
+          <Button variant="secondary">Block</Button>
+          {/* <Button variant="danger">Report</Button> */}
+          {/* <Button variant="primary">Edit Profile</Button> */}
+        </div>
+        <div className="report-button">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3zM19 14.9L14.9 19H9.1L5 14.9V9.1L9.1 5h5.8L19 9.1v5.8z" />
+            <circle cx="12" cy="16" r="1" />
+            <path d="M11 7h2v7h-2z" />
+          </svg>
+        </div>
         <div className="profile-header_detail-counts">
           <div className="profile-header_detail-post">
             <p className="detail-label text-center">Posts</p>
             <p className="detail-content fw-bold text-center">10</p>
           </div>
           <div className="profile-header_detail-follower">
-            <p className="detail-label text-center">Follower</p>
+            <p className="detail-label text-center">Followers</p>
             <p className="detail-content fw-bold text-center">10</p>
           </div>
           <div className="profile-header_detail-following">

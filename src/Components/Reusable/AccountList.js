@@ -17,9 +17,11 @@ function AccountList(props) {
     <div className="accountlists-container">
       <div className={`accountlists-header ${props.headerClassName}`}>
         <p className="accountlists-header_title fw-bold">{props.title}</p>
-        <p className="accountlists-header_subtitle text-muted fw-bold text_small">
-          {props.subtitle}
-        </p>
+        {props.subtitle && (
+          <p className="accountlists-header_subtitle text-muted fw-bold text_small">
+            {props.subtitle}
+          </p>
+        )}
       </div>
       <div className="accountlists-content">
         {accounts.map((account, index) => {
