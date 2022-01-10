@@ -93,7 +93,7 @@ const Navigation = (props) => {
             <LogoText className="nav-logo" />
           </NavLink>
           <form action="#" method="post" className="form-search" onSubmit={handleSubmit}>
-            <CustomInput ref={search} placeholder="Search" name="search" />
+            <CustomInput ref={search} placeholder="Search user" name="search" />
             <div className="searchButton" onClick={handleSubmit}>
               <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_57_59)">
