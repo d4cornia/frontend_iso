@@ -63,10 +63,14 @@ const CustomInput = forwardRef((props, ref) => {
         placeholder={props.placeholder}
         onBlur={setSuccess}
         onFocus={(e) => {
-          props.focusing(e);
+          if(props.focusing){
+            props.focusing(e);
+          }
         }}
         onKeyUp={(e) => {
-          props.keyUp(e);
+          if(props.keyUp){
+            props.keyUp(e);
+          }
         }}
         {...bindInput}
       />

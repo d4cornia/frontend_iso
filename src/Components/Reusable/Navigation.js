@@ -172,7 +172,7 @@ const Navigation = (props) => {
               ref={search}
               placeholder="Search user"
               name="search"
-              focusing={() => {}}
+              focusing={(e) => {console.log(e)}}
               blur={() => {
                 setIsSearchPopup(false);
                 // console.log('blur');
