@@ -45,7 +45,7 @@ const CustomInput = forwardRef((props, ref) => {
       setErrorMessageInput(props.successMessage);
     }
 
-    if (props.blur && input.length > 0) {
+    if (props.blur) {
       console.log('hello');
       props.blur();
     }
@@ -62,6 +62,12 @@ const CustomInput = forwardRef((props, ref) => {
         name={props.name}
         placeholder={props.placeholder}
         onBlur={setSuccess}
+        onFocus={(e) => {
+          props.focusing(e);
+        }}
+        onKeyUp={(e) => {
+          props.keyUp(e);
+        }}
         {...bindInput}
       />
       {(messageInput !== '' || errorMessageInput !== '') && (
