@@ -96,6 +96,7 @@
   object-fit: cover;
   left: 0;
   top: 0;
+  z-index: -1;
 }
 
 .profile-post-item:hover .profile-post-item-wrapper {
@@ -234,7 +235,6 @@
   .profile-post-item {
     width: calc(100% / 2 - 1rem);
     aspect-ratio: 1/1;
-    background-color: tomato;
   }
 }
 
@@ -250,6 +250,5 @@
   .profile-post-item {
     width: 100%;
     aspect-ratio: 1/1;
-    background-color: tomato;
   }
 }
