@@ -20,38 +20,8 @@ const Navigation = (props) => {
   // Variables
   const notifications = 0;
   const [allNotif, setAllNotif] = useState([]);
-  const [searchAccounts, setSearchAccounts] = useState([
-    // {
-    //   id: 1,
-    //   username: 'Fello',
-    //   subtitle: 'Fellowdie',
-    //   image_id: 'default-user'
-    // },
-    // {
-    //   id: 1,
-    //   username: 'Fello',
-    //   subtitle: 'Fellowdie',
-    //   image_id: 'default-user'
-    // },
-    // {
-    //   id: 1,
-    //   username: 'Fello',
-    //   subtitle: 'Fellowdie',
-    //   image_id: 'default-user'
-    // },
-    // {
-    //   id: 1,
-    //   username: 'Fello',
-    //   subtitle: 'Fellowdie',
-    //   image_id: 'default-user'
-    // },
-    // {
-    //   id: 1,
-    //   username: 'Fello',
-    //   subtitle: 'Fellowdie',
-    //   image_id: 'default-user'
-    // }
-  ]);
+  const [searchAccounts, setSearchAccounts] = useState([]);
+  const [searchPost, setSearchPost] = useState([]);
   const [isAddingPost, setIsAddingPost] = useState(false);
   const [publicId, setPublicId] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -116,8 +86,33 @@ const Navigation = (props) => {
         )
         .then((res) => {
           // Update Comment Section
-          console.log(res.data.data)
+          // console.log(res.data.data)
           setSearchAccounts(res.data.data);
+        }).catch((err) => {
+          console.log(err.response)
+        });
+  };
+
+  const getSearchPost = async (keyword) => {
+    // Axios Search Account
+    console.log(keyword);
+    setIsSearchPopup(true);
+    await axios
+        .post(
+            `${process.env.REACT_APP_BASE_API_URL}/api/users/post/search`,
+            {
+              keyword: keyword
+            },
+            {
+              headers: {
+                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+              }
+            }
+        )
+        .then((res) => {
+          // Update Comment Section
+          console.log(res.data.data)
+          setSearchPost(res.data.data);
         }).catch((err) => {
           console.log(err.response)
         });
@@ -130,15 +125,24 @@ const Navigation = (props) => {
     if (searchText.length > 0) {
       setIsSearchPopup(true);
       getSearchAccounts(searchText);
+      getSearchPost(searchText);
     }
   };
+
+
 
   const openNotification = (value) => {
     setNotificationOpen(value);
   };
 
   const searchAccountClick = (item) => {
+    // console.log(item);
     navigate(`/profile/${item.username}`);
+  };
+
+  const searchPostClick = (item) => {
+    // console.log(item);
+    navigate(`/profile/${item.user.username}`);
   };
 
   const handleSubmitAddPost = async (e) => {
@@ -458,6 +462,14 @@ const Navigation = (props) => {
               Clicked={searchAccountClick}
               headerClassName="searchaccounts-header"
               childClassName="searchaccounts-item"
+            />
+            <AccountList
+                accounts={searchPost}
+                key={searchPost.length}
+                title={`Found ${searchPost.length} accounts`}
+                Clicked={searchPostClick}
+                headerClassName="searchaccounts-header"
+                childClassName="searchaccounts-item"
             />
           </div>
           <div className={`notification-popup ${!isNotificationOpen ? 'hidden' : ''}`}>
