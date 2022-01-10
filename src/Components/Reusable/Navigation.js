@@ -10,6 +10,10 @@ import profileImage from '../../Image/profil.jpg';
 import Logo from './Logo';
 
 import AccountList from './AccountList';
+import {db} from "../../helper/fbconfig";
+import {addDoc, collection, getDocs} from "@firebase/firestore";
+
+
 
 const Navigation = (props) => {
   const navigate = useNavigate();
@@ -29,6 +33,7 @@ const Navigation = (props) => {
   const [isSearchPopup, setIsSearchPopup] = useState(false);
   const [isAddPost, setIsAddPost] = useState(false);
   const [widget, setWidget] = useState({});
+
 
   useEffect(() => {
     getNotif();
@@ -142,7 +147,7 @@ const Navigation = (props) => {
 
   const searchPostClick = (item) => {
     // console.log(item);
-    navigate(`/profile/${item.user.username}`);
+    navigate(`/profile/${item.user[0].username}`);
   };
 
   const handleSubmitAddPost = async (e) => {
@@ -195,6 +200,9 @@ const Navigation = (props) => {
 
     return key;
   };
+
+
+
 
   return (
     <React.Fragment>
@@ -466,7 +474,7 @@ const Navigation = (props) => {
             <AccountList
                 accounts={searchPost}
                 key={searchPost.length}
-                title={`Found ${searchPost.length} accounts`}
+                title={`Found ${searchPost.length} posts`}
                 Clicked={searchPostClick}
                 headerClassName="searchaccounts-header"
                 childClassName="searchaccounts-item"

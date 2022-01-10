@@ -8,6 +8,8 @@ import '../../css/Profile.css';
 import { Image, Video } from 'cloudinary-react';
 import { Button } from 'react-bootstrap';
 import AccountList from '../Reusable/AccountList';
+import {addDoc, collection, getDocs} from "@firebase/firestore";
+import {db} from "../../helper/fbconfig";
 
 const Profile = (param) => {
   const [userProfile, setUserProfile] = useState([]); // Data Following dan Followers
@@ -17,6 +19,8 @@ const Profile = (param) => {
   const [loggedAcc, setLoggedAcc] = useState(JSON.parse(localStorage.getItem('username')));
   const [showAccounts, setShowAccounts] = useState(false);
   const { username } = useParams();
+  const dataReport = collection(db, 'report');
+  const [report, setReport] = useState([]);
 
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
@@ -96,6 +100,24 @@ const Profile = (param) => {
       .then(() => {
         getData();
       });
+  };
+
+  // Reports(Firebase)
+  // const getReport = async () => {
+  //   const data = await getDocs(dataReport);
+  //   setReport(data.docs.map((doc) => ({
+  //     ...doc.data(),
+  //     id: doc.id }))
+  //   );
+  // };
+
+  const addReport = async (targetId) => {
+    await addDoc(dataReport, {
+      user_id: JSON.parse(localStorage.getItem('id')),
+      reported_user_id: targetId,
+      created_at: new Date(),
+      deleted_at: null
+    });
   };
 
   return (
@@ -184,7 +206,10 @@ const Profile = (param) => {
             {/* <Button variant="primary">Edit Profile</Button> */}
           </div>
         )}
-        <div className="report-button">
+        <div className="report-button"
+             onClick={() => {
+               addReport(userProfile.id);
+             }}>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
             <path d="M0 0h24v24H0V0z" fill="none" />
             <path d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3zM19 14.9L14.9 19H9.1L5 14.9V9.1L9.1 5h5.8L19 9.1v5.8z" />
