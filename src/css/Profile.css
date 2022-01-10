@@ -86,7 +86,13 @@
 .profile-post-item {
   width: calc(100% / 3 - 1rem);
   aspect-ratio: 1/1;
-  background-color: tomato;
+  position: relative;
+}
+
+.profile-post-item_image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
 }
 
 .profile-post-item:hover .profile-post-item-wrapper {
@@ -103,6 +109,7 @@
   background-color: rgba(0, 0, 0, 0.3);
   opacity: 0;
   cursor: pointer;
+  z-index: 2;
 }
 
 .profile-action {
@@ -214,6 +221,7 @@
 .report-button svg {
   fill: var(--clr-white);
 }
+
 /* X-Small devices (portrait phones, less than 576px) */
 @media (max-width: 575.98px) {
   .content-wrapper {

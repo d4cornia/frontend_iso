@@ -7,6 +7,8 @@ import { useNavigate, NavLink } from 'react-router-dom';
 import { Image } from 'cloudinary-react';
 import profileImage from '../../Image/profil.jpg';
 
+import AccountList from './AccountList';
+
 const Navigation = (props) => {
   const navigate = useNavigate();
 
@@ -16,7 +18,40 @@ const Navigation = (props) => {
   // Variables
   const notifications = 0;
   const [allNotif, setAllNotif] = useState([]);
+  const [searchAccounts, setSearchAccounts] = useState([
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // }
+  ]);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
+  const [isSearchPopup, setIsSearchPopup] = useState(false);
 
   useEffect(() => {
     getNotif();
@@ -38,23 +73,63 @@ const Navigation = (props) => {
       });
   };
 
+  const getSearchAccounts = async (keyword) => {
+    // Axios Search Account
+    console.log(keyword);
+    setIsSearchPopup(true);
+    await axios
+        .post(
+            `${process.env.REACT_APP_BASE_API_URL}/api/users/searchUser`,
+            {
+              target_user: keyword
+            },
+            {
+              headers: {
+                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+              }
+            }
+        )
+        .then((res) => {
+          // Update Comment Section
+          console.log(res.data.data)
+          setSearchAccounts(res.data.data);
+        }).catch((err) => {
+          console.log(err.response)
+        });
+  };
+
   // Handler and Functions
   const handleSubmit = (e) => {
     e.preventDefault();
     const searchText = search.current.value;
-    const postfix = searchText[0] === '#' ? 'by=tag' : 'by=name';
-    const searchUrl = `/search?post=${searchText}&${postfix}`;
-    console.log('url', searchUrl);
+    if (searchText.length > 0) {
+      setIsSearchPopup(true);
+      getSearchAccounts(searchText);
+    }
   };
 
   const openNotification = (value) => {
     setNotificationOpen(value);
   };
 
+  const searchAccountClick = (item) => {
+    navigate(`/profile/${item.username}`);
+  };
+
   return (
     <React.Fragment>
       <div className="navigation-container">
         <div className="navigation-wrapper">
+          <div className={`search-popup ${!isSearchPopup ? 'hidden' : ''}`}>
+            <AccountList
+              accounts={searchAccounts}
+              key={searchAccounts.length}
+              title={`Found ${searchAccounts.length} accounts`}
+              Clicked={searchAccountClick}
+              headerClassName="searchaccounts-header"
+              childClassName="searchaccounts-item"
+            />
+          </div>
           <div className={`notification-popup ${!isNotificationOpen ? 'hidden' : ''}`}>
             <div className="notification-header">
               <h5>Notifications</h5>
@@ -93,7 +168,22 @@ const Navigation = (props) => {
             <LogoText className="nav-logo" />
           </NavLink>
           <form action="#" method="post" className="form-search" onSubmit={handleSubmit}>
-            <CustomInput ref={search} placeholder="Search" name="search" />
+            <CustomInput
+              ref={search}
+              placeholder="Search user"
+              name="search"
+              focusing={() => {}}
+              blur={() => {
+                setIsSearchPopup(false);
+                // console.log('blur');
+              }}
+              keyUp={(e) => {
+                // if (e.target.value.length > 0) {
+                //   setIsSearchPopup(true);
+                //   getSearchAccounts(e.target.value);
+                // }
+              }}
+            />
             <div className="searchButton" onClick={handleSubmit}>
               <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_57_59)">

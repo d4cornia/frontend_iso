@@ -228,6 +228,30 @@
   opacity: 1;
 }
 
+.search-popup {
+  width: 26rem;
+  max-height: 40vh;
+  overflow-y: auto;
+  background-color: var(--clr-white);
+  position: fixed;
+  left: 46%;
+  top: 5rem;
+  transform: translateX(-50%);
+  box-shadow: var(--shadow);
+}
+
+.search-popup.hidden {
+  display: none;
+}
+
+.searchaccounts-header {
+  padding: 1rem;
+}
+
+.searchaccounts-item {
+  padding: 1rem;
+}
+
 /* Medium devices (tablets, less than 992px) */
 @media (max-width: 991.98px) {
   .navigation-container {

@@ -35,8 +35,9 @@ const Home = () => {
 
   // Variables
   const [searchParams, setSearchParams] = useSearchParams();
-  const [report, setReport] = useState([]);
+
   const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(-1);
   const [showPost, setShowPost] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
   const dataReport = collection(db, 'report');
@@ -102,79 +103,64 @@ const Home = () => {
     //   }
     // ]);
 
-
-    // const axiosResponse = await axios
-    //   .post(
-    //     `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
-    //     {
-    //       size: 10
-    //     },
-    //     {
-    //       headers: {
-    //         'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-    //       }
-    //     }
-    //   )
-    //   .then((res) => {
-    //     return res.data.data;
-    //   });
-
-     await axios
-        .post(
-            `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
-            {
-              size: 20
-            },
-            {
-              headers: {
-                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-              }
-            }
-        )
-        .then((res) => {
-        console.log(res.data.data)
-          for (let i = 0; i < res.data.data.length; i++) {
-            setPosts((posts) => [
-              ...posts,
-              {
-                id: res.data.data[i].id,
-                user: {
-                  isFollowing: res.data.data[i].user.isFollowing,
-                  username: res.data.data[i].user.username,
-                  followersCtr: res.data.data[i].user.followersCtr,
-                  image_id: res.data.data[i].user.image_id
-                },
-                dateNow: res.data.data[i].dateNow,
-                cloudinary_id: res.data.data[i].cloudinary_id,
-                isLiked: res.data.data[i].isLiked,
-                likesCtr: res.data.data[i].likesCtr,
-                commentsCtr: res.data.data[i].commentsCtr,
-                caption: res.data.data[i].caption
-              }
-            ]);
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
+        {
+          size: 20
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
           }
-
-
-        });
+        }
+      )
+      .then((res) => {
+        console.log(res.data.data);
+        for (let i = 0; i < res.data.data.length; i++) {
+          setPosts((posts) => [
+            ...posts,
+            {
+              id: res.data.data[i].id,
+              user: {
+                isFollowing: res.data.data[i].user.isFollowing,
+                username: res.data.data[i].user.username,
+                followersCtr: res.data.data[i].user.followersCtr,
+                image_id: res.data.data[i].user.image_id
+              },
+              dateNow: res.data.data[i].dateNow,
+              cloudinary_id: res.data.data[i].cloudinary_id,
+              isLiked: res.data.data[i].isLiked,
+              likesCtr: res.data.data[i].likesCtr,
+              commentsCtr: res.data.data[i].commentsCtr,
+              caption: res.data.data[i].caption
+            }
+          ]);
+        }
+      });
 
     // Waktu itu aku kesusahan gimana caranya pake useState array of object, nnti coba cari bareng" ae
     // setPosts(axiosResponse);
   };
 
+  const [report, setReport] = useState([]);
   // Reports(Firebase)
   const getReport = async () => {
     const data = await getDocs(dataReport);
-    setReport(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    setReport(data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id }))
+    );
   };
 
-  // const addReport = async () => {
-  //   await addDoc(dataReport, {
-  //     user_id: id1,
-  //     reported_user_id: id2,
-  //     created_at: new Date(),
-  //     deleted_at: null
-  //   });
-  // };
+  const addReport = async (targetId) => {
+    await addDoc(dataReport, {
+      user_id: JSON.parse(localStorage.getItem('id')),
+      reported_user_id: targetId,
+      created_at: new Date(),
+      deleted_at: null
+    });
+  };
 
   // Handler
   const masonryScript = () => {
@@ -187,6 +173,7 @@ const Home = () => {
 
   const showDetailPost = (id) => {
     window.history.pushState('', '', `/home?post=${id}`);
+    setSelectedPost(id);
     setShowPost(true);
   };
 
@@ -218,9 +205,7 @@ const Home = () => {
               setShowPost(false);
               window.history.pushState('', '', `/home`);
             }}></div>
-          {showPost &&
-          <DetailPost isShowing={showPost} key={showPost} />
-}
+          {showPost && <DetailPost postId={selectedPost} />}
         </div>
       </div>
       {/* <Card style={{ width: '42.5rem' }}>
