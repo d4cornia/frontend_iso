@@ -19,36 +19,36 @@ const Navigation = (props) => {
   const notifications = 0;
   const [allNotif, setAllNotif] = useState([]);
   const [searchAccounts, setSearchAccounts] = useState([
-    {
-      id: 1,
-      username: 'Fello',
-      subtitle: 'Fellowdie',
-      image_id: 'default-user'
-    },
-    {
-      id: 1,
-      username: 'Fello',
-      subtitle: 'Fellowdie',
-      image_id: 'default-user'
-    },
-    {
-      id: 1,
-      username: 'Fello',
-      subtitle: 'Fellowdie',
-      image_id: 'default-user'
-    },
-    {
-      id: 1,
-      username: 'Fello',
-      subtitle: 'Fellowdie',
-      image_id: 'default-user'
-    },
-    {
-      id: 1,
-      username: 'Fello',
-      subtitle: 'Fellowdie',
-      image_id: 'default-user'
-    }
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // },
+    // {
+    //   id: 1,
+    //   username: 'Fello',
+    //   subtitle: 'Fellowdie',
+    //   image_id: 'default-user'
+    // }
   ]);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isSearchPopup, setIsSearchPopup] = useState(false);
@@ -73,9 +73,29 @@ const Navigation = (props) => {
       });
   };
 
-  const getSearchAccounts = (text) => {
+  const getSearchAccounts = async (keyword) => {
     // Axios Search Account
-    console.log(text, 'search');
+    console.log(keyword);
+    setIsSearchPopup(true);
+    await axios
+        .post(
+            `${process.env.REACT_APP_BASE_API_URL}/api/users/searchUser`,
+            {
+              target_user: keyword
+            },
+            {
+              headers: {
+                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+              }
+            }
+        )
+        .then((res) => {
+          // Update Comment Section
+          console.log(res.data.data)
+          setSearchAccounts(res.data.data);
+        }).catch((err) => {
+          console.log(err.response)
+        });
   };
 
   // Handler and Functions
@@ -83,6 +103,7 @@ const Navigation = (props) => {
     e.preventDefault();
     const searchText = search.current.value;
     if (searchText.length > 0) {
+      setIsSearchPopup(true);
       getSearchAccounts(searchText);
     }
   };
@@ -154,13 +175,13 @@ const Navigation = (props) => {
               focusing={() => {}}
               blur={() => {
                 setIsSearchPopup(false);
-                console.log('blur');
+                // console.log('blur');
               }}
               keyUp={(e) => {
-                if (e.target.value.length > 0) {
-                  setIsSearchPopup(true);
-                  getSearchAccounts(e.target.value);
-                }
+                // if (e.target.value.length > 0) {
+                //   setIsSearchPopup(true);
+                //   getSearchAccounts(e.target.value);
+                // }
               }}
             />
             <div className="searchButton" onClick={handleSubmit}>

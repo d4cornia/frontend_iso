@@ -35,7 +35,7 @@ const Home = () => {
 
   // Variables
   const [searchParams, setSearchParams] = useSearchParams();
-  const [report, setReport] = useState([]);
+
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(-1);
   const [showPost, setShowPost] = useState(false);
@@ -103,22 +103,6 @@ const Home = () => {
     //   }
     // ]);
 
-    // const axiosResponse = await axios
-    //   .post(
-    //     `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
-    //     {
-    //       size: 10
-    //     },
-    //     {
-    //       headers: {
-    //         'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-    //       }
-    //     }
-    //   )
-    //   .then((res) => {
-    //     return res.data.data;
-    //   });
-
     await axios
       .post(
         `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
@@ -159,20 +143,24 @@ const Home = () => {
     // setPosts(axiosResponse);
   };
 
+  const [report, setReport] = useState([]);
   // Reports(Firebase)
   const getReport = async () => {
     const data = await getDocs(dataReport);
-    setReport(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    setReport(data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id }))
+    );
   };
 
-  // const addReport = async () => {
-  //   await addDoc(dataReport, {
-  //     user_id: id1,
-  //     reported_user_id: id2,
-  //     created_at: new Date(),
-  //     deleted_at: null
-  //   });
-  // };
+  const addReport = async (targetId) => {
+    await addDoc(dataReport, {
+      user_id: JSON.parse(localStorage.getItem('id')),
+      reported_user_id: targetId,
+      created_at: new Date(),
+      deleted_at: null
+    });
+  };
 
   // Handler
   const masonryScript = () => {
