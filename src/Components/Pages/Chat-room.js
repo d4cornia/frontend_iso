@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Pusher from 'pusher-js';
 import axios from 'axios';
 import { Image, Video } from 'cloudinary-react';
@@ -10,6 +11,7 @@ import '../../css/chat-room.css';
 import AccountList from '../Reusable/AccountList';
 
 const Chat_room = () => {
+  const { username } = useParams();
   // Variables
   const [newMsg, setNewmsg] = useState(0);
   const [userId, setUserId] = useState(JSON.parse(localStorage.getItem('id')));
@@ -28,6 +30,9 @@ const Chat_room = () => {
   useEffect(() => {
     // load all data
     // getAllMessage();
+    if (username) {
+      // set selected ke room, jika tidak ada create dlu bru selected ke room
+    }
     getRooms();
   }, []);
 
@@ -74,6 +79,10 @@ const Chat_room = () => {
           }
         }
       });
+  };
+
+  const createRoom = async (username) => {
+    await axios;
   };
 
   // HANDLER

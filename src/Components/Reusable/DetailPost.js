@@ -15,13 +15,10 @@ function DetailPost(props) {
   const [post, setPost] = useState({});
 
   useEffect(() => {
-    const postId = searchParams.get('post');
-    if (postId) {
-      getPost(postId);
-    } else {
+    if (props.postId !== -1) {
       getPost(props.postId);
     }
-  }, []);
+  }, [props.postId]);
 
   // Handler
   const getPost = async (postId) => {
@@ -109,53 +106,53 @@ function DetailPost(props) {
 
   const likePost = async (target_id) => {
     await axios
-        .post(
-            `${process.env.REACT_APP_BASE_API_URL}/api/users/post/like`,
-            {
-              target_post_id: target_id
-            },
-            {
-              headers: {
-                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-              }
-            }
-        )
-        .then((res) => {
-          // console.log(res);
-          // Update Like Count
-          setPost((prevState) => ({
-            ...prevState,
-            isLiked: true,
-            likesCtr: prevState.likesCtr + 1
-          }));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/like`,
+        {
+          target_post_id: target_id
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        // console.log(res);
+        // Update Like Count
+        setPost((prevState) => ({
+          ...prevState,
+          isLiked: true,
+          likesCtr: prevState.likesCtr + 1
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const unlikePost = async (target_id) => {
     await axios
-        .post(
-            `${process.env.REACT_APP_BASE_API_URL}/api/users/post/unlike`,
-            {
-              target_post_id: target_id
-            },
-            {
-              headers: {
-                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-              }
-            }
-        )
-        .then((res) => {
-          console.log(res);
-          // Update Like Count
-          setPost((prevState) => ({
-            ...prevState,
-            isLiked: false,
-            likesCtr: prevState.likesCtr - 1
-          }));
-        });
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/unlike`,
+        {
+          target_post_id: target_id
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        console.log(res);
+        // Update Like Count
+        setPost((prevState) => ({
+          ...prevState,
+          isLiked: false,
+          likesCtr: prevState.likesCtr - 1
+        }));
+      });
   };
 
   return (
@@ -190,7 +187,7 @@ function DetailPost(props) {
               </div>
             </div>
             <div className="detailpost-content_wrapper">
-              <div className="detailpost-content_caption">
+              <div className="detailpost-content_caption display-linebreak">
                 <p>{post.caption}</p>
                 <span className="fw-bold text-muted text_small">{post.moment}</span>
               </div>

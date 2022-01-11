@@ -1,124 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useLocation, useParams, useNavigate, navigate, Link } from 'react-router-dom';
-
-// Assets
-import profilImage from '../../Image/profil.jpg';
-import '../../css/Profile.css';
 import { Image, Video } from 'cloudinary-react';
-import { Button } from 'react-bootstrap';
-import AccountList from '../Reusable/AccountList';
-import { addDoc, collection, getDocs } from '@firebase/firestore';
-import { db } from '../../helper/fbconfig';
+import { useSearchParams } from 'react-router-dom';
 
-const Profile = (param) => {
-  const [userProfile, setUserProfile] = useState([]); // Data Following dan Followers
-  const [postsCtr, setPostsCtr] = useState(0); // Data Following dan Followers
-  const [followers, setFollowers] = useState([]);
-  const [relation, setRelation] = useState(false);
-  const [loggedAcc, setLoggedAcc] = useState(JSON.parse(localStorage.getItem('username')));
-  const [showAccounts, setShowAccounts] = useState(false);
-  const { username } = useParams();
-  const dataReport = collection(db, 'report');
-  const [report, setReport] = useState([]);
-
-  const navigate = useNavigate();
+function Search() {
   const [posts, setPosts] = useState([]);
+  const [keyword, setKeyword] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    getData();
+    setKeyword(searchParams.get('keyword'));
   }, []);
-
-  // Axios
-
-  const getData = async () => {
-    const temp = await axios
-      .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/profile/${username}`, {
-        headers: {
-          'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-        }
-      })
-      .then((res) => {
-        console.log(res);
-        setUserProfile(res.data.data.profile);
-        setPostsCtr(res.data.data.postsCtr);
-        // setDataProfileUser(res.data.data.profile);
-        setPosts(res.data.data.posts);
-        setRelation(res.data.data.relation);
-      });
-  };
-
-  const block = async () => {
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_API_URL}/api/users/block`,
-        {
-          target_user_id: userProfile.id
-        },
-        {
-          headers: {
-            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-          }
-        }
-      )
-      .then(() => {
-        getData();
-      });
-  };
-
-  const follow = async () => {
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_API_URL}/api/users/follow`,
-        {
-          target_user_id: userProfile.id
-        },
-        {
-          headers: {
-            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-          }
-        }
-      )
-      .then(() => {
-        getData();
-      });
-  };
-
-  const unfollow = async () => {
-    await axios
-      .patch(
-        `${process.env.REACT_APP_BASE_API_URL}/api/users/unfollow`,
-        {
-          target_user_id: userProfile.id
-        },
-        {
-          headers: {
-            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-          }
-        }
-      )
-      .then(() => {
-        getData();
-      });
-  };
-
-  // Reports(Firebase)
-  // const getReport = async () => {
-  //   const data = await getDocs(dataReport);
-  //   setReport(data.docs.map((doc) => ({
-  //     ...doc.data(),
-  //     id: doc.id }))
-  //   );
-  // };
-
-  const addReport = async (targetId) => {
-    await addDoc(dataReport, {
-      user_id: JSON.parse(localStorage.getItem('id')),
-      reported_user_id: targetId,
-      created_at: new Date(),
-      deleted_at: null
-    });
-  };
 
   return (
     <div className="content-container profile">
@@ -143,108 +34,8 @@ const Profile = (param) => {
             </div>
           </div>
         )} */}
-        <div className="profile-header">
-          <div className="profile-header_image-container">
-            <Image
-              cloud_name={'projekiso'}
-              publicId={'user/profiles/' + userProfile.image_id}
-              fetch-format="auto"
-              quality="auto"
-              className="profile-header_image"
-            />
-          </div>
-          <div className="profile-header_detail">
-            <div className="profile-header_detail-header">
-              <div className="profile-header_detail-username h4">{userProfile.username}</div>
-            </div>
-            <div className="profile-header_detail-counts">
-              <div className="profile-header_detail-post">
-                <p className="detail-content fw-bold text-center">{postsCtr}</p>
-                <p className="detail-label text-center">Posts</p>
-              </div>
-              <div className="profile-header_detail-follower">
-                <p className="detail-content fw-bold text-center">{userProfile.followersCtr}</p>
-                <p className="detail-label text-center">Followers</p>
-              </div>
-              <div className="profile-header_detail-following">
-                <p className="detail-content fw-bold text-center">{userProfile.followingCtr}</p>
-                <p className="detail-label text-center">Following</p>
-              </div>
-            </div>
-            <div className="profile-description">
-              <p className="profile-header_description-name fw-bold">{userProfile.name}</p>
-              <p className="profile-header_description-text">{userProfile.description}</p>
-            </div>
-
-            <div className="profile-action">
-              {relation && (
-                <Button
-                  variant="danger"
-                  onClick={() => {
-                    unfollow();
-                  }}>
-                  Unfollow
-                </Button>
-              )}
-              {!relation && loggedAcc !== userProfile.username && (
-                <Button
-                  variant="primary"
-                  onClick={() => {
-                    follow();
-                  }}>
-                  Follow
-                </Button>
-              )}
-              {relation && (
-                <div
-                  className="button-message"
-                  onClick={() => {
-                    navigate(`/directs/${userProfile.username}`);
-                  }}>
-                  <svg
-                    className="button-message-icon"
-                    viewBox="0 0 103 103"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M57.2222 28.6111H52.53C46.1783 28.6111 40.0556 35.4778 40.0556 40.9711V51.5L22.8889 68.6667V51.5H11.4444C5.15 51.5 0 46.35 0 40.0556V11.4444C0 5.15 5.15 0 11.4444 0H45.7778C52.0722 0 57.2222 5.15 57.2222 11.4444V28.6111ZM57.2222 34.3333H91.5556C97.85 34.3333 103 39.4833 103 45.7778V74.3889C103 80.6833 97.85 85.8333 91.5556 85.8333H80.1111V103L62.9444 85.8333H57.2222C50.9278 85.8333 45.7778 80.6833 45.7778 74.3889V45.7778C45.7778 39.4833 50.9278 34.3333 57.2222 34.3333Z"
-                      fill="#111111"
-                    />
-                  </svg>
-                </div>
-              )}
-              {loggedAcc === userProfile.username && (
-                <Link to="/edit-profile">
-                  <Button variant="primary">Edit Profile</Button>
-                </Link>
-              )}
-              {loggedAcc !== userProfile.username && (
-                <Button
-                  variant="secondary"
-                  className="button-block"
-                  onClick={() => {
-                    block();
-                  }}>
-                  Block
-                </Button>
-              )}
-            </div>
-            {loggedAcc !== userProfile.username && (
-              <div
-                className="report-button"
-                onClick={() => {
-                  addReport(userProfile.id);
-                }}>
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20.71 7.98L16.03 3.3C15.84 3.11 15.58 3 15.32 3H8.68C8.42 3 8.16 3.11 7.98 3.29L3.29 7.98C3.11 8.16 3 8.42 3 8.68V15.31C3 15.58 3.11 15.83 3.29 16.02L7.97 20.7C8.16 20.89 8.42 21 8.68 21H15.31C15.58 21 15.83 20.89 16.02 20.71L20.7 16.03C20.7931 15.9369 20.8667 15.8261 20.9165 15.7042C20.9663 15.5823 20.9913 15.4517 20.99 15.32V8.68C21 8.42 20.89 8.16 20.71 7.98V7.98ZM19 14.9L14.9 19H9.1L5 14.9V9.1L9.1 5H14.9L19 9.1V14.9V14.9Z" />
-                  <path d="M12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17Z" />
-                  <path d="M12 7C11.45 7 11 7.45 11 8V13C11 13.55 11.45 14 12 14C12.55 14 13 13.55 13 13V8C13 7.45 12.55 7 12 7Z" />
-                </svg>
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="fw-bold text-muted">POSTS</div>
+        <p className="text-muted fw-bold">Searching for</p>
+        <h3>#{keyword}</h3>
         <div className="profile-posts">
           {posts.map((post, index) => {
             return (
@@ -362,6 +153,6 @@ const Profile = (param) => {
       </div> */}
     </div>
   );
-};
+}
 
-export default Profile;
+export default Search;

@@ -1,18 +1,26 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Auth from './UserAuthentication';
 import Navigation from './Components/Reusable/Navigation';
 
-function ProtectedRoute() {
+const ProtectedRoute = forwardRef((props, ref) => {
   const isAuth = Auth.useAuth();
+  const navigation = useRef();
+
+  useImperativeHandle(ref, () => ({
+    showDetailPost: (id) => {
+      navigation.current.showDetailPost(id);
+    }
+  }));
+
   return isAuth ? (
     <React.Fragment>
-      <Navigation />
+      <Navigation ref={navigation} />
       <Outlet />
     </React.Fragment>
   ) : (
     <Navigate to="/login" />
   );
-}
+});
 
 export default ProtectedRoute;

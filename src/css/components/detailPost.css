@@ -9,6 +9,10 @@
   display: flex;
 }
 
+.display-linebreak {
+  white-space: pre-line;
+}
+
 .detailpost-image_container {
   flex: 1;
   aspect-ratio: 1/1;

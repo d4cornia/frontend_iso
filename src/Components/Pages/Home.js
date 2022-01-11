@@ -15,82 +15,25 @@ import { collection, getDocs, addDoc } from '@firebase/firestore';
 // Components
 import Post from '../Reusable/Post';
 import AccountList from '../Reusable/AccountList';
-import DetailPost from '../Reusable/DetailPost';
 
-const Home = () => {
+const Home = (props) => {
   useEffect(() => {
     setIsFetchingData(true);
     // getReport();
     getPosts();
     setIsFetchingData(false);
-
-    // Tambahan script Masonry
-    masonryScript();
-
-    // Check jika ada url post
-    if (searchParams.get('post')) {
-      setShowPost(true);
-    }
   }, []);
 
   // Variables
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [posts, setPosts] = useState([]);
-  const [selectedPost, setSelectedPost] = useState(-1);
-  const [showPost, setShowPost] = useState(false);
   const [isFetchingData, setIsFetchingData] = useState(true);
   const dataReport = collection(db, 'report');
 
   // AXIOS
-
-  // Get Post cma untuk awal saja, untuk update data selanjutnya bisa di dalam component post,
-  // Nanti pas user refresh halaman baru get post ini kepanggil lagi jdi urutan post gk bakal berubah kecuali user refresh halamannya
-
-  const getPosts = async () => {
-    // Cuma masukkin dummy, klo misal mau disambungin, yg axios yg di uncomment
-    // setPosts((posts) => [
-    //   ...posts,
-    //   {
-    //     id: 1,
-    //     user: {
-    //       isFollowing: false,
-    //       username: 'robby',
-    //       followersCtr: '1.3k',
-    //       image_id: 'robby_pfoish'
-    //     },
-    //     dateNow: '1h',
-    //     cloudinary_id: 'post-dummy',
-    //     isLiked: true,
-    //     likesCtr: '835',
-    //     commentsCtr: '15.3k',
-    //     caption:
-    //       'Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, soluta? Corporis, tempore consequuntur? Dolores, adipisci!',
-    //     comments: [
-    //       {
-    //         id: 3,
-    //         user: {
-    //           image_id: 'default-user',
-    //           username: 'Yoyuu'
-    //         },
-    //         comment: 'Lorem ipsum dolor sit amet.',
-    //         dateNow: '3m ago'
-    //       },
-    //
-    //       {
-    //         id: 2,
-    //         user: {
-    //           image_id: 'default-user',
-    //           username: 'd4cornia'
-    //         },
-    //         comment: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-    //         dateNow: '7m ago'
-    //       }
-    //     ]
-    //   }
-    // ]);
-
-    await axios
+  const fetchPostData = async () => {
+    return await axios
       .post(
         `${process.env.REACT_APP_BASE_API_URL}/api/users/post/following`,
         {
@@ -104,39 +47,19 @@ const Home = () => {
       )
       .then((res) => {
         console.log(res.data.data);
-        for (let i = 0; i < res.data.data.length; i++) {
-          setPosts((posts) => [
-            ...posts,
-            {
-              id: res.data.data[i].id,
-              user: {
-                isFollowing: res.data.data[i].user.isFollowing,
-                username: res.data.data[i].user.username,
-                followersCtr: res.data.data[i].user.followersCtr,
-                image_id: res.data.data[i].user.image_id
-              },
-              dateNow: res.data.data[i].dateNow,
-              cloudinary_id: res.data.data[i].cloudinary_id,
-              isLiked: res.data.data[i].isLiked,
-              likesCtr: res.data.data[i].likesCtr,
-              commentsCtr: res.data.data[i].commentsCtr,
-              caption: res.data.data[i].caption
-            }
-          ]);
-        }
+        return res.data.data;
       });
-
-    // Waktu itu aku kesusahan gimana caranya pake useState array of object, nnti coba cari bareng" ae
-    // setPosts(axiosResponse);
   };
 
   const [report, setReport] = useState([]);
   // Reports(Firebase)
   const getReport = async () => {
     const data = await getDocs(dataReport);
-    setReport(data.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id }))
+    setReport(
+      data.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id
+      }))
     );
   };
 
@@ -159,9 +82,13 @@ const Home = () => {
   };
 
   const showDetailPost = (id) => {
-    window.history.pushState('', '', `/home?post=${id}`);
-    setSelectedPost(id);
-    setShowPost(true);
+    props.showDetailPost(id);
+  };
+
+  const getPosts = async () => {
+    const allPosts = await fetchPostData();
+    setPosts((prevState) => [...allPosts]);
+    masonryScript();
   };
 
   return (
@@ -169,13 +96,25 @@ const Home = () => {
       <div className="content-wrapper">
         <div
           className="posts-container js-masonry"
-          data-masonry-options='{ "itemSelector": ".post-wrapper", "horizontalOrder": "true", "columnWidth": ".post-wrapper" }'>
+          data-masonry-options='{ "itemSelector": ".post-wrapper", "columnWidth": ".post-wrapper" }'>
+          {!isFetchingData && (
+            <div className="post-wrapper">
+              <h3>
+                Hello,{' '}
+                <span className="fw-bold secondary-font" style={{ letterSpacing: '.1rem' }}>
+                  {JSON.parse(localStorage.getItem('username'))}
+                </span>
+                !
+              </h3>
+              <h5 className="text-muted">How is it going?</h5>
+            </div>
+          )}
           {!isFetchingData &&
             posts.map((post, index) => {
               return (
                 <div
                   className="post-wrapper"
-                  key={index}
+                  key={post.id}
                   onClick={(e) => {
                     e.stopPropagation();
                     showDetailPost(post.id);
@@ -184,15 +123,6 @@ const Home = () => {
                 </div>
               );
             })}
-        </div>
-        <div className={`popup-detailpost ${showPost ? 'show' : ''}`}>
-          <div
-            className="bg-dimmed"
-            onClick={() => {
-              setShowPost(false);
-              window.history.pushState('', '', `/home`);
-            }}></div>
-          {showPost && <DetailPost postId={selectedPost} />}
         </div>
       </div>
       {/* <Card style={{ width: '42.5rem' }}>

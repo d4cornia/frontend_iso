@@ -168,7 +168,7 @@ function Post(props) {
               className="card-head_profile-followers text_small fw-bold text-muted">
               {post.user.followersCtr} Followers • {contentIsFollowing()}
             </p>
-            <p className="post-created fw-bold text-muted">{post.dateNow}</p>
+            <p className="post-created fw-bold text-muted text_small">{post.dateNow}</p>
           </div>
         </div>
         <div className="card-content">
@@ -222,7 +222,7 @@ function Post(props) {
               <p className="action-button-text text-muted fw-bold">{post.commentsCtr} comments</p>
             </div>
           </div>
-          <p className="card-caption_content">
+          <p className="card-caption_content display-linebreak">
             <span className="post-sender fw-bold">{post.user.username} </span>
             {post.caption}
           </p>

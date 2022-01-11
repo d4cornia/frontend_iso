@@ -16,6 +16,7 @@ const authentication = {
         id: localStorage.getItem('id'),
         username: localStorage.getItem('username'),
         email: localStorage.getItem('email'),
+        image_id: localStorage.getItem('image_id'),
         token: localStorage.getItem('x-auth-token')
       };
 
@@ -41,6 +42,7 @@ const authentication = {
             id: JSON.stringify(res.data.data.id),
             username: JSON.stringify(res.data.data.username),
             email: JSON.stringify(res.data.data.email),
+            image_id: JSON.stringify(res.data.data.image_id),
             token: JSON.stringify(res.data.data.token)
           };
           const credToken = CryptoJS.AES.encrypt(
@@ -51,6 +53,7 @@ const authentication = {
           localStorage.setItem('id', credential.id);
           localStorage.setItem('username', credential.username);
           localStorage.setItem('email', credential.email);
+          localStorage.setItem('image_id', credential.image_id);
           localStorage.setItem('x-auth-token', credential.token);
           localStorage.setItem('credential-token', credToken);
           navigate('/home');
@@ -65,9 +68,10 @@ const authentication = {
       });
   },
   logout: () => {
+    localStorage.removeItem('id');
     localStorage.removeItem('username');
     localStorage.removeItem('email');
-    localStorage.removeItem('name');
+    localStorage.removeItem('image_id');
     localStorage.removeItem('x-auth-token');
   }
 };

@@ -11,10 +11,11 @@
 .profile-header {
   width: 100%;
   display: flex;
-  flex-flow: column;
-  align-items: center;
   gap: 2rem;
   margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--clr-white);
+  border-radius: 0.75rem;
 }
 
 .profile-header_image-container {
@@ -30,10 +31,17 @@
   object-fit: cover;
 }
 
+.profile-header_detail-username {
+  margin-bottom: 0;
+}
+
 .profile-header_detail {
+  flex: 1;
   display: flex;
   flex-flow: column;
-  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  position: relative;
 }
 
 .profile-header_detail-header {
@@ -48,32 +56,21 @@
 
 .profile-header_detail-counts {
   width: 100%;
-  padding: 1rem 0;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 1rem;
+  gap: 1rem;
 }
 
 .profile-header_detail-counts > div {
-  width: 6rem;
   background-color: var(--clr-white);
   border-radius: 0.35rem;
   display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  cursor: pointer;
+  gap: 0.3rem;
 }
 
 .profile-description {
   margin-bottom: 1rem;
   display: flex;
   flex-flow: column;
-  align-items: center;
 }
 
 .profile-posts {
@@ -119,7 +116,10 @@
 .profile-action {
   display: flex;
   justify-content: center;
-  gap: 2rem;
+  gap: 1rem;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
 }
 
 .profile-post-item_detail {
@@ -205,25 +205,23 @@
 }
 
 .report-button {
-  width: 3.5rem;
-  height: 3.5rem;
-  padding: 1rem;
-  background-color: rgba(var(--bs-danger-rgb), 0.3);
-  position: fixed;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  position: absolute;
   display: grid;
   place-items: center;
   right: 1rem;
-  top: 5rem;
+  bottom: 1rem;
   cursor: pointer;
-  border-radius: 0.75rem;
 }
 
-.report-button:hover {
-  background-color: rgba(var(--bs-danger-rgb), 0.6);
+.report-button:hover path {
+  fill: rgba(var(--bs-danger-rgb), 1);
 }
 
-.report-button svg {
-  fill: var(--clr-white);
+.report-button path {
+  fill: rgba(var(--bs-danger-rgb), 0.6);
 }
 
 /* X-Small devices (portrait phones, less than 576px) */

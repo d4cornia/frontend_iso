@@ -1,4 +1,4 @@
-@import url('https://api.fontshare.com/css?f[]=satoshi@300,301,400,401,500,501,700,701,900,901,1,2&display=swap');
+@import url('https://api.fontshare.com/css?f[]=satoshi@300,301,400,401,500,501,700,701,900,901,1,2&f[]=boska@200,201,300,301,400,401,500,501,700,701,900,901&display=swap');
 
 :root {
   --fs-small-2: clamp(0.56rem, 0.45rem + 0.32vw, 0.63rem);
@@ -44,6 +44,8 @@
   --clr-white: var(--clr-body-0);
   --shadow: 0 1.1px 5.3px rgba(0, 0, 0, 0.024), 0 3.8px 17.9px rgba(0, 0, 0, 0.036),
     0 17px 80px rgba(0, 0, 0, 0.06);
+  --font-primary: 'Satoshi', sans-serif;
+  --font-secondary: 'Boska', serif;
   /* Override Bootstrap Variables */
   --bs-body-font-family: 'Satoshi', sans-serif !important;
   --bs-body-color: var(--cr-black) !important;
@@ -132,6 +134,10 @@ smaller,
 
 .text_secondary {
   color: var(--clr-primary-900-dark);
+}
+
+.secondary-font {
+  font-family: var(--font-secondary);
 }
 
 .link {

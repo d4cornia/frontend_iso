@@ -33,13 +33,13 @@
 .popup-detailpost {
   position: fixed;
   inset: 0;
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.popup-detailpost.show {
-  display: flex;
+.popup-detailpost.hidden {
+  display: none;
 }
 
 .bg-dimmed {

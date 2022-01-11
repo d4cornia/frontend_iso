@@ -1,22 +1,42 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import '../../css/components/Navigation.css';
 import CustomInput from './CustomInput';
 import LogoText from './LogoText';
 import axios from 'axios';
-import { useNavigate, NavLink } from 'react-router-dom';
+import { useNavigate, NavLink, useSearchParams } from 'react-router-dom';
 import { Image } from 'cloudinary-react';
 import profileImage from '../../Image/profil.jpg';
 import Logo from './Logo';
 
+import DetailPost from './DetailPost';
+import AddPostPopup from '../Popups/AddPost';
 import AccountList from './AccountList';
-import {db} from "../../helper/fbconfig";
-import {addDoc, collection, getDocs} from "@firebase/firestore";
+import { db } from '../../helper/fbconfig';
+import { addDoc, collection, getDocs } from '@firebase/firestore';
 
-
-
-const Navigation = (props) => {
+const Navigation = forwardRef((props, ref) => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Parent Function
+  useImperativeHandle(ref, () => ({
+    showDetailPost: (id) => {
+      setSelectedPost(id);
+      setDetailPostPopup(true);
+      setSearchParams({ post: id });
+    }
+  }));
+
+  useEffect(() => {
+    getNotif();
+
+    const postId = searchParams.get('post');
+    if (postId) {
+      setSelectedPost(postId);
+      setDetailPostPopup(true);
+    }
+  }, []);
 
   // Input Bind
   const search = useRef();
@@ -26,36 +46,11 @@ const Navigation = (props) => {
   const [allNotif, setAllNotif] = useState([]);
   const [searchAccounts, setSearchAccounts] = useState([]);
   const [searchPost, setSearchPost] = useState([]);
-  const [isAddingPost, setIsAddingPost] = useState(false);
-  const [publicId, setPublicId] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [selectedPost, setSelectedPost] = useState(-1);
+  const [isDetailPostPopup, setDetailPostPopup] = useState(false);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isSearchPopup, setIsSearchPopup] = useState(false);
   const [isAddPost, setIsAddPost] = useState(false);
-  const [widget, setWidget] = useState({});
-
-
-  useEffect(() => {
-    getNotif();
-    const widgetCloud = window.cloudinary.createUploadWidget(
-      {
-        cloudName: 'projekiso',
-        uploadPreset: 'upload-posts',
-        public_id: generateId(100, 1)
-      },
-      (error, result) => {
-        if (!error && result && result.event === 'success') {
-          console.log(result);
-          const publicIDs = result.info.public_id.replace('user/posts/', '');
-          const imageUrls = result.info.secure_url;
-          setPublicId(publicIDs);
-          setImageUrl(imageUrls);
-        }
-      }
-    );
-
-    setWidget(widgetCloud);
-  }, []);
 
   // Axios
   const getNotif = async () => {
@@ -78,24 +73,25 @@ const Navigation = (props) => {
     console.log(keyword);
     setIsSearchPopup(true);
     await axios
-        .post(
-            `${process.env.REACT_APP_BASE_API_URL}/api/users/searchUser`,
-            {
-              target_user: keyword
-            },
-            {
-              headers: {
-                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-              }
-            }
-        )
-        .then((res) => {
-          // Update Comment Section
-          // console.log(res.data.data)
-          setSearchAccounts(res.data.data);
-        }).catch((err) => {
-          console.log(err.response)
-        });
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/searchUser`,
+        {
+          target_user: keyword
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        // Update Comment Section
+        // console.log(res.data.data)
+        setSearchAccounts(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
   };
 
   const getSearchPost = async (keyword) => {
@@ -103,24 +99,25 @@ const Navigation = (props) => {
     console.log(keyword);
     setIsSearchPopup(true);
     await axios
-        .post(
-            `${process.env.REACT_APP_BASE_API_URL}/api/users/post/search`,
-            {
-              keyword: keyword
-            },
-            {
-              headers: {
-                'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-              }
-            }
-        )
-        .then((res) => {
-          // Update Comment Section
-          console.log(res.data.data)
-          setSearchPost(res.data.data);
-        }).catch((err) => {
-          console.log(err.response)
-        });
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/search`,
+        {
+          keyword: keyword
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        // Update Comment Section
+        console.log(res.data.data);
+        setSearchPost(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
   };
 
   // Handler and Functions
@@ -134,8 +131,6 @@ const Navigation = (props) => {
     }
   };
 
-
-
   const openNotification = (value) => {
     setNotificationOpen(value);
   };
@@ -147,62 +142,13 @@ const Navigation = (props) => {
 
   const searchPostClick = (item) => {
     // console.log(item);
-    navigate(`/profile/${item.user[0].username}`);
+    navigate(`/search?keyword=${item.name}`);
   };
 
-  const handleSubmitAddPost = async (e) => {
-    e.preventDefault();
-    const data = {
-      image_id: publicId,
-      description: e.target.description.value
-    };
-
-    await axios
-      .post(
-        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/upload`,
-        {
-          caption: data.description,
-          cloudinary_id: data.image_id,
-          type: 1,
-          tag: 'tag_1'
-        },
-        {
-          headers: {
-            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
-          }
-        }
-      )
-      .then((res) => {
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.info(err);
-      });
+  const removeParams = () => {
+    setSearchParams({});
+    console.log(searchParams.get('post'));
   };
-
-  const generateId = (length, mode) => {
-    const alphabets = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-    let key = '';
-
-    for (let i = 0; i < length; i++) {
-      let hash = Math.floor(Math.random() * 2) + 1;
-      let model = Math.floor(Math.random() * 2) + 1;
-      let randAlpha = Math.floor(Math.random() * alphabets.length);
-
-      if (hash === 1 || mode == 2) {
-        key += Math.floor(Math.random() * 10);
-      } else if (mode != 2) {
-        if (model === 1) key += alphabets[randAlpha];
-        else key += alphabets[randAlpha];
-      }
-    }
-
-    return key;
-  };
-
-
-
 
   return (
     <React.Fragment>
@@ -214,9 +160,11 @@ const Navigation = (props) => {
           <form action="#" method="post" className="form-search" onSubmit={handleSubmit}>
             <CustomInput
               ref={search}
-              placeholder="Search user"
+              placeholder="Search user or hastags"
               name="search"
-              focusing={(e) => {console.log(e)}}
+              focusing={(e) => {
+                console.log(e);
+              }}
               blur={() => {
                 setIsSearchPopup(false);
                 // console.log('blur');
@@ -248,7 +196,7 @@ const Navigation = (props) => {
             <li className={`navigation-link`} id="home">
               <NavLink
                 className={(navData) => (navData.isActive ? 'selected navlink' : 'navlink')}
-                to="/">
+                to="/home">
                 <svg
                   className="navigation-icon"
                   viewBox="0 0 97 97"
@@ -284,7 +232,7 @@ const Navigation = (props) => {
                 xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M14.55 24.25C14.55 21.6774 15.572 19.2102 17.3911 17.3911C19.2102 15.572 21.6774 14.55 24.25 14.55H72.75C75.3226 14.55 77.7899 15.572 79.609 17.3911C81.4281 19.2102 82.45 21.6774 82.45 24.25V72.75C82.45 75.3226 81.4281 77.7899 79.609 79.609C77.7899 81.4281 75.3226 82.45 72.75 82.45H24.25C21.6774 82.45 19.2102 81.4281 17.3911 79.609C15.572 77.7899 14.55 75.3226 14.55 72.75V24.25ZM24.25 19.4C22.9637 19.4 21.7301 19.911 20.8206 20.8206C19.911 21.7301 19.4 22.9637 19.4 24.25V72.75C19.4 74.0363 19.911 75.27 20.8206 76.1795C21.7301 77.0891 22.9637 77.6 24.25 77.6H72.75C74.0363 77.6 75.27 77.0891 76.1795 76.1795C77.0891 75.27 77.6 74.0363 77.6 72.75V24.25C77.6 22.9637 77.0891 21.7301 76.1795 20.8206C75.27 19.911 74.0363 19.4 72.75 19.4H24.25ZM48.5 29.1C49.1432 29.1 49.76 29.3555 50.2148 29.8103C50.6696 30.2651 50.925 30.8819 50.925 31.525V46.075H65.475C66.1182 46.075 66.735 46.3305 67.1898 46.7853C67.6446 47.2401 67.9 47.8569 67.9 48.5C67.9 49.1432 67.6446 49.76 67.1898 50.2148C66.735 50.6696 66.1182 50.925 65.475 50.925H50.925V65.475C50.925 66.1182 50.6696 66.735 50.2148 67.1898C49.76 67.6446 49.1432 67.9 48.5 67.9C47.8569 67.9 47.2401 67.6446 46.7853 67.1898C46.3305 66.735 46.075 66.1182 46.075 65.475V50.925H31.525C30.8819 50.925 30.2651 50.6696 29.8103 50.2148C29.3555 49.76 29.1 49.1432 29.1 48.5C29.1 47.8569 29.3555 47.2401 29.8103 46.7853C30.2651 46.3305 30.8819 46.075 31.525 46.075H46.075V31.525C46.075 30.8819 46.3305 30.2651 46.7853 29.8103C47.2401 29.3555 47.8569 29.1 48.5 29.1Z"
-                  fill="#111111"
+                  fill="#4f83de"
                 />
               </svg>
               <svg
@@ -294,7 +242,7 @@ const Navigation = (props) => {
                 xmlns="http://www.w3.org/2000/svg">
                 <path
                   d="M24.25 14.55C21.6774 14.55 19.2102 15.572 17.3911 17.3911C15.572 19.2102 14.55 21.6774 14.55 24.25V72.75C14.55 75.3226 15.572 77.7899 17.3911 79.609C19.2102 81.4281 21.6774 82.45 24.25 82.45H72.75C75.3226 82.45 77.7899 81.4281 79.609 79.609C81.4281 77.7899 82.45 75.3226 82.45 72.75V24.25C82.45 21.6774 81.4281 19.2102 79.609 17.3911C77.7899 15.572 75.3226 14.55 72.75 14.55H24.25ZM50.925 31.525V46.075H65.475C66.1182 46.075 66.735 46.3305 67.1898 46.7853C67.6446 47.2401 67.9 47.8569 67.9 48.5C67.9 49.1432 67.6446 49.76 67.1898 50.2148C66.735 50.6696 66.1182 50.925 65.475 50.925H50.925V65.475C50.925 66.1182 50.6696 66.735 50.2148 67.1898C49.76 67.6446 49.1432 67.9 48.5 67.9C47.8569 67.9 47.2401 67.6446 46.7853 67.1898C46.3305 66.735 46.075 66.1182 46.075 65.475V50.925H31.525C30.8819 50.925 30.2651 50.6696 29.8103 50.2148C29.3555 49.76 29.1 49.1432 29.1 48.5C29.1 47.8569 29.3555 47.2401 29.8103 46.7853C30.2651 46.3305 30.8819 46.075 31.525 46.075H46.075V31.525C46.075 30.8819 46.3305 30.2651 46.7853 29.8103C47.2401 29.3555 47.8569 29.1 48.5 29.1C49.1432 29.1 49.76 29.3555 50.2148 29.8103C50.6696 30.2651 50.925 30.8819 50.925 31.525V31.525Z"
-                  fill="#111111"
+                  fill="#4f83de"
                 />
               </svg>
             </li>
@@ -422,62 +370,37 @@ const Navigation = (props) => {
               />
             </div>
           </ul>
-
-          <div className={`addpost-popup ${!isAddPost ? 'hidden' : ''}`}>
+          <AddPostPopup
+            showing={isAddPost}
+            closePopup={() => {
+              setIsAddPost(false);
+            }}
+          />
+          <div className={`popup-detailpost ${isDetailPostPopup ? '' : 'hidden'}`}>
             <div
               className="bg-dimmed"
               onClick={() => {
-                setIsAddPost(false);
+                setDetailPostPopup(false);
+                removeParams();
               }}></div>
-            <div className="addpost-container">
-              <div
-                className="addpost-image"
-                onClick={() => {
-                  widget.open();
-                }}>
-                {imageUrl.length > 0 && (
-                  <img src={imageUrl} alt="" className="addpost-image_content" />
-                )}
-                {imageUrl.length === 0 && (
-                  <React.Fragment>
-                    <Logo className={'addpost-icon'} />
-                    <p className="text-muted fw-bold">Click to add image</p>
-                  </React.Fragment>
-                )}
-              </div>
-              <div className="addpost-description">
-                <form
-                  action="#"
-                  method="post"
-                  onSubmit={handleSubmitAddPost}
-                  className="form-addpost">
-                  <textarea
-                    name="description"
-                    className="addpost-textarea form-control"
-                    placeholder="Post Description"></textarea>
-                  <Button variant="primary" type="submit">
-                    Post
-                  </Button>
-                </form>
-              </div>
-            </div>
+            <DetailPost postId={selectedPost} />
           </div>
           <div className={`search-popup ${!isSearchPopup ? 'hidden' : ''}`}>
             <AccountList
               accounts={searchAccounts}
-              key={searchAccounts.length}
+              key={`accounts${searchAccounts.length}`}
               title={`Found ${searchAccounts.length} accounts`}
               Clicked={searchAccountClick}
               headerClassName="searchaccounts-header"
               childClassName="searchaccounts-item"
             />
             <AccountList
-                accounts={searchPost}
-                key={searchPost.length}
-                title={`Found ${searchPost.length} posts`}
-                Clicked={searchPostClick}
-                headerClassName="searchaccounts-header"
-                childClassName="searchaccounts-item"
+              accounts={searchPost}
+              key={`post${searchPost.length}`}
+              title={`Found ${searchPost.length} hastags`}
+              Clicked={searchPostClick}
+              headerClassName="searchaccounts-header"
+              childClassName="searchaccounts-item"
             />
           </div>
           <div className={`notification-popup ${!isNotificationOpen ? 'hidden' : ''}`}>
@@ -521,7 +444,7 @@ const Navigation = (props) => {
           <li className={`navigation-link`} id="home">
             <NavLink
               className={(navData) => (navData.isActive ? 'selected navlink' : 'navlink')}
-              to="/">
+              to="/home">
               <svg
                 className="navigation-icon"
                 viewBox="0 0 97 97"
@@ -557,7 +480,7 @@ const Navigation = (props) => {
               xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M14.55 24.25C14.55 21.6774 15.572 19.2102 17.3911 17.3911C19.2102 15.572 21.6774 14.55 24.25 14.55H72.75C75.3226 14.55 77.7899 15.572 79.609 17.3911C81.4281 19.2102 82.45 21.6774 82.45 24.25V72.75C82.45 75.3226 81.4281 77.7899 79.609 79.609C77.7899 81.4281 75.3226 82.45 72.75 82.45H24.25C21.6774 82.45 19.2102 81.4281 17.3911 79.609C15.572 77.7899 14.55 75.3226 14.55 72.75V24.25ZM24.25 19.4C22.9637 19.4 21.7301 19.911 20.8206 20.8206C19.911 21.7301 19.4 22.9637 19.4 24.25V72.75C19.4 74.0363 19.911 75.27 20.8206 76.1795C21.7301 77.0891 22.9637 77.6 24.25 77.6H72.75C74.0363 77.6 75.27 77.0891 76.1795 76.1795C77.0891 75.27 77.6 74.0363 77.6 72.75V24.25C77.6 22.9637 77.0891 21.7301 76.1795 20.8206C75.27 19.911 74.0363 19.4 72.75 19.4H24.25ZM48.5 29.1C49.1432 29.1 49.76 29.3555 50.2148 29.8103C50.6696 30.2651 50.925 30.8819 50.925 31.525V46.075H65.475C66.1182 46.075 66.735 46.3305 67.1898 46.7853C67.6446 47.2401 67.9 47.8569 67.9 48.5C67.9 49.1432 67.6446 49.76 67.1898 50.2148C66.735 50.6696 66.1182 50.925 65.475 50.925H50.925V65.475C50.925 66.1182 50.6696 66.735 50.2148 67.1898C49.76 67.6446 49.1432 67.9 48.5 67.9C47.8569 67.9 47.2401 67.6446 46.7853 67.1898C46.3305 66.735 46.075 66.1182 46.075 65.475V50.925H31.525C30.8819 50.925 30.2651 50.6696 29.8103 50.2148C29.3555 49.76 29.1 49.1432 29.1 48.5C29.1 47.8569 29.3555 47.2401 29.8103 46.7853C30.2651 46.3305 30.8819 46.075 31.525 46.075H46.075V31.525C46.075 30.8819 46.3305 30.2651 46.7853 29.8103C47.2401 29.3555 47.8569 29.1 48.5 29.1Z"
-                fill="#111111"
+                fill="#4f83de"
               />
             </svg>
             <svg
@@ -567,7 +490,7 @@ const Navigation = (props) => {
               xmlns="http://www.w3.org/2000/svg">
               <path
                 d="M24.25 14.55C21.6774 14.55 19.2102 15.572 17.3911 17.3911C15.572 19.2102 14.55 21.6774 14.55 24.25V72.75C14.55 75.3226 15.572 77.7899 17.3911 79.609C19.2102 81.4281 21.6774 82.45 24.25 82.45H72.75C75.3226 82.45 77.7899 81.4281 79.609 79.609C81.4281 77.7899 82.45 75.3226 82.45 72.75V24.25C82.45 21.6774 81.4281 19.2102 79.609 17.3911C77.7899 15.572 75.3226 14.55 72.75 14.55H24.25ZM50.925 31.525V46.075H65.475C66.1182 46.075 66.735 46.3305 67.1898 46.7853C67.6446 47.2401 67.9 47.8569 67.9 48.5C67.9 49.1432 67.6446 49.76 67.1898 50.2148C66.735 50.6696 66.1182 50.925 65.475 50.925H50.925V65.475C50.925 66.1182 50.6696 66.735 50.2148 67.1898C49.76 67.6446 49.1432 67.9 48.5 67.9C47.8569 67.9 47.2401 67.6446 46.7853 67.1898C46.3305 66.735 46.075 66.1182 46.075 65.475V50.925H31.525C30.8819 50.925 30.2651 50.6696 29.8103 50.2148C29.3555 49.76 29.1 49.1432 29.1 48.5C29.1 47.8569 29.3555 47.2401 29.8103 46.7853C30.2651 46.3305 30.8819 46.075 31.525 46.075H46.075V31.525C46.075 30.8819 46.3305 30.2651 46.7853 29.8103C47.2401 29.3555 47.8569 29.1 48.5 29.1C49.1432 29.1 49.76 29.3555 50.2148 29.8103C50.6696 30.2651 50.925 30.8819 50.925 31.525V31.525Z"
-                fill="#111111"
+                fill="#4f83de"
               />
             </svg>
           </li>
@@ -604,6 +527,6 @@ const Navigation = (props) => {
       </div>
     </React.Fragment>
   );
-};
+});
 
 export default Navigation;

@@ -7,7 +7,7 @@ import registerImageSrc from '../../Image/new-register.jpg';
 import '../../css/Register.css';
 // Custom Functions
 import Validator from '../../helper/validator';
-import _calculateAge from '../../helper/functions';
+import { _calculateAge } from '../../helper/functions';
 import '../../helper/functions';
 // Components
 import Logo from '../Reusable/Logo';
