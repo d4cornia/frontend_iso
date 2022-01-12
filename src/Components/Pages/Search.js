@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Video } from 'cloudinary-react';
 import { useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 
 function Search(props) {
   const [posts, setPosts] = useState([]);
@@ -9,7 +10,32 @@ function Search(props) {
 
   useEffect(() => {
     setKeyword(searchParams.get('keyword'));
+    getPosts()
   }, []);
+
+  const getPosts = async () => {
+    // Axios Search Accoun
+    await axios
+      .post(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/search`,
+        {
+          keyword: searchParams.get('keyword')
+        },
+        {
+          headers: {
+            'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
+          }
+        }
+      )
+      .then((res) => {
+        // Update Comment Section
+        console.log(res.data.data)
+        setPosts(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      });
+  };
 
   return (
     <div className="content-container profile">

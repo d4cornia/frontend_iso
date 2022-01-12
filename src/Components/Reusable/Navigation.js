@@ -55,7 +55,7 @@ const Navigation = forwardRef((props, ref) => {
   const notifications = 0;
   const [allNotif, setAllNotif] = useState([]);
   const [searchAccounts, setSearchAccounts] = useState([]);
-  const [searchPost, setSearchPost] = useState([]);
+  const [searchPostHashtag, setSearchPostHashtag] = useState([]);
   const [selectedPost, setSelectedPost] = useState(-1);
   const [isDetailPostPopup, setDetailPostPopup] = useState(false);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
@@ -109,11 +109,8 @@ const Navigation = forwardRef((props, ref) => {
     console.log(keyword);
     setIsSearchPopup(true);
     await axios
-      .post(
-        `${process.env.REACT_APP_BASE_API_URL}/api/users/post/search`,
-        {
-          keyword: keyword
-        },
+      .get(
+        `${process.env.REACT_APP_BASE_API_URL}/api/users/hashtag/search/${keyword}`,
         {
           headers: {
             'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
@@ -122,8 +119,8 @@ const Navigation = forwardRef((props, ref) => {
       )
       .then((res) => {
         // Update Comment Section
-        console.log(res.data.data);
-        setSearchPost(res.data.data);
+        console.log('hastag', res.data.data);
+        setSearchPostHashtag(res.data.data);
       })
       .catch((err) => {
         console.log(err.response);
@@ -154,7 +151,7 @@ const Navigation = forwardRef((props, ref) => {
   const searchPostClick = (item) => {
     search.current.clearValue();
     setIsSearchPopup(false);
-    navigate(`/search?keyword=${item.name}`);
+    navigate(`/search?keyword=${item.username.replace('#', '')}`);
   };
 
   const removeParams = () => {
@@ -406,9 +403,9 @@ const Navigation = forwardRef((props, ref) => {
               childClassName="searchaccounts-item"
             />
             <AccountList
-              accounts={searchPost}
-              key={`post${searchPost.length}`}
-              title={`Found ${searchPost.length} hastags`}
+              accounts={searchPostHashtag}
+              key={`post${searchPostHashtag.length}`}
+              title={`Found ${searchPostHashtag.length} hastags`}
               Clicked={searchPostClick}
               headerClassName="searchaccounts-header"
               childClassName="searchaccounts-item"
