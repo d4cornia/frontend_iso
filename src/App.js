@@ -29,9 +29,13 @@ function App() {
 
   // Child Emit Callback
   const popUpDetailPost = (id) => {
-    console.log('POPUP CUY');
     protectedRoute.current.showDetailPost(id);
   };
+
+  const showAlert = (alertObj) => {
+    protectedRoute.current.showAlert(alertObj);
+  };
+
   return (
     <Router>
       <div className="App">
@@ -40,20 +44,34 @@ function App() {
           {/* disini jika path sama dengan yang ada di URL maka di append component dalam element */}
           <Route element={<ProtectedRoute ref={protectedRoute} />}>
             <Route exact path={'/'} element={<Navigate to="/home" />} />
-            <Route exact path={'/home'} element={<Home showDetailPost={popUpDetailPost} />} />
-            <Route path={'/edit-profile'} element={<EditProfile />} />
-            <Route path={'/editPassword'} element={<EditPassword />} />
-            <Route path="/profile/:username" element={<Profile />} />
-            <Route path="/search" element={<Search />} />
+            <Route
+              exact
+              path={'/home'}
+              element={<Home showDetailPost={popUpDetailPost} showAlert={showAlert} />}
+            />
+            <Route path={'/edit-profile'} element={<EditProfile showAlert={showAlert} />} />
+            <Route path={'/editPassword'} element={<EditPassword showAlert={showAlert} />} />
+            <Route
+              path="/profile/:username"
+              element={<Profile showDetailPost={popUpDetailPost} />}
+            />
+            <Route
+              path="/search"
+              element={<Search showDetailPost={popUpDetailPost} showAlert={showAlert} />}
+            />
             <Route path="/directs">
-              <Route exact path={':username'} element={<Chat_room />} />
-              <Route exact path={''} element={<Chat_room />} />
+              <Route exact path={':username'} element={<Chat_room showAlert={showAlert} />} />
+              <Route exact path={''} element={<Chat_room showAlert={showAlert} />} />
             </Route>
           </Route>
-          <Route exact path={'/login'} element={<Login />} />
-          <Route exact path={'/register'} element={<Register />} />
+          <Route exact path={'/login'} element={<Login showAlert={showAlert} />} />
+          <Route exact path={'/register'} element={<Register showAlert={showAlert} />} />
           <Route exact path={'/legal/privacy-policy'} element={<PrivacyPolicy />} />
-          <Route exact path={'/forgot-password'} element={<ForgotPassword />} />
+          <Route
+            exact
+            path={'/forgot-password'}
+            element={<ForgotPassword showAlert={showAlert} />}
+          />
           {/* <Route exact path={"/search"} element={<Search/>}/>
                 <Route exact path={"/post"} element={<Post/>}/>*/}
           {/* jika tidak ada url yang cocok dengan route" diatas*/}

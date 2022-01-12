@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Video } from 'cloudinary-react';
 import { useSearchParams } from 'react-router-dom';
 
-function Search() {
+function Search(props) {
   const [posts, setPosts] = useState([]);
   const [keyword, setKeyword] = useState('');
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,7 +39,12 @@ function Search() {
         <div className="profile-posts">
           {posts.map((post, index) => {
             return (
-              <div className="profile-post-item" key={index}>
+              <div
+                className="profile-post-item"
+                key={index}
+                onClick={() => {
+                  props.showDetailPost(post.id);
+                }}>
                 <Image
                   cloud_name={'projekiso'}
                   publicId={'user/posts/' + post.cloudinary_id}

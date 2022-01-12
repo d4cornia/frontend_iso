@@ -1,0 +1,29 @@
+.alert-popup {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  transition: all 1s;
+}
+
+.alert-popup.hidden {
+  bottom: -10rem;
+}
+
+.alert {
+  max-width: 40vw;
+  margin-bottom: 0;
+  padding: 0.75rem;
+}
+
+/* Small devices (landscape phones, less than 768px) */
+@media (max-width: 767.98px) {
+  .alert-popup {
+    width: calc(100% - 2rem);
+    right: 1rem;
+  }
+
+  .alert {
+    width: 100% !important;
+    max-width: 100%;
+  }
+}

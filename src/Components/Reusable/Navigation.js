@@ -1,22 +1,29 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Button } from 'react-bootstrap';
-import '../../css/components/Navigation.css';
-import CustomInput from './CustomInput';
-import LogoText from './LogoText';
 import axios from 'axios';
 import { useNavigate, NavLink, useSearchParams } from 'react-router-dom';
-import { Image } from 'cloudinary-react';
-import profileImage from '../../Image/profil.jpg';
-import Logo from './Logo';
 
+// Assets
+import { Button } from 'react-bootstrap';
+import '../../css/components/Navigation.css';
+import { Image } from 'cloudinary-react';
+
+// Components
+import CustomInput from './CustomInput';
+import LogoText from './LogoText';
+import Logo from './Logo';
 import DetailPost from './DetailPost';
 import AddPostPopup from '../Popups/AddPost';
 import AccountList from './AccountList';
+import ProfileImage from './ProfileImage';
+import AlertPopup from '../Popups/Alert';
+
+// Firebase
 import { db } from '../../helper/fbconfig';
 import { addDoc, collection, getDocs } from '@firebase/firestore';
 
 const Navigation = forwardRef((props, ref) => {
   const navigate = useNavigate();
+  const alert = useRef();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Parent Function
@@ -25,6 +32,9 @@ const Navigation = forwardRef((props, ref) => {
       setSelectedPost(id);
       setDetailPostPopup(true);
       setSearchParams({ post: id });
+    },
+    showAlert: (alertObj) => {
+      alert.current.showMessage(alertObj);
     }
   }));
 
@@ -136,18 +146,19 @@ const Navigation = forwardRef((props, ref) => {
   };
 
   const searchAccountClick = (item) => {
-    // console.log(item);
+    search.current.clearValue();
+    setIsSearchPopup(false);
     navigate(`/profile/${item.username}`);
   };
 
   const searchPostClick = (item) => {
-    // console.log(item);
+    search.current.clearValue();
+    setIsSearchPopup(false);
     navigate(`/search?keyword=${item.name}`);
   };
 
   const removeParams = () => {
     setSearchParams({});
-    console.log(searchParams.get('post'));
   };
 
   return (
@@ -164,10 +175,6 @@ const Navigation = forwardRef((props, ref) => {
               name="search"
               focusing={(e) => {
                 console.log(e);
-              }}
-              blur={() => {
-                setIsSearchPopup(false);
-                // console.log('blur');
               }}
               keyUp={(e) => {
                 // if (e.target.value.length > 0) {
@@ -360,22 +367,21 @@ const Navigation = forwardRef((props, ref) => {
               </li>
             )}
             <div className="profile-container">
-              <img
-                src={profileImage}
-                alt="Profile"
+              <ProfileImage
+                publicId={JSON.parse(localStorage.getItem('image_id'))}
+                username={JSON.parse(localStorage.getItem('username'))}
                 className="profile-img"
-                onClick={() => {
-                  navigate('/profile/' + JSON.parse(localStorage.getItem('username')));
-                }}
               />
             </div>
           </ul>
+          {/* POPUPS */}
           <AddPostPopup
             showing={isAddPost}
             closePopup={() => {
               setIsAddPost(false);
             }}
           />
+          <AlertPopup ref={alert} />
           <div className={`popup-detailpost ${isDetailPostPopup ? '' : 'hidden'}`}>
             <div
               className="bg-dimmed"
@@ -385,7 +391,12 @@ const Navigation = forwardRef((props, ref) => {
               }}></div>
             <DetailPost postId={selectedPost} />
           </div>
-          <div className={`search-popup ${!isSearchPopup ? 'hidden' : ''}`}>
+          <div
+            className={`search-popup ${!isSearchPopup ? 'hidden' : ''}`}
+            tabIndex={0}
+            onBlur={() => {
+              setIsSearchPopup(false);
+            }}>
             <AccountList
               accounts={searchAccounts}
               key={`accounts${searchAccounts.length}`}
@@ -437,8 +448,10 @@ const Navigation = forwardRef((props, ref) => {
               <p className="empty-state-Text">You have no notifications at the moment.</p>
             )}
           </div>
+          {/* END POPUPS */}
         </div>
       </div>
+      {/* MOBILE NAV */}
       <div className="navigation-mobile">
         <ul className="navigation-links">
           <li className={`navigation-link`} id="home">

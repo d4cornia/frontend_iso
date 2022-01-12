@@ -11,7 +11,7 @@ import AccountList from '../Reusable/AccountList';
 import { addDoc, collection, getDocs } from '@firebase/firestore';
 import { db } from '../../helper/fbconfig';
 
-const Profile = (param) => {
+const Profile = (props) => {
   const [userProfile, setUserProfile] = useState([]); // Data Following dan Followers
   const [postsCtr, setPostsCtr] = useState(0); // Data Following dan Followers
   const [followers, setFollowers] = useState([]);
@@ -248,7 +248,12 @@ const Profile = (param) => {
         <div className="profile-posts">
           {posts.map((post, index) => {
             return (
-              <div className="profile-post-item" key={index}>
+              <div
+                className="profile-post-item"
+                key={post.id}
+                onClick={() => {
+                  props.showDetailPost(post.id);
+                }}>
                 <Image
                   cloud_name={'projekiso'}
                   publicId={'user/posts/' + post.cloudinary_id}

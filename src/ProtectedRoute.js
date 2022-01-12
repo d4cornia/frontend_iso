@@ -10,6 +10,9 @@ const ProtectedRoute = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     showDetailPost: (id) => {
       navigation.current.showDetailPost(id);
+    },
+    showAlert: (alertObj) => {
+      navigation.current.showAlert(alertObj);
     }
   }));
 
