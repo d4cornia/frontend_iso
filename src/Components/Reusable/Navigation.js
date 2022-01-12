@@ -17,6 +17,7 @@ import AccountList from './AccountList';
 import ProfileImage from './ProfileImage';
 import AlertPopup from '../Popups/Alert';
 
+
 // Firebase
 import { db } from '../../helper/fbconfig';
 import { addDoc, collection, getDocs } from '@firebase/firestore';
@@ -55,9 +56,13 @@ const Navigation = forwardRef((props, ref) => {
   const notifications = 0;
   const [allNotif, setAllNotif] = useState([]);
   const [searchAccounts, setSearchAccounts] = useState([]);
+
   const [searchPostHashtag, setSearchPostHashtag] = useState([]);
   const [selectedPost, setSelectedPost] = useState(-1);
   const [isDetailPostPopup, setDetailPostPopup] = useState(false);
+
+  // const [isAddingPost, setIsAddingPost] = useState(false);
+
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [isSearchPopup, setIsSearchPopup] = useState(false);
   const [isAddPost, setIsAddPost] = useState(false);
@@ -81,7 +86,7 @@ const Navigation = forwardRef((props, ref) => {
   const getSearchAccounts = async (keyword) => {
     // Axios Search Account
     console.log(keyword);
-    setIsSearchPopup(true);
+   // setIsSearchPopup(true);
     await axios
       .post(
         `${process.env.REACT_APP_BASE_API_URL}/api/users/searchUser`,
@@ -107,7 +112,7 @@ const Navigation = forwardRef((props, ref) => {
   const getSearchPost = async (keyword) => {
     // Axios Search Account
     console.log(keyword);
-    setIsSearchPopup(true);
+    //setIsSearchPopup(true);
     await axios
       .get(
         `${process.env.REACT_APP_BASE_API_URL}/api/users/hashtag/search/${keyword}`,
@@ -125,6 +130,7 @@ const Navigation = forwardRef((props, ref) => {
       .catch((err) => {
         console.log(err.response);
       });
+
   };
 
   // Handler and Functions
@@ -433,7 +439,7 @@ const Navigation = forwardRef((props, ref) => {
                           {notif.message}
                         </p>
                         <p className="notification-item_content-created text-muted fw-bold text_small">
-                          {/*1h ago*/}
+                          {notif.dateNow}
                         </p>
                       </div>
                     </div>

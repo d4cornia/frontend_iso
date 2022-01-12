@@ -103,21 +103,40 @@ const Profile = (props) => {
   };
 
   // Reports(Firebase)
-  // const getReport = async () => {
-  //   const data = await getDocs(dataReport);
-  //   setReport(data.docs.map((doc) => ({
-  //     ...doc.data(),
-  //     id: doc.id }))
-  //   );
-  // };
+  const getReport = async () => {
+    const data = await getDocs(dataReport);
+    setReport(data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id }))
+    );
+  };
 
   const addReport = async (targetId) => {
-    await addDoc(dataReport, {
-      user_id: JSON.parse(localStorage.getItem('id')),
-      reported_user_id: targetId,
-      created_at: new Date(),
-      deleted_at: null
-    });
+    if(JSON.parse(localStorage.getItem('id')) != targetId) {
+      getReport();
+      let ada = false;
+      report.map((rep) => {
+
+        if (rep.user_id == JSON.parse(localStorage.getItem('id')) && rep.reported_user_id == targetId) {
+          ada = true;
+        }
+      })
+
+      if (!ada) {
+        await addDoc(dataReport, {
+          user_id: JSON.parse(localStorage.getItem('id')),
+          reported_user_id: targetId,
+          created_at: new Date(),
+          deleted_at: null
+        });
+        getReport();
+      } else {
+        console.log("sudah report");
+      }
+    }else{
+      console.log("tdk bisa report dirisendiri");
+    }
+
   };
 
   return (
