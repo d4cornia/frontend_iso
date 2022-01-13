@@ -55,7 +55,7 @@ function AddPostPopup(props) {
           caption: data.description,
           cloudinary_id: data.image_id,
           type: 1,
-          tag: data.description.match(/#[a-z0-9_]+/gi).join(',')
+          tag: data.description === '' ? '' : data.description.match(/#[a-z0-9_]+/gi).join(',')
         },
         {
           headers: {
