@@ -53,7 +53,7 @@ function App() {
             <Route path={'/editPassword'} element={<EditPassword showAlert={showAlert} />} />
             <Route
               path="/profile/:username"
-              element={<Profile showDetailPost={popUpDetailPost} />}
+              element={<Profile showDetailPost={popUpDetailPost} showAlert={showAlert} />}
             />
             <Route
               path="/search"

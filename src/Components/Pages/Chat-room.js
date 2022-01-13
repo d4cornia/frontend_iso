@@ -49,40 +49,49 @@ const Chat_room = () => {
   //   console.log('load', allMessages);
   // };
 
-  const getRooms = async () => {
-    const temp = await axios
+  const fetchRoom = async () => {
+    return await axios
       .get(`${process.env.REACT_APP_BASE_API_URL}/api/users/dm`, {
         headers: {
           'x-auth-token': JSON.parse(localStorage.getItem('x-auth-token'))
         }
       })
       .then((res) => {
-        console.log(res);
-        for (let i = 0; i < res.data.data.length; i++) {
-          if (res.data.data[i].id != -1) {
-            setRooms([
-              ...rooms,
-              {
-                id: res.data.data[i].id,
-                user_id: res.data.data[i].target_user.id,
-                dm_relation: res.data.data[i].dm_relation,
-                username: res.data.data[i].target_user.username,
-                subtitle: res.data.data[i].lastChat.message,
-                image_id: res.data.data[i].target_user.image_id,
-                followersCtr: res.data.data[i].target_user.followersCtr,
-                chats: res.data.data[i].chats
-              }
-            ]);
-          } else {
-            setNewmsg(res.data.data[i].unreadCtr);
-            console.log(newMsg);
-          }
-        }
+        // setRooms(res.data.data.filter((el) => {
+        //   return el.id != -1
+        // } ))
+       return res.data.data;
+
+
       });
+
   };
 
-  const createRoom = async (username) => {
-    await axios;
+
+  const getRooms = async (username) => {
+    const allRooms = await fetchRoom();
+    for (let i = 0; i < allRooms.length; i++) {
+      if (allRooms[i].id != -1) {
+        setRooms((prevState) => [
+          ...prevState,
+          {
+            id: allRooms[i].id,
+            user_id: allRooms[i].target_user.id,
+            dm_relation: allRooms[i].dm_relation,
+            username: allRooms[i].target_user.username,
+            subtitle: allRooms[i].lastChat.message,
+            image_id: allRooms[i].target_user.image_id,
+            followersCtr: allRooms[i].target_user.followersCtr,
+            chats: allRooms[i].chats
+          }
+        ]);
+      } else {
+        setNewmsg(allRooms[i].unreadCtr);
+        console.log(newMsg);
+      }
+    }
+
+    console.log(allRooms);
   };
 
   // HANDLER
@@ -197,15 +206,29 @@ const Chat_room = () => {
             </svg>
           </div>
           <div className="room-wrapper">
-            <AccountList
-              accounts={rooms}
-              key={rooms.length}
-              title="Direct Messages"
-              subtitle={`${newMsg} new messages`}
-              selectedId={target.id}
-              Clicked={roomClick}
-              childClassName="room-item"
-            />
+            {console.log(rooms)}
+              <AccountList
+                  accounts={rooms}
+                  key={rooms.length}
+                  title="Direct Messages"
+                  subtitle={`${newMsg} new messages`}
+                  selectedId={target.id}
+                  Clicked={roomClick}
+                  childClassName="room-item"
+              />
+            {/*{rooms.map((room, index) => {*/}
+            {/*  console.log('chattt', room);*/}
+            {/*  <AccountList*/}
+            {/*      accounts={room}*/}
+            {/*      key={room.length}*/}
+            {/*      title="Direct Messages"*/}
+            {/*      subtitle={`${newMsg} new messages`}*/}
+            {/*      selectedId={target.id}*/}
+            {/*      Clicked={roomClick}*/}
+            {/*      childClassName="room-item"*/}
+            {/*  />*/}
+            {/*})}*/}
+
           </div>
         </div>
         {target && Object.keys(target).length !== 0 && (
@@ -228,7 +251,7 @@ const Chat_room = () => {
               </div>
             </div>
             <div className="chat-wrapper">
-              {target.chats.map((chat, index) => {
+              {target.chats && target.chats.map((chat, index) => {
                 return (
                   <div className="chat-bubble-section" key={index}>
                     <div className="timespan fw-bold text_small text-center">{chat.momentDate}</div>
